@@ -1,26 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<search> 
-  
-  
-    
-    <entry>
-      <title>搭建个人博客</title>
-      <link href="/2022/03/29/%E5%88%9B%E5%BB%BA%E5%8D%9A%E5%AE%A2/"/>
-      <url>/2022/03/29/%E5%88%9B%E5%BB%BA%E5%8D%9A%E5%AE%A2/</url>
-      
-        <content type="html"><![CDATA[<p>这是个人博客搭建的向导</p><h3 id="相关工具下载"><a href="#相关工具下载" class="headerlink" title="相关工具下载"></a>相关工具下载</h3><ul><li><a href="https://nodejs.org/en/">Node.js</a> ：使用<code>node -v</code>和<code>npm -v</code>查看是否安装成功</li><li><a href="https://git-scm.com/download/win">git</a>：使用<code>git --version</code>查看是否安装成功</li><li>Hexo：<code>npm install -g hexo-cli</code></li></ul><h3 id="Github仓库搭建"><a href="#Github仓库搭建" class="headerlink" title="Github仓库搭建"></a>Github仓库搭建</h3><ul><li>新建一个仓库，仓库名为<code>&lt;Github用户名&gt;.github.io</code></li><li>连接本地与Github服务器：<br>1. 打开Gitbash输入<code>ssh-keygen -t rsa -C &quot;&lt;Github注册邮箱地址&gt;&quot;</code><br>1. 在<code>C:/users/&lt;用户名&gt;/.ssh</code>文件夹下，复制<em>id_rsa.pub</em>文件中的内容<br> 2. 拷贝内容至Github的settings中</li></ul><p>注：在.ssh新建文件config，在里面填入</p><figure class="highlight plaintext"><figcaption><span>github.com</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">User 注册github的邮箱</span><br><span class="line">Hostname ssh.github.com</span><br><span class="line">PreferredAuthentications publickey</span><br><span class="line">IdentityFile ~/.ssh/id_rsa</span><br><span class="line">Port 443</span><br></pre></td></tr></table></figure><h3 id="搭建个人博客"><a href="#搭建个人博客" class="headerlink" title="搭建个人博客"></a>搭建个人博客</h3><ul><li><code>hexo init</code> 初始化本地博客文件夹，注意该文件夹应为空</li><li><code>hexo g</code> 生成网页</li><li><code>hexo s</code> 把生成的网页放在本地服务器，输入<a href="http://localhost:4000/%E6%9F%A5%E7%9C%8B%E6%95%88%E6%9E%9C">http://localhost:4000/查看效果</a></li><li><code>ctrl + c</code> 结束本地网页</li></ul><h3 id="更改主题-NexT"><a href="#更改主题-NexT" class="headerlink" title="更改主题 (NexT)"></a>更改主题 (NexT)</h3><ul><li>在本地博客文件夹下载next：<br><code>git clone https://github.com/theme-next/hexo-theme-next themes/next</code> </li><li>更改Hexo的config中的scheme值为next</li><li>修改头像：在next&#x2F;_config.yml中找到<code>avatar</code></li><li>添加搜索：在next&#x2F;_config.yml中找到<code>local search</code>，并根据上面网页下载搜索插件</li><li>添加分类：在next&#x2F;_config.yml中找到<code>menu</code>，取消掉相关注释，然后<code>hexo new page &lt;&gt;</code></li></ul><h3 id="其他操作"><a href="#其他操作" class="headerlink" title="其他操作"></a>其他操作</h3><ul><li>删除文件：删除本地文件后键入<code>hexo clean</code></li></ul>]]></content>
-      
-      
+<search>
+  <entry>
+    <title>搭建个人博客</title>
+    <url>/2022/03/29/%E5%88%9B%E5%BB%BA%E5%8D%9A%E5%AE%A2/</url>
+    <content><![CDATA[<p>这是个人博客搭建的向导</p>
+<h3 id="相关工具下载"><a href="#相关工具下载" class="headerlink" title="相关工具下载"></a>相关工具下载</h3><ul>
+<li><a href="https://nodejs.org/en/">Node.js</a> ：使用<code>node -v</code>和<code>npm -v</code>查看是否安装成功</li>
+<li><a href="https://git-scm.com/download/win">git</a>：使用<code>git --version</code>查看是否安装成功</li>
+<li>Hexo：<code>npm install -g hexo-cli</code></li>
+</ul>
+<h3 id="Github仓库搭建"><a href="#Github仓库搭建" class="headerlink" title="Github仓库搭建"></a>Github仓库搭建</h3><ul>
+<li>新建一个仓库，仓库名为<code>&lt;Github用户名&gt;.github.io</code></li>
+<li>连接本地与Github服务器：<br>1. 打开Gitbash输入<code>ssh-keygen -t rsa -C &quot;&lt;Github注册邮箱地址&gt;&quot;</code><br> 2. 在<code>C:/users/&lt;用户名&gt;/.ssh</code>文件夹下，复制<em>id_rsa.pub</em>文件中的内容<br> 3. 拷贝内容至Github的settings中</li>
+</ul>
+<p>注：在.ssh新建文件config，在里面填入</p>
+<figure class="highlight plaintext"><figcaption><span>github.com</span></figcaption><table><tr><td class="code"><pre><span class="line">User 注册github的邮箱</span><br><span class="line">Hostname ssh.github.com</span><br><span class="line">PreferredAuthentications publickey</span><br><span class="line">IdentityFile ~/.ssh/id_rsa</span><br><span class="line">Port 443</span><br></pre></td></tr></table></figure>
+
+<h3 id="搭建个人博客"><a href="#搭建个人博客" class="headerlink" title="搭建个人博客"></a>搭建个人博客</h3><ul>
+<li><code>hexo init</code> 初始化本地博客文件夹，注意该文件夹应为空</li>
+<li><code>hexo g</code> 生成网页</li>
+<li><code>hexo s</code> 把生成的网页放在本地服务器，输入[<a href="http://localhost:4000/]%E6%9F%A5%E7%9C%8B%E6%95%88%E6%9E%9C">http://localhost:4000/]查看效果</a></li>
+<li><code>ctrl + c</code> 结束本地网页</li>
+</ul>
+<h3 id="更改主题-NexT"><a href="#更改主题-NexT" class="headerlink" title="更改主题 (NexT)"></a>更改主题 (NexT)</h3><ul>
+<li>在本地博客文件夹下载next：<br><code>git clone https://github.com/theme-next/hexo-theme-next themes/next</code> </li>
+<li>更改Hexo的config中的scheme值为next</li>
+<li>修改头像：在next&#x2F;_config.yml中找到<code>avatar</code></li>
+<li>添加搜索：在next&#x2F;_config.yml中找到<code>local search</code>，并根据上面网页下载搜索插件</li>
+<li>添加分类：在next&#x2F;_config.yml中找到<code>menu</code>，取消掉相关注释，然后<code>hexo new page &lt;&gt;</code></li>
+</ul>
+<h3 id="其他操作"><a href="#其他操作" class="headerlink" title="其他操作"></a>其他操作</h3><ul>
+<li><p>删除文件：删除本地文件后键入<code>hexo clean</code></p>
+</li>
+<li><p>将当前博客上传到github上</p>
+<ol>
+<li>安装部署工具：<code>npm install hexo-deployer-git --save</code></li>
+<li>修改hexo的_config.yml文件中的deploy部分</li>
+<li>使用<code>hexo clean</code>、<code>hexo g</code>、<code>hexo d</code></li>
+</ol>
+</li>
+</ul>
+]]></content>
       <categories>
-          
-          <category> 博客 </category>
-          
+        <category>博客</category>
       </categories>
-      
-      
-    </entry>
-    
-    
-  
-  
+  </entry>
 </search>
