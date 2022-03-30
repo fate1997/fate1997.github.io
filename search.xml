@@ -4,7 +4,7 @@
     <title>CLIP-笔记</title>
     <url>/2022/03/29/CLIP-%E7%AC%94%E8%AE%B0/</url>
     <content><![CDATA[<h2 id="Learning-Transferable-Visual-Models-From-Natural-Language-Supervision"><a href="#Learning-Transferable-Visual-Models-From-Natural-Language-Supervision" class="headerlink" title="Learning Transferable Visual Models From Natural Language Supervision"></a>Learning Transferable Visual Models From Natural Language Supervision</h2><p><a href="G:\Google\2103.00020.pdf">paper</a> <a href="https://github.com/OpenAI/CLIP">Github</a> </p>
-<p><img src="/.%5Cimages%5CCLIP.png" alt="avatar" title="模型总览与zero-shot推理"></p>
+<p><img src="/CLIP.png" alt="avatar" title="模型总览与zero-shot推理"></p>
 <hr>
 <span id="more"></span>
 
@@ -19,7 +19,7 @@
 <li>之前通过自然语言协助图片分类的工作有着最大的问题就是规模不够大</li>
 <li>之前的工作多是用文本带来的弱监督信号去帮助图片的有监督学习，但是这类任务仍然针对的是固定类别的类，没有zero-shot的能力</li>
 </ol>
-<h3 id="方法"><a href="#方法" class="headerlink" title="方法"></a>方法</h3><p><font color=red size=4>概述</font></p>
+<h3 id="方法"><a href="#方法" class="headerlink" title="方法"></a>方法</h3><p><font color="red" size="4">概述</font></p>
 <ol>
 <li>核心是用自然语言的有监督讯号训练视觉任务</li>
 <li>Transformer和BERT的兴起使得自然语言模型更加强大</li>
@@ -32,7 +32,7 @@
 <ol start="6">
 <li>在这个工作中，最后用的是线性投射层，而没有使用非线性透射层</li>
 </ol>
-<p><font color=red size=4>训练</font></p>
+<p><font color="red" size="4">训练</font></p>
 <ol>
 <li>调参都是用小模型训练一个周期的结果来调的</li>
 <li>batch_size &#x3D; 32768</li>
@@ -74,7 +74,7 @@
 <li>很多任务用语言都无法描述的</li>
 <li>如何在few-shot也能具有更好的效果</li>
 </ol>
-<center><font color=brown size=5> 打破了固定标签类别的范式 </font></center>
+<center><font color="brown" size="5"> 打破了固定标签类别的范式 </font></center>
 
 ]]></content>
       <categories>
@@ -85,7 +85,7 @@
     <title>MoCo-笔记</title>
     <url>/2022/03/29/MoCo-%E7%AC%94%E8%AE%B0/</url>
     <content><![CDATA[<h2 id="Momentum-Contrast-for-Unsupervised-Visual-Representation-Learning"><a href="#Momentum-Contrast-for-Unsupervised-Visual-Representation-Learning" class="headerlink" title="Momentum Contrast for Unsupervised Visual Representation Learning"></a>Momentum Contrast for Unsupervised Visual Representation Learning</h2><p><a href="https://openaccess.thecvf.com/content_CVPR_2020/html/He_Momentum_Contrast_for_Unsupervised_Visual_Representation_Learning_CVPR_2020_paper.html">paper</a> <a href="https://github.com/facebookresearch/moco">code</a></p>
-<p><img src="/.%5Cimages%5CMOCO.png" alt="avatar" title="模型总览与zero-shot推理"></p>
+<p><img src="/images/MOCO.png" alt="avatar" title="模型总览与zero-shot推理"></p>
 <hr>
 <span id="more"></span>
 
