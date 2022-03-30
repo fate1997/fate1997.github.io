@@ -20,15 +20,15 @@
     var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="pdf 第2章 Introduction2.2 结构-性质关系 分子的反向设计通常难于正向预测 水蒸气的性质可以只取决于单个水分子 (即两个O-H距离和一个H-O-H角度)，这些空间信息以极窄的分布存在；至于液态水，事实上单个水分子的状态仍没有什么变化，引起液态水和水蒸气性质差异的是分子间相互作用；至于冰，水分子内的自由度仍然没有改变，水分子间的自由度发生了变化，他们不像在气相或液相那样可以随意移">
+  <meta name="description" content="source 介绍机器学习在量子物理(主要是量子化学中的应用)，如分子性质预测等">
 <meta property="og:type" content="article">
 <meta property="og:title" content="机器学习与量子物理">
 <meta property="og:url" content="http://example.com/2022/03/29/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E4%B8%8E%E9%87%8F%E5%AD%90%E7%89%A9%E7%90%86/index.html">
 <meta property="og:site_name" content="Ten&#39;s Blog">
-<meta property="og:description" content="pdf 第2章 Introduction2.2 结构-性质关系 分子的反向设计通常难于正向预测 水蒸气的性质可以只取决于单个水分子 (即两个O-H距离和一个H-O-H角度)，这些空间信息以极窄的分布存在；至于液态水，事实上单个水分子的状态仍没有什么变化，引起液态水和水蒸气性质差异的是分子间相互作用；至于冰，水分子内的自由度仍然没有改变，水分子间的自由度发生了变化，他们不像在气相或液相那样可以随意移">
+<meta property="og:description" content="source 介绍机器学习在量子物理(主要是量子化学中的应用)，如分子性质预测等">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2022-03-29T13:56:45.000Z">
-<meta property="article:modified_time" content="2022-03-29T14:09:05.750Z">
+<meta property="article:modified_time" content="2022-03-30T03:09:31.777Z">
 <meta property="article:author" content="Fate_10号">
 <meta name="twitter:card" content="summary">
 
@@ -207,10 +207,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2022-03-29 21:56:45 / 修改时间：22:09:05" itemprop="dateCreated datePublished" datetime="2022-03-29T21:56:45+08:00">2022-03-29</time>
+              <time title="创建时间：2022-03-29 21:56:45" itemprop="dateCreated datePublished" datetime="2022-03-29T21:56:45+08:00">2022-03-29</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-03-30 11:09:31" itemprop="dateModified" datetime="2022-03-30T11:09:31+08:00">2022-03-30</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -232,7 +238,10 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p><a href="G:\Google\machine_learning_and_quantum_physics.pdf">pdf</a></p>
+        <p><a target="_blank" rel="noopener" href="https://link.springer.com/book/10.1007/978-3-030-40245-7">source</a></p>
+<p>介绍机器学习在量子物理(主要是量子化学中的应用)，如分子性质预测等</p>
+<span id="more"></span>
+
 <h2 id="第2章-Introduction"><a href="#第2章-Introduction" class="headerlink" title="第2章 Introduction"></a>第2章 Introduction</h2><h3 id="2-2-结构-性质关系"><a href="#2-2-结构-性质关系" class="headerlink" title="2.2 结构-性质关系"></a>2.2 结构-性质关系</h3><ul>
 <li>分子的反向设计通常难于正向预测</li>
 <li><em>水蒸气</em>的性质可以只取决于单个水分子 (即两个O-H距离和一个H-O-H角度)，这些空间信息以极窄的分布存在；至于<em>液态水</em>，事实上单个水分子的状态仍没有什么变化，引起液态水和水蒸气性质差异的是分子间相互作用；至于<em>冰</em>，水分子内的自由度仍然没有改变，水分子间的自由度发生了变化，他们不像在气相或液相那样可以随意移动。冰是一种晶体，这意味着每个水分子以一定的周期形式排列着，单个晶体有时会对其性质产生影响。</li>
@@ -263,7 +272,8 @@
 <li>统计力学的计算复杂度主要就集中于上面的积分过程，对于具有较多原子的材料也有着计算复杂度高的问题。但是这通常可以通过蒙特卡洛模拟来减少计算量，也就是选取一些代表性的sample，计算他们的概率。因此统计力学的任务就变成了得到一些统计意义上重要的微观状态(也就是有着大的玻尔兹曼因子的微观状态)。</li>
 <li>最常用的得到这种微观状态的方法就是分子动力学，这种方法让原子受到势能面的影响而进行经典力学上的移动，然后我们可以通过截取原子们运动的快照来获得微观状态。</li>
 </ul>
-<h2 id="第3章-Kernel-Methods-for-Quantum-Chemistry"><a href="#第3章-Kernel-Methods-for-Quantum-Chemistry" class="headerlink" title="第3章 Kernel Methods for Quantum Chemistry"></a>第3章 Kernel Methods for Quantum Chemistry</h2>
+<h2 id="第3章-Kernel-Methods-for-Quantum-Chemistry"><a href="#第3章-Kernel-Methods-for-Quantum-Chemistry" class="headerlink" title="第3章 Kernel Methods for Quantum Chemistry"></a>第3章 Kernel Methods for Quantum Chemistry</h2><p>To be continued …</p>
+
     </div>
 
     
