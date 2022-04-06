@@ -1,0 +1,1256 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Consolas Serif SC:300,300italic,400,400italic,700,700italic|Consolas:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Course Description This course provides a broad introduction to machine learning and statistical pattern recognition. Topics include: supervised learning (generative&#x2F;discriminative learning, parame">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Notes for Stanford CS229 course">
+<meta property="og:url" content="http://example.com/2022/04/06/Notes-for-Stanford-CS229-course/index.html">
+<meta property="og:site_name" content="Ten&#39;s Blog">
+<meta property="og:description" content="Course Description This course provides a broad introduction to machine learning and statistical pattern recognition. Topics include: supervised learning (generative&#x2F;discriminative learning, parame">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2022/04/06/Notes-for-Stanford-CS229-course/image-20210307200624480.png">
+<meta property="article:published_time" content="2022-04-06T11:22:10.000Z">
+<meta property="article:modified_time" content="2022-04-06T11:33:56.280Z">
+<meta property="article:author" content="Fate_10号">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2022/04/06/Notes-for-Stanford-CS229-course/image-20210307200624480.png">
+
+<link rel="canonical" href="http://example.com/2022/04/06/Notes-for-Stanford-CS229-course/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Notes for Stanford CS229 course | Ten's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Ten's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/fate1997" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/04/06/Notes-for-Stanford-CS229-course/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/FLCL.jfif">
+      <meta itemprop="name" content="Fate_10号">
+      <meta itemprop="description" content="想象力改变一切">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Ten's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Notes for Stanford CS229 course
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-04-06 19:22:10 / 修改时间：19:33:56" itemprop="dateCreated datePublished" datetime="2022-04-06T19:22:10+08:00">2022-04-06</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-Machine-Learning/" itemprop="url" rel="index"><span itemprop="name">机器学习 (Machine Learning)</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="course-description">Course Description</h1>
+<p>This course provides a broad introduction to machine learning and
+statistical pattern recognition. Topics include: supervised learning
+(generative/discriminative learning, parametric/non-parametric learning,
+neural networks, support vector machines); unsupervised learning
+(clustering, dimensionality reduction, kernel methods); learning theory
+(bias/variance tradeoffs, practical advice); reinforcement learning and
+adaptive control. The course will also discuss recent applications of
+machine learning, such as to robotic control, data mining, autonomous
+navigation, bioinformatics, speech recognition, and text and web data
+processing.</p>
+<p><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV19e411W7ga?spm_id_from=333.788.top_right_bar_window_custom_collection.content.click">[Course
+Website]</a></p>
+<span id="more"></span>
+<h2 id="l1---introduction">L1 - Introduction</h2>
+<p><strong>Machine Learning definition:</strong> Field of study that
+gives computers the ability to learn without being explicitly
+programmed.</p>
+<h3 id="machine-learning-tool">Machine learning tool</h3>
+<p><strong>Supervised learning</strong>: given a data set (x, y), the
+goal is to obtain the mapping of x to y</p>
+<p>​ Regression problem: consistent (output)</p>
+<p>​ Classification problem: discrete (output)</p>
+<p><strong>Unsupervised learning</strong>: just given features but no
+labels y</p>
+<p><strong>Deep learning</strong>: part of machine learning</p>
+<p><strong>Machine learning strategy</strong>: systematic engineering
+principles for machine learning</p>
+<p><strong>Reinforcement learning</strong>: do whatever it wants and
+judge it behave good or not (game, robot)</p>
+<h2 id="l2---linear-regression-and-gradient-descent">L2 - Linear
+Regression and Gradient Descent</h2>
+<p><strong>House price predict</strong>: Training set → learning
+algorithm → hypothesis (whose work is getting the area of house and
+telling the price of the house)</p>
+<p><strong>Model of linear regression</strong>: <span class="math inline">\(h(x)=\theta_0+\theta_1x_1+\theta_2x_2\)</span></p>
+<p>​ to simplify the formula of hypothesis: <span class="math inline">\(h(x)=\sum_{j=0}^2\theta_jx_j,\ where \ x_0=1\
+(dummy\ feature)\)</span></p>
+<p>​ and the parameters and feature can be written as: <span class="math inline">\(\Theta=[\theta_0\ \theta_1\ \theta_2]^T\)</span>
+and <span class="math inline">\(x^{(i)}=[x_0^{(i)}\ x_1^{(i)}\
+x_2^{(i)}]^T\)</span></p>
+<p>​ <em>Some notation</em>: <span class="math inline">\(\theta\)</span>-''parameters''/weight; ​ <span class="math inline">\(m\)</span>-# training examples (# rows in table
+above); ​ <span class="math inline">\(x\)</span>-"inputs"/features/attributes'; ​ <span class="math inline">\(y\)</span>-"output"/target variable; ​ <span class="math inline">\((x, y)\)</span>-training example; ​ <span class="math inline">\((x^{(i)},y^{(i)})\)</span>-<span class="math inline">\(i^{th}\)</span> training example; ​ <span class="math inline">\(n\)</span>-# features.</p>
+<p><strong>Choose parameters such that <span class="math inline">\(h(x)\approx y\)</span></strong>: to minimize the
+cost function of: <span class="math display">\[
+J(\theta)=\frac{1}{2}\sum_{i=1}^m(h_{\theta}(x^{(i)})-y^{(i)})^2\tag{2-1}
+\]</span> ​ think: why square but not absolute error or errors to the
+power of 4</p>
+<p><strong>How to find the minima of cost function</strong>:
+<em>Gradient descent</em></p>
+<p>​ 1.start with some value of <span class="math inline">\(\theta\)</span> (say <span class="math inline">\(\theta=\vec{0}\)</span>)</p>
+<p>​ 2.keep changing <span class="math inline">\(\theta\)</span> to
+reduce of <span class="math inline">\(J(\theta)\)</span>: <span class="math inline">\(\theta_j:=\theta_j-\alpha\frac{\partial}{\partial\theta_j}J(\theta)\)</span>,
+where <span class="math inline">\(\alpha\)</span> is learning rate</p>
+<p>​ it can be derived to <span class="math inline">\(\theta_j:=\theta_j-\alpha\sum_{i=1}^m(h_\theta(x^{(i)})-y^{(i)})x_j^{(i)}\)</span></p>
+<p>​ 3.repeat until convergence</p>
+<p>​ P.S. try learning rate on an exponential scale to obtain the
+quickest learning rate (doubling or tripling scale)</p>
+<p><strong>Gradient descent algorithm</strong>: another name is "batch
+gradient descent"</p>
+<p>​ disadvantage: for giant dataset, the "m" will be large, thus the sum
+will be very slow, and one step of iteration will cost lots of time.</p>
+<p>​ <em>stochastic gradient descent</em>: instead of scanning all
+million examples. ​ <span class="math inline">\(\theta_j:=\theta_j-\alpha(h_\theta(x^{(i)})-y^{(i)})x_j^{(i)}\)</span>
+(for every j)</p>
+<p><strong>Normal equation</strong>: only can be used in linear
+regression</p>
+<p>​ solve equation <span class="math inline">\(\nabla_\theta(J(\theta))=0\)</span> to get <span class="math inline">\(\theta\)</span></p>
+<p>​ <em>some notation</em>: <span class="math inline">\(tr\ A\)</span> =
+sum of $ A_{ii}$; ​ <span class="math inline">\(tr\ A=tr\ A^T\)</span>; ​
+<span class="math inline">\(\nabla_A(tr\ AB)=B^T\)</span>; ​ <span class="math inline">\(tr\ AB = tr\ BA\)</span>; ​ <span class="math inline">\(tr\ ABC = tr\ CBA\)</span>; ​ <span class="math inline">\(\nabla_A(tr\ AA^TC)=CA+C^TA\)</span>; ​ <span class="math inline">\(\nabla_xb^Tx=b\)</span>; ​ <span class="math inline">\(\nabla_xx^TAx=(A+A^T)x\)</span>.</p>
+<p>​ <em>matrix formula</em>: <span class="math inline">\(X\)</span>-design matrix <span class="math display">\[
+X=\begin{bmatrix}
+(x^{(1)})^T \\
+(x^{(2)})^T \\
+\vdots\\
+(x^{(m)})^T
+\end{bmatrix}
+\]</span> ​ Thus <span class="math inline">\(J(\theta)=(X\theta-y)^T(X\theta-y)\)</span></p>
+<p>​ and the equation can be simplified into <span class="math inline">\(\frac{1}{2}\nabla_\theta((X\theta-y)^T(X\theta-y))=X^TX\theta-X^Ty=0\)</span></p>
+<p>​ then the <em>normal equation</em> is <span class="math inline">\(X^TX\theta=X^Ty\)</span>, and solve it can get
+<span class="math inline">\(\theta=(X^TX)^{-1}X^Ty\)</span></p>
+<p>​ if the <span class="math inline">\(X\)</span> is non-invertible
+probably means the same feature repeated twice</p>
+<p><strong>Some theories in exercises</strong>:</p>
+<p>​ <em>Hessian matrix</em>: <span class="math inline">\(\nabla^2f(x)=\frac{\partial }{\partial
+x^T}(\frac{\partial}{\partial x}f(x))\)</span></p>
+<p>​ <em>Composite function</em>: <span class="math inline">\(\nabla
+g(h(x))=g&#39;(h(x))\nabla h(x),\ where\
+g:\mathbb{R}\rightarrow\mathbb{R}\ and\
+h:\mathbb{R}^n\rightarrow\mathbb{R}\)</span></p>
+<p>​ <em>Positive semi-definite(PSD)</em>: if <span class="math inline">\(A=A^T\)</span> and <span class="math inline">\(x^TAx\ge0\)</span> for all <span class="math inline">\(x\ge\mathbb{R}^n\)</span></p>
+<p>​ To judge: A symmetric matrix is PSD if and only if all eigenvalues
+are non-negative</p>
+<p>​ <em>Spectral theorem</em>: A matrix <span class="math inline">\(M\)</span> with entries in <span class="math inline">\(\R\)</span> is called <em>symmetric</em> if <span class="math inline">\(M=M^T\)</span>. It states that any symmetric
+matrix is diagonalizable.</p>
+<p>​ <em>Eigenvectors and eigenvalues</em>: <span class="math inline">\(A=TDT^{-1}\)</span>, where <span class="math inline">\(D=diag(\lambda_1,...,\lambda_n)\)</span> and <span class="math inline">\(T=[t^{(1)}\cdots t^{(n)}]\)</span>, then <span class="math inline">\(At^{(i)}=\lambda_it^{(i)}\)</span> where <span class="math inline">\(\lambda_i\)</span> is eigenvalues and <span class="math inline">\(t^{(i)}\)</span> is eigenvectors.</p>
+<p>​ <em>Orthogonal</em>: <span class="math inline">\(U^TU=I\)</span>,
+and <span class="math inline">\(A=UDU^T\)</span>, where <span class="math inline">\(U=[u^{(1)}\cdots u^{(n)}]\)</span>, then <span class="math inline">\(Au^{(i)}=\lambda_iu^{(i)}\)</span></p>
+<h2 id="l3---locally-weighted-logistic-regression">L3 - Locally Weighted
+&amp; Logistic Regression</h2>
+<p><strong>Locally weighted regression</strong>: non-parametric learning
+algorithm, it means amount of parameters need to be keep grow (linearly)
+with size of data.</p>
+<p>​ Fit <span class="math inline">\(\theta\)</span> to minimize <span class="math inline">\(\sum_{i=1}^m\omega^{(i)}(y^{(i)}-\theta^Tx^{(i)})^2\)</span>,
+where <span class="math inline">\(\omega^{(i)}\)</span> is a "weighting"
+function, it can be written as: <span class="math display">\[
+\omega^{(i)}=exp(\frac{(x^{(i)}-x)^2}{\tau^2})\tag{3-1}
+\]</span> ​ where <span class="math inline">\(x\)</span> is the location
+where we want to make prediction, and the shape of this function is
+similar as gaussian function, <span class="math inline">\(\tau\)</span>
+is a hyper-parameter which can decide fatter or narrower curve.</p>
+<p>​ <em>Applications</em>: relatively low dimensional dataset.</p>
+<p><strong>Probabilistic interpretation</strong>: (why least
+squares)</p>
+<p>​ Assume <span class="math inline">\(y^{(i)}=\theta^Tx^{(i)}+\epsilon^{(i)}\)</span>
+where <span class="math inline">\(\epsilon^{(i)}\)</span> is unmodeled
+effects and random noise (<span class="math inline">\(\epsilon^{(i)}\sim
+N(0,\sigma^2)\)</span>);</p>
+<p>​ Assume <span class="math inline">\(\epsilon^{(i)}\)</span> is
+independently and identically distributed (IID) <span class="math display">\[
+(y^{(i)}|x^{(i)};\theta)\sim N(\theta^Tx^{(i)}, \sigma^2)
+\]</span> ​ where "<span class="math inline">\(;\)</span>" means
+parameterized by , <span class="math inline">\(\theta\)</span> is just a
+set of parameters</p>
+<p>​ the likelihood of <span class="math inline">\(\theta\)</span> is:
+<span class="math display">\[
+L(\theta)=p(y|x;\theta)=\prod_{i=1}^mp(y^{(i)}|x^{(i)};\theta)\tag{3-2}
+\]</span> ​ where <em>likelihood</em> means parameters changed but the
+data fixed and <em>probability</em> means parameters fixed but the data
+changed.</p>
+<p>​ log likelihood of <span class="math inline">\(\theta\)</span> is:
+<span class="math display">\[
+l(\theta)=m\cdot
+log\frac{1}{\sqrt{2\pi}\sigma}+\sum_{i=1}^m-\frac{(y^{(i)}-\theta^T
+x^{(i)})^2}{2\sigma^2}\tag{3-3}
+\]</span> ​ eliminate constant, we can get the cost function in linear
+regression.</p>
+<p>​ <em>notation</em>: MLE - maximum likelihood estimation</p>
+<p><strong>Logistic regression</strong>: <span class="math inline">\(y\in \{0, 1\}\)</span></p>
+<p>​ <em>sigmoid function/ logistic function</em>: <span class="math display">\[
+g(z)=\frac{1}{1+e^{-z}}\tag{3-4}
+\]</span> ​ hypothesis: <span class="math display">\[
+h_\theta(x)=g(\theta^Tx)=\frac{1}{1+e^{-\theta^Tx}}\tag{3-5}
+\]</span> ​ where <span class="math inline">\(P(y=1|x;\theta)=h_\theta(x)\)</span> and <span class="math inline">\(P(y=0|x;\theta)=1-h_\theta(x)\)</span>, these
+probability can be combined to <span class="math inline">\(P(y|x;\theta)=h(x)^y(1-h(x))^{1-y}\)</span></p>
+<p>​ the log likelihood of <span class="math inline">\(\theta\)</span>:
+<span class="math display">\[
+l(\theta)=\sum_{i=1}^my^{(i)}log\ h_\theta(x^{(i)})+(1-y^{(i)})log\
+(1-h_\theta(x^{(i)}))\tag{3-6}
+\]</span> ​ batch gradient ascent <span class="math inline">\(\theta_j:=\theta_j+\alpha\frac{\partial}{\partial
+\theta_j}l(\theta)=\theta_j+\alpha\sum_{i=1}^m(y^{(i)}-h_\theta(x^{(i)}))x_j^{(i)}\)</span>
+which is as same as the iteration formula in linear regression</p>
+<p><strong>Newton's method</strong>: quadratic convergence <span class="math display">\[
+\theta^{(t+1)}:=\theta^{(t)}-\frac{l&#39;(\theta^{(t)})}{l&#39;&#39;(\theta^{(t)})}
+\]</span> ​ if <span class="math inline">\(\theta\)</span> is a
+vector(<span class="math inline">\(\theta\in\mathbb{R}^{n+1}\)</span>),
+above formula can be written as: <span class="math display">\[
+\theta^{(t+1)}:=\theta^{(t)}-H^{-1}\nabla_\theta l\tag{3-7}
+\]</span> ​ where <span class="math inline">\(H\)</span> is Hessian
+matrix, <span class="math inline">\(H_{ij}=\frac{\partial^2l}{\partial\theta_i\partial\theta_j}\)</span>(<span class="math inline">\(H\in\mathbb{R}^{(n+1)\times(n+1)}\)</span>).</p>
+<p>​ if # features are too large, gradient descent better, otherwise
+newton's method better</p>
+<h2 id="l4---perceptron-generalized-linear-model">L4 - Perceptron &amp;
+Generalized Linear Model</h2>
+<p><strong>Perceptron Algorithm</strong>: simple and easy to analyze but
+not applied in practice</p>
+<p>​ Perceptron has similar function like Sigmoid function: <span class="math display">\[
+g(z)=
+\begin{cases}
+1&amp; z\ge0\\
+0&amp;z&lt;0
+\end{cases}\tag{4-1}
+\]</span> ​ Then the hypothesis can be written as: <span class="math display">\[
+h_\theta(x)=g(\theta^Tx)\tag{4-2}
+\]</span> ​ Update rules is as same as above algorithms: <span class="math display">\[
+\theta_j:=\theta_j+\alpha(y^{(i)}-h_\theta(x^{(i)}))x_j^{(i)}\tag{4-3}
+\]</span> ​ where <span class="math inline">\(y^{(i)}-h_\theta(x^{(i)})\)</span> will be <span class="math inline">\(1\)</span> when wrong at <span class="math inline">\(y^{(i)}=1\)</span>, <span class="math inline">\(0\)</span> when wrong at <span class="math inline">\(y^{(i)}=0\)</span>, which means if <span class="math inline">\(y=1\)</span>, <span class="math inline">\(\theta\)</span> is closed to x, if <span class="math inline">\(y=0\)</span>, <span class="math inline">\(\theta\)</span> is not closed to x</p>
+<p><strong>Exponential Family</strong>:</p>
+<p>​ PDF (probability mass function): <span class="math display">\[
+p(y,\eta)=b(y)exp(\eta^TT(y)-a(\eta))\tag{4-4}
+\]</span></p>
+<p>​ where: ​ <span class="math inline">\(y\)</span> - data; ​ <span class="math inline">\(\eta\)</span> - natural parameter; ​ <span class="math inline">\(T(y)\)</span> - sufficient statistic (<span class="math inline">\(=y\)</span> in this class); ​ <span class="math inline">\(b(y)\)</span> - base measure; ​ <span class="math inline">\(a(\eta)\)</span> - log-partition function
+(normalizing constant of probability distributions).</p>
+<p>​ <em>Bernoulli</em>: model binary data.</p>
+<p>​ PDF: <span class="math inline">\(\phi\)</span> - probability of
+event <span class="math display">\[
+p(y,\phi)=\phi^y(1-\phi)^{1-y}
+\]</span></p>
+<p>​ <em>Gaussian (with fixed variance=1)</em>: <span class="math display">\[
+p(y;\mu)=\frac{1}{\sqrt{2\pi}}exp(-\frac{(y-\mu)^2}{2})
+\]</span> ​ <em>Properties of exponential family</em>: ​ a. MLE wrt(with
+respect to) <span class="math inline">\(\eta\)</span> is concave and
+NLL(negative log-likelihood) is convex ​ b. Expectation of y (<span class="math inline">\(E[y; \eta]\)</span>) = <span class="math inline">\(\frac{\partial}{\partial\eta}a(\eta)\)</span> ​ c.
+<span class="math inline">\(Var[y;\eta]\)</span> = <span class="math inline">\(\frac{\partial^2}{\partial\eta^2}a(\eta)\)</span></p>
+<p>​ <em>Choose model</em>: if <span class="math inline">\(y\)</span> is ​
+Real - Gaussian; ​ Binary - Bernoulli; ​ Count(non-negative integers) -
+Poisson; ​ Positive real value integers - Gamma, Exponential; ​
+Probability distributions - Beta, Dirichlet (Bayesian).</p>
+<p><strong>GLM</strong>:</p>
+<p>​ <em>Assumptions</em>: 1) <span class="math inline">\(y|x;\theta \sim
+Exponential\ Family(y)\)</span>; 2) <span class="math inline">\(\eta=\theta^Tx\)</span> <span class="math inline">\(\theta\in\mathbb{R}^n, \ x\in\mathbb{R}^n\)</span>
+where n is # inputs; 3) Test time: Output <span class="math inline">\(h_\theta(x)=E[y|x;\theta]\)</span></p>
+<p>​ <em>Test time</em>: <span class="math display">\[
+x\rightarrow\eta=\theta^Tx\rightarrow Exponential\
+Family(b,a,T)\rightarrow E[y;\eta]=h_\theta(x)
+\]</span> ​ <em>Train time</em>: <span class="math inline">\(\mathop{max}\limits_\theta\ log\
+\Pi_{i=1}^mp(y^{(i)},\theta^Tx^{(i)})\)</span>.</p>
+<p>​ <em>Learning Update Rule</em>: <span class="math inline">\(\theta_j:=\theta_j+\sum_{i=1}^m\alpha(y^{(i)}-h_\theta(x^{(i)}))x_J^{(i)}\)</span></p>
+<p>​ <em>Terminology</em>: <span class="math inline">\(\eta\)</span> -
+natural parameter; ​ <span class="math inline">\(\mu=E[y;\eta]=g(\eta)\)</span> - canonical
+response function; ​ <span class="math inline">\(\eta=g^{-1}(\mu)\)</span> - canonical link
+function; ​ <span class="math inline">\(\theta\)</span> - model
+parameter; ​ <span class="math inline">\(\phi(Ber),\mu\sigma^2(Gau),\lambda-Poi\)</span> -
+canonical parameters.</p>
+<p><strong>Softmax Regression</strong>: cross entropy</p>
+<p>​ <em>some notation</em>: <span class="math inline">\(k\)</span> -
+number of class; ​ <span class="math inline">\(x^{(i)}\in\mathbb{R}^n\)</span>; ​ <span class="math inline">\(Label\ y=\{\{0,1\}^k\}\)</span> eg. <span class="math inline">\(\{0,0,1,0\}\)</span> - one-hot vector, <span class="math inline">\(y\in\mathbb{R}^k\)</span>; ​ <span class="math inline">\(\theta_{class}\in\mathbb{R}^n\)</span>,
+shape(<span class="math inline">\(k,n\)</span>); ​ <span class="math inline">\(\phi_i\)</span> - probability of <span class="math inline">\(i\)</span> output; ​ <span class="math inline">\(\phi_k=1-\sum_{i=1}^{k-1}\phi_i\)</span> -
+probability of last output; ​ <span class="math inline">\(T(y)\in\mathbb{R}^{k-1}\)</span>.</p>
+<p>​ <em>Response function</em>: <span class="math display">\[
+p(y=i|x;\theta)=\phi_i=\frac{e^{\eta_i}}{\sum_{j=1}^k e^{\eta_j}}
+\]</span> ​ <em>cross Entropy</em>: <span class="math inline">\(-\sum_{y=1}^{k-1}p(y)log\ \hat{p}(y)\)</span>
+(loss function)</p>
+<h2 id="l5---gda-naive-bayes">L5 - GDA &amp; Naive Bayes</h2>
+<p>​ Above algorithms are called discriminative learning algorithms, in
+this class will talk generative learning algorithms.</p>
+<p><em>Discriminative</em>: learn <span class="math inline">\(p(y|x)\)</span> (or <span class="math inline">\(h_\theta(x)=...\)</span> mapping of <span class="math inline">\(x\rightarrow y\)</span>).</p>
+<p><em>Generative</em>: learn <span class="math inline">\(p(x|y)\)</span>, what the feature <span class="math inline">\(x\)</span> given the class <span class="math inline">\(y\)</span>, and learn <span class="math inline">\(p(y)\)</span> which called class prior</p>
+<p><em>Bayes rule</em>: <span class="math display">\[
+p(y=1|x)=\frac{p(x|y=1)p(y=1)}{p(x)}
+\]</span> ​ where <span class="math inline">\(p(x)=p(x|y=1)p(y=1)+p(x|y=0)p(y=0)\)</span>.</p>
+<p><strong>Gaussian Discriminant Analysis</strong>: suppose <span class="math inline">\(x\in\mathbb{R}^n\)</span>, drop <span class="math inline">\(x_0=1\)</span> convention</p>
+<p>​ Assume <span class="math inline">\(p(x|y)\)</span> is Gaussian,
+<span class="math inline">\(z\sim N(\mu,\Sigma)\)</span>, where <span class="math inline">\(z,\mu\in\mathbb{R}^n\)</span> and <span class="math inline">\(\Sigma\in\mathbb{R}^{n\times n}\)</span>. And the
+expectation of <span class="math inline">\(z\)</span> (<span class="math inline">\(E[z]\)</span>) = <span class="math inline">\(\mu\)</span>, covariance (<span class="math inline">\(Cov(z)\)</span>) = <span class="math inline">\(E[(z-\mu)(z-\mu)^T]=E[zz^T]-(E[z])^2\)</span> and
+is symmetric. <span class="math display">\[
+p(z)=\frac{1}{(2\pi)^{n/2}|\Sigma|^{1/2}}exp(-\frac{1}{2}(z-\mu)^T\Sigma^{-1}(z-\mu))\tag{5-1}
+\]</span> ​ <em>GDA model</em>: <span class="math display">\[
+p(x|y=0)=\frac{1}{(2\pi)^{n/2}|\Sigma|^{1/2}}exp(-\frac{1}{2}(x-\mu_0)^T\Sigma^{-1}(x-\mu_0))\tag{5-2}
+\]</span></p>
+<p><span class="math display">\[
+p(x|y=1)=\frac{1}{(2\pi)^{n/2}|\Sigma|^{1/2}}exp(-\frac{1}{2}(x-\mu_1)^T\Sigma^{-1}(x-\mu_1))\tag{5-3}
+\]</span></p>
+<p><span class="math display">\[
+p(y)=\phi^y(1-\phi)^{1-y}\tag{5-4}
+\]</span></p>
+<p>​ (<span class="math inline">\(\uparrow\)</span>Thus parameters is
+<span class="math inline">\(\mu_0,\mu_1\in\mathbb{R}^n,\Sigma\in\mathbb{R}^{n\times
+n},\phi\in\R\)</span>)</p>
+<p>​ <em>Learning parameter</em>: Training set - <span class="math inline">\(\{(x^{(i)},y^{(i)})\}_{i=1}^m\)</span></p>
+<p>​ likelihood of parameters: <span class="math inline">\(L(\phi,\mu_0,\mu_1,\Sigma)=\prod_{i=1}^mp(x^{(i)},y^{(i)},\phi,\mu_0,\mu_1,\Sigma)=\prod_{i=1}^mp(x^{(i)}|y^{(i)})p(y^{(i)})\)</span></p>
+<p>​ MLE(maximum likelihood estimation): <span class="math display">\[
+\mathop{max}\limits_{\phi,\mu_0,\mu_!,\Sigma}\
+l(\phi,\mu_0,\mu_1,\Sigma)=log\ L(\phi,\mu_0,\mu_1,\Sigma)
+\]</span> ​ derive it, we can get: <span class="math display">\[
+\begin{align}
+\phi&amp;=\frac{\sum_{i=1}^my^{(i)}}{m}=\frac{\sum_{i=1}^{m}1\{y^{(i)}=1\}}{m}\\
+\mu_0&amp;=\frac{\sum_{i=1}^m1\{y^{(i)}=0\}x^{(i)}}{\sum_{i=1}^m1\{y^{(i)}=0\}}\\
+\mu_1&amp;=\frac{\sum_{i=1}^m1\{y^{(i)}=1\}x^{(i)}}{\sum_{i=1}^m1\{y^{(i)}=1\}}\\
+\Sigma&amp;=\frac{1}{m}\sum_{i=1}^m(x^{(i)}-\mu_{y^{(i)}})(x^{(i)}-\mu_{y^{(i)}})^T
+\end{align}
+\]</span> ​ where the notation <span class="math inline">\(1\{True\}=1\)</span> is indication operator</p>
+<p>​ <em>Prediction</em>: <span class="math display">\[
+arg\ \mathop{max}\limits_y\ p(y|x)=arg\ \mathop{max}\limits_y
+\frac{p(x|y)p(y)}{p(x)}=arg\ \mathop{max}\limits_y\ p(x|y)p(y)
+\]</span> ​ where the notation <span class="math inline">\(arg\)</span>
+means get value of <span class="math inline">\(y\)</span> to maximum the
+formula.</p>
+<p>​ <em>Comparison to logistic regression</em>:</p>
+<p>​ For fixed <span class="math inline">\(\phi,\mu_0,\mu_1,\Sigma\)</span>, plot <span class="math inline">\(p(y=1|x,\phi,\mu_0,\mu_1,\Sigma)\)</span> as a
+function of <span class="math inline">\(x\)</span>, then you will find
+the curve is exactly Sigmoid function. <span class="math display">\[
+\begin{cases}
+x|y=0\sim N(\mu_0,\Sigma)\\
+x|y=1\sim N(\mu_1,\Sigma)\\
+y\sim Ber(\phi)
+\end{cases}\Rightarrow p(y=1|x)=\frac{1}{1+e^{-\theta^Tx}}
+\]</span> ​ which means the GDA have stronger assumptions, and above
+formula is satisfied for any exponential family distribution. And if the
+distribution exactly satisfy above formula, then we can say the GDA
+doing better than logistic regression, because the GDA get more
+information.</p>
+<p>​ If we have lots of data, then we can do less assumption in model,
+which mean we can choose logistic regression; but GDA compute more
+efficiently, and can give better results when dataset satisfy the
+distribution approximately.</p>
+<p>​
+<code>What we give the model is hypothesis and training data</code></p>
+<p><strong>Naive Bayes</strong>: by talking about example of e-mail spam
+classification</p>
+<p>​ <em>feature vector x?</em> find the top 10000 occurring words and
+use that as a feature set. than turn feature vector <span class="math inline">\(x\)</span> into a binary feature vector. <span class="math inline">\(x\in\{0,1\}^n\)</span>, <span class="math inline">\(x_i=1\)</span><span class="math inline">\(\{\)</span>word <span class="math inline">\(i\)</span> appears in email<span class="math inline">\(\}\)</span></p>
+<p>​ want to model <span class="math inline">\(p(x|y),\ p(y)\)</span>,
+then we have <span class="math inline">\(2^{10000}\)</span> possible
+value of <span class="math inline">\(x\)</span> and <span class="math inline">\(2^{10000}\)</span> parameters.</p>
+<p>​ Assume <span class="math inline">\(x_i\ &#39;s\)</span> are
+conditionally independent given y: (also called Naive Bayes assumption)
+<span class="math display">\[
+\begin{align}
+p(x_1,...,x_{10000}|y)&amp;=p(x_1|y)p(x_2|x_1,y)...p(x_{10000}|...)\\
+&amp;\overset{assume}{=}p(x_1|y)p(x_2|y)...p(x_{10000}|y)
+\end{align}
+\]</span> ​ <em>parameters</em>: ​ <span class="math inline">\(\phi_{j|y=1}=p(x_j=1|y=1)\)</span> ​ <span class="math inline">\(\phi_{j|y=0}=p(x_j=1|y=0)\)</span> ​ <span class="math inline">\(\phi_y=p(y=1)\)</span></p>
+<p>​ <em>Joint likelihood</em>: <span class="math display">\[
+L(\phi_y,\phi_{j|y})=\prod_{i=1}^mp(x^{(i)},y^{(i)};\phi_y,\phi_{j|y})
+\]</span> ​ <em>MLE</em>: <span class="math display">\[
+\phi_y=\frac{\sum_{i=1}^m1\{y^{(i)}=1\}}{m}\\
+\phi_{j|y=1}=\frac{\sum_{i=1}^m1\{x_j^{(i)}=1,y^{(i)}=1\}}{\sum_{i=1}^m1\{y^{(i)}=1\}}
+\]</span></p>
+<h2 id="l6---support-vector-machines">L6 - Support Vector Machines</h2>
+<p><strong>Naive theory limitations</strong>:</p>
+<p>​ at prediction time: <span class="math display">\[
+p(y=1|x)=\frac{p(x|y=1)p(y=1)}{p(x)}
+\]</span> ​ if there is a word doesn't exist in the training set, then
+when it first comes out, the model will treat its probability as zero
+(<span class="math inline">\(p(x_k|y)=0\)</span>), than the formula
+above will become <span class="math inline">\(0/(0+0)\)</span>.</p>
+<p><strong>Laplace smoothing</strong>:</p>
+<p>​ set <span class="math inline">\(x\in\{1,...,k\}\)</span>, estimate
+of <span class="math inline">\(x=j\)</span> : <span class="math display">\[
+p(x=j)=\frac{\sum_{j=1}^m1\{x^{(i)}=j\}+1}{m+k}\tag{6-1}
+\]</span> ​ it says the numerator plus one, and denominator plus the
+number of <span class="math inline">\(x\)</span>.</p>
+<p><strong>Two models</strong>:</p>
+<p>​ for e-mail spam, there are two models to describe features <span class="math inline">\(x\)</span>:</p>
+<p>​ <em>Multivariate Bernoulli Model</em>: <span class="math inline">\(x\in\mathbb{R}^n\)</span>, where n is the number
+of words in dictionary. so if a e-main is received, it can be written as
+<span class="math inline">\(x=[0\ 0\  ...\ 1\ ...\ 0]\)</span></p>
+<p>​ <em>Multinomial Event Model</em>: <span class="math inline">\(x\in\mathbb{R}^n\)</span>, where n is the length
+of e-mail, then <span class="math inline">\(x=[1600\ 800\ 1600\
+800]\)</span></p>
+<p>​ probability: <span class="math inline">\(p(x,y)=p(x|y)p(y)\overset{assume}{=}\prod_{j=1}^np(x_j|y)...p(y)\)</span></p>
+<p>​ parameters: <span class="math inline">\(\phi_y=p(y=1)\)</span>,
+<span class="math inline">\(\phi_{k|y=0}=p(x_j=k|y=0)\)</span></p>
+<p>​ MLE: <span class="math display">\[
+\phi_{k|y=0}=\frac{\sum_{i=1}^m1\{y^{(i)}=0\}\sum_{j=1}^{n_i}1\{x_j^{(i)}=k\}+1}{\sum_{i=1}^m1\{y^{(i)}=0\}n_i+|V|}
+\]</span> ​ where <span class="math inline">\(|V|\)</span> is the number
+of possible values of <span class="math inline">\(x\)</span>.</p>
+<p>​
+<code>Start ML: collect dataset and build a simple algorithm then see what it's doing wrong and improve it</code></p>
+<p><strong>Support vector machine</strong>:</p>
+<p>​ <em>geometric margin</em>: the distance between training example to
+decision boundary. <span class="math display">\[
+\gamma^{(i)}=\frac{\omega^Tx^{(i)}+b}{||\omega||}
+\]</span> ​ <span class="math inline">\(\gamma=\mathop{min}\limits_i\
+\gamma^{(i)},\ where \ i=1,...,m\)</span></p>
+<p>​ <em>notation</em>: ​ labels <span class="math inline">\(y\in\{-1,+1\}\)</span>; ​ have <span class="math inline">\(h\)</span> output values in <span class="math inline">\(\{-1,+1\}\)</span>; ​ <span class="math inline">\(g(z)=\begin{cases}1\ \ \  \ z\ge0\\-1\
+othersise\end{cases}\)</span></p>
+<p>​ <em>hypothesis of SVM</em>: <span class="math display">\[
+h_{\omega,b}=g(\omega^Tx+b), where\ \omega\in\R^n\ and\ b\in\R
+\]</span> ​ <em>functional margin of (<span class="math inline">\(\omega,b\)</span>)</em>: <span class="math inline">\(\hat\gamma^{(i)}=y^{(i)}(\omega^Tx^{(i)}+b)\)</span>,
+and we want <span class="math inline">\(\hat\gamma^{(i)}\gg1\)</span>.
+for whole training set <span class="math inline">\(\hat\gamma=\mathop{min}\limits_i\
+\hat\gamma^{(i)},\ where \ i=1,...,m\)</span></p>
+<p>​ we can cheat by times 10 to parameters, then we have 10 times
+functional margin, in order to avoid this cheating way: <span class="math inline">\((\omega,b)\rightarrow(\frac{\omega}{||\omega||},\frac{b}{||\omega||})\)</span>.
+so we have geometric margin <span class="math inline">\(\gamma^{(i)}=\hat\gamma^{(i)}/||\omega||\)</span></p>
+<p>​ <em>optimal margin classifier</em>: basic building block in SVM</p>
+<p>​ <span class="math inline">\(h_\theta(x)=g(\theta^Tx)\)</span>,
+predict "<span class="math inline">\(1\)</span>" if <span class="math inline">\(\theta^Tx\ge0\)</span>, "<span class="math inline">\(0\)</span>" otherwise. which means if <span class="math inline">\(y^{(i)}=1\)</span> hope that <span class="math inline">\(\theta^Tx\gg0\)</span> and if <span class="math inline">\(y^{(i)}=0\)</span> hope that <span class="math inline">\(\theta^Tx\ll0\)</span>.</p>
+<p>​ parameter: choose <span class="math inline">\(\omega,b\)</span> to
+maximize <span class="math inline">\(\gamma\)</span>, it can be proved
+that it's same to: (s.t. means subject to) <span class="math display">\[
+\mathop{min}\limits_{\omega,b}\ \frac{1}{2}||\omega||^2,\ s.t.\
+y^{(i)}(\omega^Tx^{(i)}+b)\ge1,\ i=1,...,n
+\]</span></p>
+<h2 id="l7---kernels">L7 - Kernels</h2>
+<p>To solve when features x is 100 trillion dimensional</p>
+<p><strong>Intuition</strong>:</p>
+<ol type="1">
+<li><p><span class="math inline">\(\omega=\sum_{i=1}^m\alpha_ix^{(i)}\)</span>, which
+can be proved true; (and we can prove by induction from Eq.4-3)</p></li>
+<li><p>vector <span class="math inline">\(omega\)</span> is
+perpendicular to decision boundary(<span class="math inline">\(omega\)</span> controls direction of
+boundary);</p>
+<p>Let <span class="math inline">\(\omega=\sum_{i=1}^m\alpha_iy^{(i)}x^{(i)}\)</span>,
+then the optimization objective can be written as:</p></li>
+</ol>
+<p><span class="math display">\[
+\frac{1}{2}\sum_i\sum_j\alpha_i\alpha_jy^{(i)}y^{(j)}&lt;x^{(i)},x^{(j)}&gt;
+\]</span></p>
+<p>​ where <span class="math inline">\(&lt;x,z&gt;=x^Tz\)</span> is the
+inner product</p>
+<p>​ And s.t. becomes: <span class="math display">\[
+y^{(i)}(\sum_{ij}\alpha_jy^{(j)}&lt;x^{(j)},x^{(j)}&gt;+b)\ge1
+\]</span> <strong>kernel trick</strong>:</p>
+<ol type="1">
+<li>write algorithm in terms of <span class="math inline">\(&lt;x^{(i)},x^{(j)}&gt;\)</span>; (sometimes it
+can be written as <span class="math inline">\(&lt;x,z&gt;\)</span>)</li>
+<li>let that be mapping from <span class="math inline">\(x\)</span> to
+<span class="math inline">\(\phi(x)\)</span> (it would be <span class="math inline">\([x\ x^2\ x^3...]\)</span> or <span class="math inline">\([x_1\ x_2\ x_1x_2\ ...]\)</span>, it can be
+infinite dimensional);</li>
+<li>find the way to compute <span class="math inline">\(K(x,z)=\phi(x)^T\phi(z)\)</span> (it's called
+kernel function);</li>
+<li>replace <span class="math inline">\(&lt;x,z&gt;\)</span> by <span class="math inline">\(K(x,z)\)</span></li>
+</ol>
+<p><strong>Example</strong>:</p>
+<p>​ -suppose we have features <span class="math inline">\(x\in\mathbb{R}^n\)</span> and <span class="math inline">\(\phi(x)\in\mathbb{R}^{n^2}\)</span>, it means if
+we want to calculate <span class="math inline">\(K(x,z)\)</span> there
+need to take <span class="math inline">\(O(n^2)\)</span> time. (<span class="math inline">\(\phi(x)=[x_ix_j\ for\ i,j=1,2...]\)</span>), it
+can be proved that: <span class="math display">\[
+K(x,z)=\phi(x)^T\phi(z)=(x^Tz)^2
+\]</span> ​ which take <span class="math inline">\(O(n)\)</span> time</p>
+<p>​ -if we append <span class="math inline">\(\phi(x)\)</span> by <span class="math inline">\([\sqrt{2c}x_i\ i=1,2,...]\cup[c]\)</span> then
+<span class="math inline">\(K(x,z)=(x^Tz+c)^2\)</span></p>
+<p>​ -if <span class="math inline">\(K(x,z)=(x^Tz+c)^d\)</span> then
+<span class="math inline">\(\phi(x)\)</span> has all features of
+monomial up to order <span class="math inline">\(d\)</span></p>
+<p><code>Optimal margin classifier + kernal trick = SVM</code></p>
+<p>So what <em>SVM</em> is doing is <em>mapping feature</em> to much
+higher dimensional feature space, and use a <em>hyperplane</em> to be
+decision boundary, then <em>project it</em> back down to the original
+feature space, it will end up with <em>a very non-linear decision
+boundary</em>.</p>
+<p><strong>How to make kernels</strong>:</p>
+<p>​ If <span class="math inline">\(x,z\)</span> are similar, the kernel
+function is large; if <span class="math inline">\(x,z\)</span> are not
+similar, the kernel function is small. (just like the inner product of
+vector, if two vector are similar, then the product will be large)</p>
+<p>​ <span class="math inline">\(K(x,z)=exp(-\frac{||x-z||^2}{2\sigma^2})\)</span>
+is kernel function? yes, gaussian kernel</p>
+<ul>
+<li><p>does that exist <span class="math inline">\(\phi\)</span> s.t.
+<span class="math inline">\(K(x,z)=\phi(x)^T\phi(z)\)</span>;</p></li>
+<li><p><span class="math inline">\(K(x,x)=\phi(x)^T\phi(x)\ge0\)</span></p></li>
+<li><p>Let <span class="math inline">\(\{x^{(1)},...,x^{(d)}\}\)</span>
+be <span class="math inline">\(d\)</span> points, let <span class="math inline">\(K\in\mathbb{R}^{d\times d}\)</span> called 'kernel
+matrix' <span class="math inline">\(K_{ij}=K(x^{(i)},x^{(j)})\)</span>,
+<span class="math inline">\(K\)</span> is positive
+semi-definite</p></li>
+<li><p>Mercer theorem: <span class="math inline">\(K\)</span> is a valid
+kernel function if and only if for any d points <span class="math inline">\(\{x^{(1)},...,x^{(d)}\}\)</span>, the
+corresponding kernel matrix <span class="math inline">\(K\)</span> is a
+positive semi-definite.</p>
+<p><em>most used</em>: Linear kernel function: <span class="math inline">\(K(x,z)=x^Tz\)</span> and <span class="math inline">\(\phi(x)=x\)</span></p>
+<p><em>second used</em>: Gaussian kernel function. <span class="math inline">\(\phi(x)\in\mathbb{R}^\infty\)</span></p>
+<p><em>Polynomial kernel</em>: <span class="math inline">\(K(x,z)=(x^Tz)^d\)</span></p></li>
+</ul>
+<p><strong>L1 norm soft margin SVM</strong>: <span class="math display">\[
+\begin{align}
+&amp;\mathop{min}\limits_{\omega,b,\xi_i}\
+\frac{1}{2}||\omega||^2+C\sum_{i=1}^m\xi_i \\
+&amp;s.t.\ y^{(i)}(\omega^Tx^{(i)}+b)\ge1-\xi_i,\ i=1,...,n
+\end{align}
+\]</span> ​ It makes it <em>much more robust</em> outliers.</p>
+<p>​ Bring <span class="math inline">\(\omega=\sum_{i=1}^m\alpha_ix^{(i)}\)</span> into
+above formula then it can be changed to: $$ <span class="math display">\[\begin{align}
+&amp;\mathop{max}\limits_{\alpha}\sum_{i=1}^n\alpha_i-\frac{1}{2}\sum_i^n\sum_j^ny^{(i)}y^{(j)}\alpha_i\alpha_j&lt;x^{(i)},x^{(j)}&gt;
+\\
+&amp;s.t.\ 0\le\alpha_i\le C,\ i=1,...,n;\ \sum_{i=1}^n\alpha_iy^{(i)}=0
+
+\end{align}\]</span> $$</p>
+<h2 id="l8---data-splits-models-cross-validation">L8 - Data Splits,
+Models &amp; Cross-Validation</h2>
+<p><em>underfit - high bias; outfit - high variance</em> (variance means
+that there's a lot of variability in the predictions this algorithm will
+make)</p>
+<p><strong>Regularization</strong>: prevent overfitting (it's used very
+very often)</p>
+<p>​ for linear regression: <span class="math display">\[
+\mathop{min}\limits_\theta\frac{1}{2}\sum_{i=1}^m||y^{(i)}-\theta^Tx^{(i)}||^2+\frac{\lambda}{2}||\theta||^2
+\]</span> ​ the right side of above formula is called <em>regularization
+term</em>, for the <span class="math inline">\(SVM\)</span> the <span class="math inline">\(\mathop{min}\limits_{\omega,b}\
+\frac{1}{2}||\omega||^2\)</span> play a similar role as regularization
+term to prevent <span class="math inline">\(SVM\)</span>
+overfitting.</p>
+<p><strong>Two thoughts</strong> (<span class="math inline">\(s\)</span>
+is training set)</p>
+<p>​ <em>frequentists</em>: <span class="math inline">\(arg\
+\mathop{max}\limits_\theta\ p(s|\theta)\)</span> ---- MLE;</p>
+<p>​ <em>Bayesian</em>: prior distribution <span class="math inline">\(p(\theta)\)</span> -&gt; <span class="math inline">\(arg\ \mathop{max}\limits_\theta\
+p(\theta|s)\)</span> (maximum a posteriori estimation, MAP)</p>
+<p><strong>Dataset in ML</strong>: Train/dev(development)/test sets</p>
+<p>​ -Train each model (option for the degree of polynomial/<span class="math inline">\(\lambda\)</span> for regularization/<span class="math inline">\(C\)</span> for soft margin SVM/<span class="math inline">\(\tau\)</span> for locally weighted regression) on
+train set. Get some hypothesis <span class="math inline">\(h_i\)</span>;</p>
+<p>​ -Measure the error on dev set;</p>
+<p>​ -evaluate algorithm on test set.</p>
+<p><strong>Dataset split</strong>:</p>
+<p><em>Hold-out cross validation</em>:</p>
+<p>​ S -&gt; 70% train, 30% dev ; 60% train, 20% dev, 20% test. It can be
+used fine when dataset are thousands magnitude or below. (dev set =
+cross validation set)</p>
+<p>​ choose dev and test sets to be big enough that the difference in the
+performance of algorithms can be seen.</p>
+<p><em>k-fold CV</em>: when dataset is small</p>
+<p>​ divide dataset in to <span class="math inline">\(k\)</span> subsets.
+(<span class="math inline">\(k=10\)</span> is most common choice)</p>
+<p>​ "For model in models: For <span class="math inline">\(i=1,...,k\)</span>: Train on <span class="math inline">\(k-1\)</span> pieces and test on remaining one
+piece. Then average error". Choose the model have lowest error, then
+train on the whole dataset.</p>
+<p>​ - advantage: makes more efficient use of the data</p>
+<p>​ - disadvantage: compute very expensive</p>
+<p><em>leave-one-out cross validation</em>: for much smaller dataset(for
+# examples <span class="math inline">\(&lt;100\)</span>) <span class="math inline">\(k=m\)</span></p>
+<p><strong>Feature selection</strong>: a way to avoid overfitting
+(special case of model selection)</p>
+<p><em>Forward search</em>:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Starts with f=phi(phi is empty set of features):</span><br><span class="line">	Repeat:</span><br><span class="line">		1) Try adding each feature i to f. and see which single feature 			addition most improves the dev set performance</span><br><span class="line">		2) Add that feature to f</span><br></pre></td></tr></table></figure>
+<h2 id="l9---approx_estimation-error-erm">L9 - Approx_Estimation Error
+&amp; ERM</h2>
+<p><strong>Assumptions</strong>:</p>
+<ol type="1">
+<li>Data distribution D: <span class="math inline">\((x,y)\sim
+D\)</span>, train set and test set are all satisfy this
+distribution;</li>
+<li>All samples are independent;</li>
+<li><span class="math inline">\(\hat{h}\ or\ \hat{\theta}\sim\)</span>
+sampling distribution, but its true value <span class="math inline">\(h^*\ and\  \theta^*\)</span> are not random
+variable.</li>
+</ol>
+<p><strong>Bias &amp; Variance</strong>: bias is error between estimate
+parameter and true parameter; and variance is to describe the degree of
+dispersion in distribution of estimate parameter.</p>
+<p>​ <em>Statistical efficiency</em>: <span class="math inline">\(m\rightarrow\infty,\
+Var(\hat\theta)\rightarrow0\)</span>; ​ <em>Consistent</em>: <span class="math inline">\(\hat\theta\rightarrow\theta^*\ as\
+m\rightarrow\infty\)</span></p>
+<p><strong>Fighting Variance</strong>:</p>
+<pre><code>1) $m\rightarrow\infty$;
+2) Regularization: get higher bias but lower variance.</code></pre>
+<p><strong>Error about hypothesis</strong>:</p>
+<p>​ <span class="math inline">\(g\)</span> - Best possible hypothesis; ​
+<span class="math inline">\(h^*\)</span> - Best hypothesis in class
+<span class="math inline">\(\mathbb{H}\)</span>; ​ <span class="math inline">\(\hat h\)</span> - learnt from finite data ​ <span class="math inline">\(\epsilon(h)\)</span> - Risk / Generalization error
+= <span class="math inline">\(E_{(x,y)\sim D}[1\{h(x)\ne y\}]\)</span>,
+infinite process; ​ <span class="math inline">\(\hat\epsilon_s(h)\)</span> - empirical risk =
+<span class="math inline">\(\frac{1}{m}\sum_{i=1}^m1\{h(x)\ne
+y\}\)</span>, <span class="math inline">\(m\)</span> is finite number; ​
+<span class="math inline">\(\epsilon(g)\)</span> - Bayes error /
+irreducible error; ​ <span class="math inline">\(\epsilon(h^*)-\epsilon(g)\)</span> - approximation
+error; ​ <span class="math inline">\(\epsilon(\hat
+h)-\epsilon(h^*)\)</span> - estimation error.</p>
+<p>​ <span class="math inline">\(\epsilon(\hat h)\)</span> = estimation
+error(by limited data) + approximation error(by model) + irreducible
+error ​ estimation error can be broke down to estimation variance and
+estimation bias, where estimation variance is what we call
+<em>variance</em> and estimation variance plus approximation error is
+what we call <em>bias</em>.</p>
+<p><strong>Fight high bias</strong>:</p>
+<p>​ 1) make the space of hypothesis <span class="math inline">\(\mathbb{H}\)</span> bigger, but it increase
+variance</p>
+<p><strong>Empirical risk minimization (ERM)</strong>: learning
+algorithm <span class="math display">\[
+\hat h_{ERM}=arg\ \mathop{min}\limits_{h\in\mathbb{H}}\
+\frac{1}{m}\sum_{i=1}^m1\{h(x^{(i)})\ne y^{(i)}\}
+\]</span> <strong>Uniform Convergence</strong>: research on <span class="math inline">\(\hat\epsilon(h)\)</span> vs $ (h)$ and <span class="math inline">\(\epsilon(\hat h)\)</span> vs <span class="math inline">\(\epsilon(h^*)\)</span></p>
+<p>​ <em>Tools</em>: ​ 1) Union Bound: ​ For <span class="math inline">\(A_1,A_2,...,A_k\)</span> (could not be
+independent), <span class="math inline">\(p(A_1\cup A_2...\cup A_k)\le
+p(A_1)+p(A_2)+...+p(A_k)\)</span></p>
+<pre><code>    2) Hoeffding&#39;s inequality:</code></pre>
+<p>​ Let <span class="math inline">\(z_1,z_2,...,z_m\sim\)</span>Bern(<span class="math inline">\(\phi\)</span>) (<span class="math inline">\(z_i=\{0,1\}\)</span>), <span class="math inline">\(\hat\phi=\frac{1}{m}\sum_{i=1}^mz_i\)</span> and
+<span class="math inline">\(\gamma&gt;0\)</span> as a margin.</p>
+<p><span class="math display">\[
+p[|\hat\phi-\phi|&gt;\gamma]\le 2exp(-2\gamma^2m)
+\]</span></p>
+<p>​ Apply this two Tools on empirical risk and generalization error:
+<span class="math inline">\(p(|\hat\epsilon(h)-
+\epsilon(h)|&gt;\gamma)\le2exp(-2\gamma^2m)\)</span> (which is applied
+to one h, next we expand h to H)</p>
+<p>​ <em>For finite hypothesis class</em>:</p>
+<p>​ <span class="math inline">\(\hat\epsilon(h)\)</span> vs $ (h)$:
+<span class="math inline">\(|\mathbb{H}|=k\)</span> <span class="math display">\[
+p(\forall
+h\in\mathbb{H},|\hat\epsilon(h)-\epsilon(h)|&lt;\gamma)\ge1-2k\exp(-2\gamma^2m)
+\]</span> ​ Let <span class="math inline">\(\delta=2k\exp(-2\gamma^2m)\)</span> - probability
+of error; <span class="math inline">\(\gamma\)</span> - margin error;
+<span class="math inline">\(m\)</span> - sample size <span class="math display">\[
+m\ge\frac{1}{2\gamma^2}\log\frac{2k}{\delta}
+\]</span> ​ (it has another name "sample complexity")</p>
+<p>​ <span class="math inline">\(\epsilon(\hat h)\)</span> vs <span class="math inline">\(\epsilon(h^*)\)</span>: <span class="math display">\[
+\begin{align}
+\epsilon(\hat h)&amp;\le\hat\epsilon(\hat h)+\gamma\\
+&amp;\le\hat\epsilon(h^*)+\gamma\ (because\ \hat h\ is\ best\
+estimation\ error\ in\ \mathbb{H})\\
+&amp;\le\epsilon(h^*)+2\gamma\\
+&amp;\le\epsilon(h^*)+2\sqrt{\frac{1}{2m}\log\frac{2k}{\delta}}
+\end{align}
+\]</span> <strong>VC dimension</strong></p>
+<p><em>Shatter</em>: 当假设空间 <span class="math inline">\(\mathcal{H}\)</span> 作用于大小为 <span class="math inline">\(N\)</span> 的样本集 <span class="math inline">\(\mathcal{D}\)</span> 时, 产生的对分数量等于 <span class="math inline">\(2^{N}\)</span> 即 <span class="math inline">\(m_{\mathcal{H}}(N)=2^{N}\)</span> 时, 就称 <span class="math inline">\(\mathcal{D}\)</span> 被 <span class="math inline">\(\mathcal{H}\)</span> 打散了。</p>
+<p><em>VC dimension</em>: at least <span class="math inline">\(d\)</span> <span class="math display">\[
+|\varepsilon(h)-\hat{\varepsilon}(h)| \leq O\left(\sqrt{\frac{d}{m} \log
+\frac{m}{d}+\frac{1}{m} \log \frac{1}{\delta}}\right)
+\]</span></p>
+<p><span class="math display">\[
+\varepsilon(\hat{h}) \leq
+\varepsilon\left(h^{*}\right)+O\left(\sqrt{\frac{d}{m} \log
+\frac{m}{d}+\frac{1}{m} \log \frac{1}{\delta}}\right)
+\]</span></p>
+<p>The number of training examples needed is usually roughly linear in
+the number of parameters of <span class="math inline">\(\H\)</span>.</p>
+<h2 id="l10---decision-trees-ensemble-methods">L10 - Decision Trees
+&amp; Ensemble Methods</h2>
+<p><strong>Decision Trees</strong>: Greedy, Top-Down, Recursive,
+Partitioning, fairly high variance models</p>
+<p><span class="math display">\[
+S_p(j, t)=(\{X|X_j&lt;t,X\in R_p\},\{X|X_j\ge t,X\in R_p\})
+\]</span> ​ where: ​ <span class="math inline">\(R_p\)</span> - Region of
+parents; ​ <span class="math inline">\(S_p\)</span> - Looking for a
+split, it gives two outputs, <span class="math inline">\(R_1,R_2\)</span>; ​ <span class="math inline">\(t\)</span> - threshold; ​ <span class="math inline">\(j\)</span> - feature number.</p>
+<p>​ <em>How to choose splits</em>:</p>
+<p>​ Define <span class="math inline">\(L(R)\)</span>: loss on R ​ Given
+<span class="math inline">\(C\)</span> classes, define <span class="math inline">\(\hat p_c\)</span> to be proportion of examples in
+R that are of class <span class="math inline">\(C\)</span>. <span class="math display">\[
+L_{misclassification}=1-\mathop {max}\limits_c \hat p_c
+\]</span> ​ The goal is to maximize <span class="math inline">\(L(R_p)-(L(R_1)+L(R_2))\)</span> with parameters
+<span class="math inline">\(j,t\)</span>. Actually <span class="math inline">\(L(R_p)\)</span> is constant, thus what we want to
+do is to minimize the loss of children.</p>
+<p>​ However this misclassification have issues that it would not make
+classier working better if two child have same amounts. Instead define
+cross entropy loss: <span class="math display">\[
+L_{cross}=-\sum_c\hat p_c\log_2\hat p_c
+\]</span> <img src="/2022/04/06/Notes-for-Stanford-CS229-course/image-20210307200624480.png" alt="image-20210307200624480"></p>
+<p>the shape of Gini loss is similar as cross-entropy: <span class="math inline">\(\sum_c \hat p_c(1-\hat p_c)\)</span></p>
+<p>​ <em>Regression Trees</em>:</p>
+<p>​ Predict <span class="math inline">\(\hat y_m=\sum_{i\in
+R_m}y_i/|R_m|\)</span> <span class="math display">\[
+L_{squared}=\frac{\sum_{i\in R_m}(y_i-\hat y_m)^2}{|R_m|}
+\]</span> ​ <em>Regularization of DTs</em>:</p>
+<p>​ 1) min leaf size; ​ 2) max depth; ​ 3) max number of nodes; ​ 4) min
+decrease in loss; ​ 5) pruning (misclassification with validation
+set).</p>
+<p>​ <em>Runtime</em>:</p>
+<p>​ some notation: <span class="math inline">\(n\)</span>-examples;
+<span class="math inline">\(f\)</span>-features; <span class="math inline">\(d\)</span>-depth. <span class="math inline">\(d&lt;\log_2n\)</span>. Each point is part of <span class="math inline">\(O(d)\)</span> nodes, cost of point at each node is
+<span class="math inline">\(O(f)\)</span>, So total cost is <span class="math inline">\(O(nfd)\)</span>.</p>
+<p>​ <em>No additive structure</em>: when the features are interacting
+additively with one_another</p>
+<p>​ <em>Recap</em>: ​ advantage: Easy to explain; Interpretable;
+Categorical Variables ​ disadvantage: High variance; Bad at additive; low
+predictive accuracy</p>
+<p><strong>Ensemble</strong>: If <span class="math inline">\(X_i&#39;s\)</span> are ID(identical distribution),
+and <span class="math inline">\(X_i\)</span> is correlated by <span class="math inline">\(\rho\)</span> <span class="math display">\[
+Var(\bar x)=\rho\sigma^2+\frac{1-\rho}{n}\sigma^2
+\]</span> ​ <em>Ways to ensemble</em>: 1) different algorithms; 2)
+different training sets; 3) Bagging (Random Forest); 4) Boosting
+(Adaboost, xgboost).</p>
+<p>​ <em>Bagging - Bootstrap Aggregation</em>:</p>
+<p>​ Bootstrap: the method used in statistics to measure uncertainty your
+estimate</p>
+<p>​ Have a true population <span class="math inline">\(P\)</span>,
+training set <span class="math inline">\(S\)</span> sampled from <span class="math inline">\(P\)</span>. Assume <span class="math inline">\(P=S\)</span>, bootstrap samples <span class="math inline">\(Z\)</span> sampled from <span class="math inline">\(S\)</span> (<span class="math inline">\(z_1,...,z_M\)</span>). Then train model <span class="math inline">\(G_m\)</span> on <span class="math inline">\(z_m\)</span>, we can get <span class="math inline">\(G(m)=\sum_{i=1}^M G_m(x)/M\)</span>. Bootstrapping
+is driving down <span class="math inline">\(\rho\)</span>, so variance
+will decrease, however, because shape(<span class="math inline">\(Z\)</span>) is smaller than shape(<span class="math inline">\(S\)</span>), so bias will slightly increased.</p>
+<p>​ - Random Forests: At each split, consider only a fraction of total
+features, it would decrease <span class="math inline">\(\rho\)</span>
+and decorrelate models</p>
+<p>​ <em>Boosting</em>(Adaboost) : decreasing bias of model. Determine
+for classifier <span class="math inline">\(G_m\)</span> a weight <span class="math inline">\(\alpha_m\)</span> proportional <span class="math inline">\(\log(1-err_m/err_m)\)</span>, <span class="math inline">\(G(x)=\sum_m\alpha_mG_m\)</span> and each <span class="math inline">\(G_m\)</span> is trained on a reweighted training
+set.</p>
+<h2 id="l11---introduction-to-neural-networks">L11 - Introduction to
+Neural Networks</h2>
+<p><strong>Deep Learning</strong>:</p>
+<ul>
+<li>computational power (GPU)</li>
+<li>data available (more data can get more salient feature)</li>
+<li>algorithms</li>
+</ul>
+<p><strong>Logistic Regression</strong>: Goal find cats in images (1
+<span class="math inline">\(\rightarrow\)</span> presence of a cat; 0
+<span class="math inline">\(\rightarrow\)</span> absence of a cat)</p>
+<p>​ colored picture (size <span class="math inline">\(64\times64\)</span>) <span class="math inline">\(\rightarrow\)</span> length <span class="math inline">\(64\times64\times3\)</span> vector (where <span class="math inline">\(3\)</span> represent RGB) <span class="math inline">\(\rightarrow\)</span> <span class="math inline">\(h=wx+b\)</span> <span class="math inline">\(\rightarrow\)</span> <span class="math inline">\(g(h)=sigmoid(h)\)</span> <span class="math inline">\(\rightarrow\)</span> <span class="math inline">\(\hat y=\sigma(\theta^Tx)\)</span> (where <span class="math inline">\(x\)</span>=shape(64*64*3, 1) and <span class="math inline">\(w\)</span>=shape(1, 64*64*3))</p>
+<p>​ 1) initiate <span class="math inline">\(w,b\)</span> ; ​ 2) find the
+optimal <span class="math inline">\(w\)</span> and <span class="math inline">\(b\)</span>; (<span class="math inline">\(L=-[y\log\hat y+(1-y)\log(1-\hat y)]\)</span> and
+use gradient descent method to update parameters) ​ 3) use <span class="math inline">\(\hat y=\sigma(wx+b)\)</span> to predict</p>
+<p>​ <em>Goal2.0</em>: find cat/lion/iguana in images</p>
+<p>​ (Eq1) neural = linear + activation ​ (Eq2) model = architecture +
+parameters</p>
+<p>​ In order to classify these three animals, we need three output nodes
+named by <span class="math inline">\(a_1^{[1]},a_2^{[1]},a_3^{[1]}\)</span> where
+square brackets represent the index of the layer. However it will do
+worse when there are rare iguanas, so the <span class="math inline">\(a^{[1]}_3\)</span> will be rarely trained, and the
+model ignore the correlation between animals.</p>
+<p>​ <em>Goal3.0</em>: + constraint which is an unique animal on an
+image. (Let's call <span class="math inline">\(w^{[1]}_1x+b_1^{[1]}\)</span> as <span class="math inline">\(z_1^{[1]}\)</span>)</p>
+<p>​ Using softmax multi-class network to replace simoid function, (e.g.
+<span class="math inline">\(e^{z_3^{[1]}}/\sum_{k=1}^3e^{z_k^{[1]}}\)</span>),
+loss function will be <span class="math inline">\(-\sum_{k=1}^{3}p(y)log\ \hat{p}(y)\)</span></p>
+<p>​ If we want to predict the cats' age, we can replace simoid function
+by ReLU function, the ReLU function is <span class="math inline">\(f(x)=\max(0,x)\)</span> (ReLU - rectified linear
+units)</p>
+<p><strong>Neural Networks</strong>: end to end learning / black box
+model</p>
+<p>​ <em>Propagation equation</em>: (the architect of network is [3, 2,
+1]) ​ Input matrix: <span class="math inline">\(X-shape(m,n)\)</span>,
+<span class="math inline">\(x^{(1)}-shape(1,n)\)</span> as a single
+example <span class="math display">\[
+X=(x^{(1)}\cdots x^{(m)})^T
+\]</span> ​ The first layer: <span class="math inline">\(w^{[1]}-shape(n,3),Z^{[1]}-shape(m,3),b^{[1]}-shape(1,3)\)</span>
+where <span class="math inline">\(b^{[1]}\)</span> will be broadcasted
+by numPy automatically to <span class="math inline">\(shape(m,3)\)</span> <span class="math display">\[
+\begin{align}
+&amp;Z^{[1]}=Xw^{[1]}+b^{[1]}\\
+&amp;a^{[1]}=\sigma(z^{[1]})
+\end{align}
+\]</span> ​ The second layer: <span class="math inline">\(w^{[2]}-shape(3,2),Z^{[2]}-shape(m,2),b^{[2]}-shape(1,2)\)</span>
+<span class="math display">\[
+\begin{align}
+&amp;Z^{[2]}=a^{[1]}w^{[2]}+b^{[2]}\\
+&amp;a^{[2]}=\sigma(z^{[2]})
+\end{align}
+\]</span> ​ The second layer: <span class="math inline">\(w^{[3]}-shape(2,1),Z^{[3]}-shape(m,1),b^{[2]}-shape(1,1)\)</span>
+<span class="math display">\[
+\begin{align}
+&amp;Z^{[3]}=a^{[2]}w^{[3]}+b^{[3]}\\
+&amp;\hat y=a^{[3]}=\sigma(z^{[3]})
+\end{align}
+\]</span> ​ <em>Optimizing all the parameters</em>:</p>
+<p>​ Define loss function (1 example) or cost function (multiple
+examples): <span class="math display">\[
+J(\hat y,y)=\frac{1}{m}\sum_{i=1}^mL^{(i)}\\
+with\ L^{(i)}=-[y^{(i)}\log\hat y^{(i)}+(1-y^{(i)})\log(1-\hat y^{(i)})]
+\]</span> ​ <em>Backward propagation</em>: <span class="math display">\[
+\begin{align}
+\forall l=1,2,3\qquad w^{[l]}&amp;=w^{[l]}-\alpha\frac{\partial
+J}{\partial w^{[l]}}\\
+b^{[l]}&amp;=b^{[l]}-\alpha\frac{\partial J}{\partial b^{[l]}}
+\end{align}
+\]</span></p>
+<h2 id="l12---backprop-improving-neural-networks">L12 - Backprop &amp;
+Improving neural networks</h2>
+<p><strong>backpropagation</strong>: (shape of <span class="math inline">\(X\)</span> is <span class="math inline">\((n,m)\)</span>) <span class="math display">\[
+\frac{\partial L^{(i)}}{\partial w^{[3]}}=-(y^{(i)}-a^{[3]})(a^{[2]})^T
+\]</span></p>
+<p><span class="math display">\[
+\frac{\partial L^{(i)}}{\partial
+w^{[2]}}=-(y^{(i)}-a^{[3]})(a^{[1]})^T((w^{[3]})^T*a^{[2]}*(1-a^{[2]}))
+\]</span></p>
+<p>​ where <span class="math inline">\(*\)</span> means element-wise
+product.</p>
+<p><strong>Improving NNs</strong>:</p>
+<p>​ <em>Activation function</em>: these are hyper-parameters</p>
+<ul>
+<li><span class="math inline">\(sigmoid(z)=1/(1+e^{-z})\)</span>
+-:gradient vanish</li>
+<li><span class="math inline">\(ReLU(z)=max(0,z)\)</span>, <span class="math inline">\(ReLU&#39;(z)=1\{z&gt;0\}\)</span></li>
+<li><span class="math inline">\(\tanh(z)=(e^z-e^{-z})/({e^z+e^{-z})}\)</span>,
+<span class="math inline">\(\tanh&#39;(z)=1-\tanh^2(z)\)</span> [-1,
+1]</li>
+</ul>
+<p>why do we need activation function?if don't apply activation, the
+network will lose complexity and can only do linear regression.</p>
+<p>​ <code>Using one of these three activations in a layer</code></p>
+<p>​ <em>Initialization method</em>:</p>
+<p>​ Normalizing your input: make input feature vector <span class="math inline">\(\sim N(0,1)\)</span> (use calculated <span class="math inline">\(\mu,\sigma\)</span> on training set for all
+dataset)</p>
+<p>​ Vanishing/Exploding gradient: For instance, we have <span class="math inline">\(L\)</span> layers NNs, and each layer except last
+layer has two nodes, the activation function is identity function (<span class="math inline">\(f(z)=z\)</span>), and bias are zero. Then the
+predicted label y hat is : <span class="math display">\[
+\hat y=w^{[L]}w^{[L-1]}\cdots w^{[ 1]}x
+\]</span> if <span class="math inline">\(w^{[L-1]}\)</span> is a bit
+more than <span class="math inline">\(1\)</span>, then the <span class="math inline">\(\hat y\)</span> will be <span class="math inline">\(L\)</span> exponential of parameter and explode;
+for the parameter less than <span class="math inline">\(1\)</span>, $y $
+will vanish. So we expect to have parameters to be exact <span class="math inline">\(1\)</span>.</p>
+<p>​ Intuition: Large <span class="math inline">\(n\)</span> <span class="math inline">\(\rightarrow\)</span> small <span class="math inline">\(w\)</span>.</p>
+<p>​ Some initialization method proved to be practical:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># For sigmoid</span></span><br><span class="line">w_l = np.random.randn(shape) * np.sqrt(<span class="number">1</span>/n_l_minus_one)</span><br><span class="line"><span class="comment"># For ReLU</span></span><br><span class="line">w_l = np.random.randn(shape) * np.sqrt(<span class="number">2</span>/n_l_minus_one)</span><br><span class="line"><span class="comment"># Xavier Intialization</span></span><br><span class="line">w_l = np.sqrt(<span class="number">1</span>/n_l_minus_one) <span class="comment"># for tanh</span></span><br><span class="line"><span class="comment"># He Initialization</span></span><br><span class="line">w_l = np.sqrt(<span class="number">2</span>/(n_l_minus_one+n_l))</span><br></pre></td></tr></table></figure>
+<p>​ <em>Optimization</em>:</p>
+<p>​ mini-batch gradient descent: for input <span class="math inline">\(X=(x^{(1)},x^{(2)},...,x^{(m)}),
+Y=(y^{(1)},y^{(2)},..,y^{(m)})\)</span>, we pack certain number of
+examples, and the input become <span class="math inline">\(X=(x^{\{1\}},...,x^{\{T\}}),
+Y=(y^{\{1\}},..,y^{\{T\}})\)</span></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Algo:</span><br><span class="line">For iteration t =1...:</span><br><span class="line">	Select batch (x_t, y_t)</span><br><span class="line">	Forward propagation</span><br><span class="line">	Backward Batch</span><br><span class="line">	Update w and b</span><br></pre></td></tr></table></figure>
+<p>​ Momentum algorithm: <span class="math display">\[
+v=\beta v+(1-\beta)\frac{\partial L}{\partial w}\\
+w=w-\alpha v
+\]</span></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/04/06/Notes-for-Stanford-229W-course/" rel="prev" title="Notes for Stanford 229W course">
+      <i class="fa fa-chevron-left"></i> Notes for Stanford 229W course
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#course-description"><span class="nav-number">1.</span> <span class="nav-text">Course Description</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#l1---introduction"><span class="nav-number">1.1.</span> <span class="nav-text">L1 - Introduction</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#machine-learning-tool"><span class="nav-number">1.1.1.</span> <span class="nav-text">Machine learning tool</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#l2---linear-regression-and-gradient-descent"><span class="nav-number">1.2.</span> <span class="nav-text">L2 - Linear
+Regression and Gradient Descent</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#l3---locally-weighted-logistic-regression"><span class="nav-number">1.3.</span> <span class="nav-text">L3 - Locally Weighted
+&amp; Logistic Regression</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#l4---perceptron-generalized-linear-model"><span class="nav-number">1.4.</span> <span class="nav-text">L4 - Perceptron &amp;
+Generalized Linear Model</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#l5---gda-naive-bayes"><span class="nav-number">1.5.</span> <span class="nav-text">L5 - GDA &amp; Naive Bayes</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#l6---support-vector-machines"><span class="nav-number">1.6.</span> <span class="nav-text">L6 - Support Vector Machines</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#l7---kernels"><span class="nav-number">1.7.</span> <span class="nav-text">L7 - Kernels</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#l8---data-splits-models-cross-validation"><span class="nav-number">1.8.</span> <span class="nav-text">L8 - Data Splits,
+Models &amp; Cross-Validation</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#l9---approx_estimation-error-erm"><span class="nav-number">1.9.</span> <span class="nav-text">L9 - Approx_Estimation Error
+&amp; ERM</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#l10---decision-trees-ensemble-methods"><span class="nav-number">1.10.</span> <span class="nav-text">L10 - Decision Trees
+&amp; Ensemble Methods</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#l11---introduction-to-neural-networks"><span class="nav-number">1.11.</span> <span class="nav-text">L11 - Introduction to
+Neural Networks</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#l12---backprop-improving-neural-networks"><span class="nav-number">1.12.</span> <span class="nav-text">L12 - Backprop &amp;
+Improving neural networks</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Fate_10号"
+      src="/images/FLCL.jfif">
+  <p class="site-author-name" itemprop="name">Fate_10号</p>
+  <div class="site-description" itemprop="description">想象力改变一切</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">9</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Fate_10号</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+</body>
+</html>

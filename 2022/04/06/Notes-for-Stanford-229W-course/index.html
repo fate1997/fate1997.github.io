@@ -1,0 +1,1420 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Consolas Serif SC:300,300italic,400,400italic,700,700italic|Consolas:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="What is this course about? Complex data can be represented as a graph of relationships between objects. Such networks are a fundamental tool for modeling social, technological, and biological syste">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Notes for Stanford 229W course">
+<meta property="og:url" content="http://example.com/2022/04/06/Notes-for-Stanford-229W-course/index.html">
+<meta property="og:site_name" content="Ten&#39;s Blog">
+<meta property="og:description" content="What is this course about? Complex data can be represented as a graph of relationships between objects. Such networks are a fundamental tool for modeling social, technological, and biological syste">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2022/04/06/Notes-for-Stanford-229W-course/image-20210721192309546.png">
+<meta property="og:image" content="http://example.com/2022/04/06/Notes-for-Stanford-229W-course/image-20210721203838496.png">
+<meta property="og:image" content="http://example.com/2022/04/06/Notes-for-Stanford-229W-course/image-20210722185534659.png">
+<meta property="og:image" content="http://example.com/2022/04/06/Notes-for-Stanford-229W-course/image-20210722190109415.png">
+<meta property="og:image" content="http://example.com/2022/04/06/Notes-for-Stanford-229W-course/image-20210722190348940.png">
+<meta property="og:image" content="http://example.com/2022/04/06/Notes-for-Stanford-229W-course/image-20210723195113919.png">
+<meta property="og:image" content="http://example.com/2022/04/06/Notes-for-Stanford-229W-course/image-20210723201836393.png">
+<meta property="og:image" content="http://example.com/2022/04/06/Notes-for-Stanford-229W-course/image-20210725085157352.png">
+<meta property="og:image" content="http://example.com/2022/04/06/Notes-for-Stanford-229W-course/image-20210725150836335.png">
+<meta property="og:image" content="http://example.com/2022/04/06/Notes-for-Stanford-229W-course/image-20210725181225105.png">
+<meta property="og:image" content="http://example.com/2022/04/06/Notes-for-Stanford-229W-course/image-20210725181513298.png">
+<meta property="og:image" content="http://example.com/2022/04/06/Notes-for-Stanford-229W-course/image-20210725181953504.png">
+<meta property="og:image" content="http://example.com/2022/04/06/Notes-for-Stanford-229W-course/image-20210725184028562.png">
+<meta property="og:image" content="http://example.com/2022/04/06/Notes-for-Stanford-229W-course/image-20210729203110106.png">
+<meta property="og:image" content="http://example.com/2022/04/06/Notes-for-Stanford-229W-course/image-20210731133922246.png">
+<meta property="og:image" content="http://example.com/2022/04/06/Notes-for-Stanford-229W-course/image-20210731133906876.png">
+<meta property="og:image" content="http://example.com/2022/04/06/Notes-for-Stanford-229W-course/image-20210731193947925.png">
+<meta property="og:image" content="http://example.com/2022/04/06/Notes-for-Stanford-229W-course/image-20210804201531938.png">
+<meta property="og:image" content="http://example.com/2022/04/06/Notes-for-Stanford-229W-course/image-20210824211306785.png">
+<meta property="og:image" content="http://example.com/2022/04/06/Notes-for-Stanford-229W-course/image-20210824215101872.png">
+<meta property="og:image" content="http://example.com/2022/04/06/Notes-for-Stanford-229W-course/image-20211008160356576.png">
+<meta property="article:published_time" content="2022-04-06T11:14:59.000Z">
+<meta property="article:modified_time" content="2022-04-06T11:36:06.763Z">
+<meta property="article:author" content="Fate_10号">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2022/04/06/Notes-for-Stanford-229W-course/image-20210721192309546.png">
+
+<link rel="canonical" href="http://example.com/2022/04/06/Notes-for-Stanford-229W-course/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Notes for Stanford 229W course | Ten's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Ten's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/fate1997" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/04/06/Notes-for-Stanford-229W-course/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/FLCL.jfif">
+      <meta itemprop="name" content="Fate_10号">
+      <meta itemprop="description" content="想象力改变一切">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Ten's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Notes for Stanford 229W course
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-04-06 19:14:59 / 修改时间：19:36:06" itemprop="dateCreated datePublished" datetime="2022-04-06T19:14:59+08:00">2022-04-06</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%9B%BE%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C-Graph-Neural-Network/" itemprop="url" rel="index"><span itemprop="name">图神经网络 (Graph Neural Network)</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="what-is-this-course-about">What is this course about?</h3>
+<p>Complex data can be represented as a graph of relationships between
+objects. Such networks are a fundamental tool for modeling social,
+technological, and biological systems. This course focuses on the
+computational, algorithmic, and modeling challenges specific to the
+analysis of massive graphs. By means of studying the underlying graph
+structure and its features, students are introduced to machine learning
+techniques and data mining tools apt to reveal insights on a variety of
+networks. <strong>Topics include:</strong> representation learning and
+Graph Neural Networks; algorithms for the World Wide Web; reasoning over
+Knowledge Graphs; influence maximization; disease outbreak detection,
+social network analysis.</p>
+<p><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1RZ4y1c7Co?spm_id_from=333.1007.top_right_bar_window_custom_collection.content.click">[course
+website]</a></p>
+<span id="more"></span>
+<h2 id="introduction">Introduction</h2>
+<h3 id="why-graphs">Why graphs?</h3>
+<p>Some interesting graphs:</p>
+<ul>
+<li>Particle networks</li>
+<li>Networks of neurons</li>
+<li><strong>Molecules</strong></li>
+<li><strong>Mesh</strong></li>
+</ul>
+<p>Types of Networks and Graphs</p>
+<ul>
+<li>Networks (also known as Natural Graphs): Biomedicine, brain
+connections</li>
+<li>Graphs: Molecules, 3D shape</li>
+</ul>
+<h3 id="why-is-it-hard">Why is it hard?</h3>
+<p>Networks are complex:</p>
+<ul>
+<li>Arbitrary size and complex topological structure</li>
+<li>No fixed node ordering or reference point</li>
+<li>Often dynamic and have multimodal features</li>
+</ul>
+<p>Representation learning: Map nodes to d-dimensional embeddings such
+that similar nodes in the network are embedded close together.</p>
+<p><img src="/2022/04/06/Notes-for-Stanford-229W-course/image-20210721192309546.png" alt="image-20210721192309546" style="zoom:80%;"></p>
+<h3 id="different-types-of-tasks">Different types of tasks</h3>
+<ul>
+<li>Node level: Node classification - predict a property of a node e.g.
+categorize online users/items</li>
+<li>Edge level: link prediction - predict whether there are missing
+links between two nodes e.g. knowledge graph completion</li>
+<li>Graph level: Graph classification; Graph generation; graph
+evolution</li>
+</ul>
+<p><strong>Node-level example: Protein Folding</strong></p>
+<p>​ Given a sequence of amino acids to predict protein. Treat protein as
+graph, and nodes in the graph are amino acids in the protein sequence,
+and the edge is amino acids that are spatially close to each other</p>
+<p><strong>Edge-level example 1: Recommender systems</strong></p>
+<p>​ Nodes: Users and items. Edges: User-item interactions</p>
+<p><strong>Edge-level example 2: Drug side effects</strong></p>
+<p>​ Nodes: drugs &amp; proteins. Edges: interactions. Task: predict
+whether the two drugs have interactions (edge)</p>
+<p><strong>Subgraph-level example: Traffic prediction</strong></p>
+<p>​ Nodes: Road segments. Edges: connectivity between road segments.
+Task: predict the time needed</p>
+<p><strong>Graph-level example 1: Drug discovery</strong></p>
+<p>​ Nodes: Atoms. Edges: Chemical bonds. Graph generation: generating
+novel molecules</p>
+<p><strong>Graph-level example 2: Physics simulation</strong></p>
+<p>​ Nodes: particles. Edges: Interaction between particles. Goal:
+predict how a graph will evolve over</p>
+<h3 id="choice-of-graph-representation">Choice of graph
+representation</h3>
+<p><strong>Components of a network</strong>:</p>
+<ul>
+<li>Objects: nodes, vertices <span class="math inline">\(N\)</span></li>
+<li>Interactions: links, edges <span class="math inline">\(E\)</span></li>
+<li>System: network, graph <span class="math inline">\(G(N,E)\)</span></li>
+</ul>
+<p><strong>How to define a graph</strong>: what are nodes, what are
+edges</p>
+<p><strong>Node degrees</strong>:</p>
+<ul>
+<li>Undirected: <span class="math inline">\(k_i\)</span> the number of
+edges adjacent to node <span class="math inline">\(i\)</span> . Avg.
+degree: <span class="math inline">\(\bar
+k=\frac{1}{N}\sum_{i=1}^Nk_i=\frac{2E}{N}\)</span></li>
+<li>Directed: in-degree <span class="math inline">\(k_i^{in}\)</span>;
+out-degree <span class="math inline">\(k_i^{out}\)</span>; total degree
+is the sum of in- and out-degrees. Avg. degree: <span class="math inline">\(\bar k=E/N\)</span></li>
+</ul>
+<p><strong>Bipartite Graph</strong>: a graph whose nodes can be divided
+into two disjoint sets <span class="math inline">\(U\)</span> and <span class="math inline">\(V\)</span> such that every link connects a node in
+<span class="math inline">\(U\)</span> to one in <span class="math inline">\(V\)</span>; that is, <span class="math inline">\(U\)</span> and <span class="math inline">\(V\)</span> are independent sets.</p>
+<p><img src="/2022/04/06/Notes-for-Stanford-229W-course/image-20210721203838496.png" alt="image-20210721203838496" style="zoom:50%;"></p>
+<p>Some examples: authors-to-papers; users-to-movies</p>
+<p><strong>Representing Graphs</strong>:</p>
+<ul>
+<li>Adjacency matrix: <span class="math inline">\(A_{ij}=1\)</span> if
+there is a link from node <span class="math inline">\(i\)</span> to node
+<span class="math inline">\(j\)</span>, 0 otherwise. Adjacency matrices
+are <em>sparse</em></li>
+<li>Adjacency list: easier to work with if network is large and sparse;
+quickly retrieve all neighbors of a given node</li>
+<li>Node and edge attributes</li>
+</ul>
+<h2 id="traditional-methods-for-ml-on-graphs">Traditional methods for ML
+on graphs</h2>
+<p>### Traditional feature-based method - nodes</p>
+<p><strong>Goal</strong>: Characterize the structure and position of a
+node in the network</p>
+<p><strong>Node features</strong></p>
+<ul>
+<li><p>Node degree: will treat neighboring nodes equally.</p></li>
+<li><p>Node centrality:</p>
+<p><em>eigenvector centrality</em>:</p></li>
+</ul>
+<p><span class="math display">\[
+c_{v}=\frac{1}{\lambda} \sum_{u \in N(v)} c_{u} \quad \leftrightarrow
+\quad \lambda c=A c
+\]</span></p>
+<p>​ where <span class="math inline">\(\lambda\)</span> is some positive
+constant, <span class="math inline">\(c\)</span> is centrality vector
+and <span class="math inline">\(A\)</span> is adjacency matrix</p>
+<p>​ <em>betweenness centrality</em>: how important transit hub <span class="math display">\[
+c_{v}=\sum_{s \neq v \neq t} \frac{\#(\text { shortest paths between } s
+\text { and } t \text { that contain } v)}{\#(\text { shortest paths
+between } s \text { and } t)}
+\]</span> ​ <em>closeness</em>: a node is important if it has small
+shortest path lengths to all other nodes <span class="math display">\[
+c_{v}=\frac{1}{\sum_{u \neq v} \text { shortest path length between } u
+\text { and } v}
+\]</span> ​ <em>clustering coefficient</em>: how connected <span class="math inline">\(v\)</span>'s neighboring nodes are:</p>
+<p><span class="math display">\[
+e_v=\frac{\#(\text { edges among neighboring nodes })}{\#(\text { node
+pairs among kv\ neighboring nodes })}
+\]</span>
+<img src="/2022/04/06/Notes-for-Stanford-229W-course/image-20210722185534659.png" alt="image-20210722185534659" style="zoom:50%;"></p>
+<p>​ clustering coefficient counts the #(triangles) in the
+ego-network</p>
+<p><img src="/2022/04/06/Notes-for-Stanford-229W-course/image-20210722190109415.png" alt="image-20210722190109415" style="zoom:50%;"></p>
+<p>​ <em>Graphlets</em>: rooted connected non-isomorphic subgraphs:</p>
+<figure>
+<img src="/2022/04/06/Notes-for-Stanford-229W-course/image-20210722190348940.png" alt="image-20210722190348940">
+<figcaption aria-hidden="true">image-20210722190348940</figcaption>
+</figure>
+<p>​ Graph degree vector(GDV): graphlet-base features for nodes. Degree
+counts #(graphlets) that a node touches</p>
+<h3 id="traditional-feature-based-method---edges">Traditional
+feature-based method - edges</h3>
+<p><strong>Goal</strong>: predict new edges based on existing links. at
+test time, all node pairs (no existing links) are ranked and top <span class="math inline">\(K\)</span> node pairs are predicted. In training
+process, remove a random set of links and then aim to predict them. or
+predicting links over time</p>
+<p><strong>distance-based features</strong>: this does not capture the
+degree of neighborhood overlap</p>
+<p><strong>local neighborhood overlap</strong>:</p>
+<ul>
+<li>common neighbors:</li>
+</ul>
+<p><span class="math display">\[
+\left|N\left(v_{1}\right) \cap N\left(v_{2}\right)\right|
+\]</span></p>
+<ul>
+<li>Jaccard's coefficient:</li>
+</ul>
+<p><span class="math display">\[
+\frac{\left|N\left(v_{1}\right) \cap
+N\left(v_{2}\right)\right|}{\left|N\left(v_{1}\right) \cup
+N\left(v_{2}\right)\right|}
+\]</span></p>
+<ul>
+<li><em>Adamic-Adar index</em>:</li>
+</ul>
+<p><span class="math display">\[
+\sum_{u \in N\left(v_{1}\right) \cap N\left(v_{2}\right)} \frac{1}{\log
+\left(k_{u}\right)}
+\]</span></p>
+<p>limitation of local neighborhood features:</p>
+<pre><code>1. metric is always zero if the two nodes do not have any neighbors in common
+2. however, the two nodes may still potentially be connected in the future.</code></pre>
+<p><strong>Global neighborhood overlap</strong>:</p>
+<ul>
+<li><p>Katz index: count the number of paths of all lengths between a
+given pair of nodes</p>
+<p>computing paths between two nodes: Let <span class="math inline">\(P_{uv}^{(k)}\)</span> = #paths of length <span class="math inline">\(K\)</span> between <span class="math inline">\(u\)</span> and <span class="math inline">\(v\)</span>. It will be proved that <span class="math inline">\(P^{(K)}=A^K\)</span>. And Katz index is: <span class="math display">\[
+S_{v_1v_2}=\sum_{l=1}^\infty\beta^l A^l_{v_1v_2}
+\]</span></p>
+<p>where <span class="math inline">\(0&lt;\beta^l&lt;1\)</span> is
+discount factor, and it can be computed in closed-form: <span class="math display">\[
+S=\sum_{i=1}^\infty\beta^iA^i=(I-\beta A)^{-1}-I
+\]</span></p></li>
+</ul>
+<h3 id="graph-level-features-and-graph-kernels">Graph-level features and
+graph kernels</h3>
+<p>Goal: We want features that characterize the structure of an entire
+graph</p>
+<p><strong>Background: kernel methods</strong>: Design kernels instead
+of feature vectors</p>
+<ul>
+<li>Kernel <span class="math inline">\(K(G,G&#39;)\in\R\)</span>
+measures similarity between data</li>
+<li>Kernel matrix <span class="math inline">\(\mathbf
+K=(K(G,G&#39;))_{G,G&#39;}\)</span> must always be positive semidefinite
+(i.e., has positive eigenvalues, of it is symmetric)</li>
+<li>There exists a feature representation <span class="math inline">\(\phi(\cdot)\)</span> such that <span class="math inline">\(K(G,G&#39;)=\phi(G)^T\phi(G&#39;)\)</span></li>
+<li>Once the kernel is defined, off-the-shelf ML models, such as SVM can
+be used to make predictions.</li>
+</ul>
+<p><strong>Graphlet Features</strong>: Count the number of different
+graphlets in a graph. It should be noted that the definition of
+graphlets here is slightly different from node-level features</p>
+<p><img src="/2022/04/06/Notes-for-Stanford-229W-course/image-20210723195113919.png" alt="image-20210723195113919" style="zoom:67%;"></p>
+<p>Given graph <span class="math inline">\(G\)</span>, and a graphlet
+list <span class="math inline">\(G_{k}=(g_1,g_2,...,g_{n_k})\)</span>,
+define the graphlet count vector <span class="math inline">\(f_G\in\R^{n^k}\)</span> as: <span class="math display">\[
+\left(\boldsymbol{f}_{G}\right)_{i}=\#\left(g_{i} \subseteq G\right)
+\text { for } i=1,2, \ldots, n_{k}
+\]</span></p>
+<p><span class="math display">\[
+\boldsymbol{h}_{G}=\frac{\boldsymbol{f}_{G}}{\operatorname{Sum}\left(\boldsymbol{f}_{G}\right)}
+\quad K\left(G, G^{\prime}\right)=\boldsymbol{h}_{G}{ }^{\mathrm{T}}
+\boldsymbol{h}_{G^{\prime}}
+\]</span></p>
+<p><em>Limitations</em>: Counting graphlets is expensive!</p>
+<p><strong>Weisfeiler-Lehman Kernel</strong>: use neighborhood structure
+to iteratively enrich node vocabulary, generalized version of bag of
+node degrees since node degrees are one-hop neighborhood information.
+And use <em>Color refinement</em> to achieve this.</p>
+<p><em>Color refinement</em>:</p>
+<ul>
+<li>Assign an initial color <span class="math inline">\(c^{(0)}(v)\)</span> to each node <span class="math inline">\(v\)</span>;</li>
+<li>Iteratively refine node colors by</li>
+</ul>
+<p><span class="math display">\[
+c^{(k+1)}(v)=\operatorname{HASH}\left(\left\{c^{(k)}(v),\left\{c^{(k)}(u)\right\}_{u
+\in N(v)}\right\}\right)
+\]</span></p>
+<p>​ where HASH maps different inputs to different colors (HASH
+function).</p>
+<p>After color refinement, WL kernel counts number of nodes with a given
+color.</p>
+<p><strong>Comparison</strong></p>
+<p><img src="/2022/04/06/Notes-for-Stanford-229W-course/image-20210723201836393.png" alt="image-20210723201836393" style="zoom:80%;"></p>
+<h2 id="graph-representation-learning">Graph representation
+learning</h2>
+<h3 id="node-embedding">Node embedding</h3>
+<p><strong>Goal</strong>: Define Encoder (ENC) and similarity(u, v) in
+original space</p>
+<p><img src="/2022/04/06/Notes-for-Stanford-229W-course/image-20210725085157352.png" alt="image-20210725085157352" style="zoom:80%;"></p>
+<p><strong>Two key components</strong>:</p>
+<ul>
+<li>Encoder: maps each node to a low-dimensional vector</li>
+</ul>
+<p><span class="math display">\[
+\text{ENC}(v)=z_v
+\]</span></p>
+<p>where <span class="math inline">\(z_v\)</span> is a d-dimensional
+vector (d usually be set to 64-1000)</p>
+<ul>
+<li>Decoder: Find a function that can similar with the similarity in the
+original network:</li>
+</ul>
+<p><span class="math display">\[
+\text{similarity}(u,v)\simeq z_v^Tz_u
+\]</span></p>
+<p>In this work, we use dot-product as our decoder</p>
+<p><strong>"Shallow" Encoding</strong>: the simplest encoding approach:
+<span class="math display">\[
+\text{ENC}(v)=z_v=Z\cdot v
+\]</span> where <span class="math inline">\(Z\in\R^{d\times|\mathcal{V}|}\)</span> is a matrix
+and each column is a node embedding. <span class="math inline">\(v\in\mathbb{I}^{|\mathcal{V}|}\)</span> is a
+indicator vector, all zeroes except a one in column indication node
+<span class="math inline">\(v\)</span>.</p>
+<p><em>Limitation</em>: for large graph, the matrix <span class="math inline">\(Z\)</span> will be very large</p>
+<p><code>Node embedding is unsupervised/self-superviesed approah</code></p>
+<h3 id="random-walk-approaches-for-node-embeddings">Random walk
+approaches for node embeddings</h3>
+<p><strong>Notation</strong>:</p>
+<ul>
+<li>Vector <span class="math inline">\(z_u\)</span>: the embeddings of
+node <span class="math inline">\(u\)</span></li>
+<li>Probability <span class="math inline">\(P(v|z_u)\)</span>: The
+probability of visiting node <span class="math inline">\(v\)</span> on
+random walks starting from node <span class="math inline">\(u\)</span></li>
+</ul>
+<p><strong>Random Walk</strong>: Given a graph and a starting point, we
+select a neighbor of it at random, and move to this neighbor, etc. The
+random sequence of points visited this way is a random walk on the
+graph.</p>
+<p><em>Similarity</em>: probability that <span class="math inline">\(u\)</span> and <span class="math inline">\(v\)</span> occur on a random walk over the
+graph</p>
+<p><strong>Why random walk</strong>:</p>
+<ul>
+<li>expressivity: incorporates both local and higher-order neighborhood
+information</li>
+<li>efficiency: only need to consider pairs that co-occur on random
+walks</li>
+</ul>
+<p><strong>Unsupervised feature learning</strong>:</p>
+<ul>
+<li>intuition: find embedding of nodes in d-dimensional space that
+preserves similarity</li>
+<li>idea: learn node embedding such that nearby nodes are close together
+in the network</li>
+<li>given a node <span class="math inline">\(u\)</span>, how do we
+define nearby nodes? sequence from <span class="math inline">\(u\)</span> to <span class="math inline">\(v\)</span></li>
+</ul>
+<p><strong>Feature learning as optimization</strong>:</p>
+<ul>
+<li>Given <span class="math inline">\(G=(V,E)\)</span></li>
+<li>Goal is to learn a mapping <span class="math inline">\(f:u\rightarrow \R^d\)</span> : <span class="math inline">\(f(u)=z_u\)</span></li>
+<li>Objective function:</li>
+</ul>
+<p><span class="math display">\[
+\max_f \sum_{u\in V}\log P(N_R(u)|z_u)
+\]</span></p>
+<p>​ where <span class="math inline">\(N_R(u)\)</span> is the
+neighborhood of node <span class="math inline">\(u\)</span> by strategy
+<span class="math inline">\(R\)</span></p>
+<ul>
+<li>Given node <span class="math inline">\(u\)</span>, we want to learn
+feature representations that are predictive of the nodes in its random
+walk neighborhood <span class="math inline">\(N_R(u)\)</span></li>
+</ul>
+<p><strong>Random walk optimization</strong></p>
+<ul>
+<li><p>Run short fixed-length random walks starting from each node <span class="math inline">\(u\)</span> in the graph using some random walk
+strategy <span class="math inline">\(R\)</span></p></li>
+<li><p>For each node <span class="math inline">\(u\)</span> collect
+<span class="math inline">\(N_R(u)\)</span>, the multiset of nodes
+visited on random walks starting from <span class="math inline">\(u\)</span></p></li>
+<li><p>Optimize embeddings according to: Given node <span class="math inline">\(u\)</span>, predict its neighbors <span class="math inline">\(N_R(u)\)</span></p></li>
+<li><p>the objective function can be written as equivalently :</p></li>
+</ul>
+<p><span class="math display">\[
+\sum_{u\in V}\sum_{v\in N_R(u)}-\log(P(v|z_u))
+\]</span></p>
+<ul>
+<li>Parameterize <span class="math inline">\(P(v|z_u)\)</span> using
+softmax:</li>
+</ul>
+<p><span class="math display">\[
+P(v|z_u)=\frac{\exp(z_u^Tz_v)}{\sum_{n\in V}\exp(z_u^Tz_n)}
+\]</span></p>
+<ul>
+<li>the time complexity is <span class="math inline">\(n^2\)</span>
+because there are two summations of all node in the loss function</li>
+</ul>
+<p><em>Negative sampling</em>: solve the time complexity is <span class="math inline">\(n^2\)</span> <span class="math display">\[
+\begin{align}
+&amp;\log \left(\frac{\exp \left(\mathbf{z}_{u}^{\mathrm{T}}
+\mathbf{z}_{v}\right)}{\sum_{n \in V} \exp
+\left(\mathbf{z}_{u}^{\mathrm{T}} \mathbf{z}_{n}\right)}\right)\\
+\simeq&amp;\log \left(\sigma\left(\mathbf{z}_{u}^{\mathrm{T}}
+\mathbf{z}_{v}\right)\right)-\sum_{i=1}^{k} \log
+\left(\sigma\left(\mathbf{z}_{u}^{\mathrm{T}}
+\mathbf{z}_{n_{i}}\right)\right), n_{i} \sim P_{V}
+\end{align}
+\]</span> ​ sample <span class="math inline">\(k\)</span> negative nodes
+each with probability proportional to its degree. There are two
+considerations for <span class="math inline">\(k\)</span> (# negative
+samples):</p>
+<ol type="1">
+<li>Higher <span class="math inline">\(k\)</span> gives more robust
+estimates</li>
+<li>Higher <span class="math inline">\(k\)</span> corresponds to higher
+bias on negative events.</li>
+</ol>
+<p>In practice <span class="math inline">\(k=5-20\)</span></p>
+<p><strong>node2vec</strong>:</p>
+<ul>
+<li><p>Simplest idea: Just run fixed-length, unbiased random walks
+starting from each node. But the issue is that such notion of similarity
+is too constrained.</p></li>
+<li><p>node2vec: key observation - Flexible notion of network
+neighborhood <span class="math inline">\(N_R(u)\)</span> of node <span class="math inline">\(u\)</span> leads to rich node embeddings; Develop
+biased <span class="math inline">\(2^{nd}\)</span> order random walk
+<span class="math inline">\(R\)</span> to generate network neighborhood
+<span class="math inline">\(N_R(u)\)</span> of node <span class="math inline">\(u\)</span>.</p>
+<p>​ Idea: use flexible, biased random walks that can trade off between
+local and global views of the network.</p>
+<p>​ Biased walk: Use two classic strategies to define a neighborhood
+<span class="math inline">\(N_R(u)\)</span> of a given node <span class="math inline">\(u\)</span>. one is depth-first search (DFS) and
+breadth-first search (BFS)</p></li>
+</ul>
+<p><img src="/2022/04/06/Notes-for-Stanford-229W-course/image-20210725150836335.png" alt="image-20210725150836335" style="zoom:67%;"></p>
+<p>​ BFS: Micro-view of neighborhood; DFS: Macro-view of neighborhood</p>
+<p><strong>Interpolating BFS and DFS</strong>: Biased fixed-length
+random walk <span class="math inline">\(R\)</span> that given a node
+<span class="math inline">\(u\)</span> generates neighborhood <span class="math inline">\(N_R(u)\)</span>. There are two
+hyper-parameters:</p>
+<ul>
+<li>Return parameter <span class="math inline">\(p\)</span>: Return back
+to the previous node</li>
+<li>In-out parameter <span class="math inline">\(q\)</span>: Moving
+outwards (DFS) vs. inward (BFS); Intuitively <span class="math inline">\(q\)</span> is the "ratio" of BFS vs. DFS</li>
+</ul>
+<p><strong>Biased Random walks</strong>: Biased <span class="math inline">\(2^{nd}\)</span>-order random walks explore network
+neighborhoods - Ran. walk just traversed edge <span class="math inline">\((s_1,w)\)</span> and is now at <span class="math inline">\(w\)</span></p>
+<p><img src="/2022/04/06/Notes-for-Stanford-229W-course/image-20210725181225105.png" alt="image-20210725181225105" style="zoom: 67%;"></p>
+<p><img src="/2022/04/06/Notes-for-Stanford-229W-course/image-20210725181513298.png" alt="image-20210725181513298" style="zoom:67%;"></p>
+<p><strong>node2vec algorithm</strong>:</p>
+<ol type="1">
+<li><p>Compute random walk probabilities</p></li>
+<li><p>Simulate <span class="math inline">\(r\)</span> random walks of
+length <span class="math inline">\(l\)</span> starting from each node
+<span class="math inline">\(u\)</span></p></li>
+<li><p>Optimize the node2vec objective using SGD</p>
+<p><em>Linear-time complexity</em> and All 3 steps are <em>individually
+parallelizable</em></p></li>
+</ol>
+<p><strong>Other Random walk ideas</strong>:</p>
+<p><img src="/2022/04/06/Notes-for-Stanford-229W-course/image-20210725181953504.png" alt="image-20210725181953504" style="zoom:67%;"></p>
+<h3 id="embedding-entire-graph">Embedding entire graph</h3>
+<p><strong>Goal</strong>: Want to embed a subgraph or an entire graph
+<span class="math inline">\(G\)</span> to an embedding <span class="math inline">\(z_G\)</span></p>
+<p><strong>Simple idea</strong>: Run a standard node embedding technique
+on the graph <span class="math inline">\(G\)</span> to get <span class="math inline">\(z_v\)</span> then just sum or average the node
+embeddings in the graph <span class="math inline">\(G\)</span> <span class="math display">\[
+z_G=\sum_{v\in G}z_v
+\]</span> <strong>Introduce "virtual node"</strong>: to represent the
+graph and run a standard graph embedding technique (the virtual node
+will connect to every node in the graph)</p>
+<p><strong>Anonymous walk embeddings</strong>:</p>
+<p><img src="/2022/04/06/Notes-for-Stanford-229W-course/image-20210725184028562.png" alt="image-20210725184028562" style="zoom:67%;"></p>
+<p>​ Unlike the random walk taking the neighbor sequence in the random
+walk, the anonymous walk embeddings is to get the sequence of times when
+node was first visited. However, the number of walks grow
+exponentially.</p>
+<p><strong>Simple Use of Anonymous Walks</strong>:</p>
+<p>​ Simulate anonymous walks <span class="math inline">\(w_i\)</span> of
+<span class="math inline">\(l\)</span> steps and record their counts.
+Then represent the graph as a probability distribution over these walks.
+For example: set <span class="math inline">\(l\)</span>=3, then we can
+represent the graph as 5-dim vector (111, 112, 121, 122, 123) as <span class="math inline">\(w_i\)</span>. Use <span class="math inline">\(Z_G[i]\)</span> as probability of anonymous walk
+<span class="math inline">\(w_i\)</span> in <span class="math inline">\(G\)</span>.</p>
+<p><strong>Sampling Anonymous</strong>:</p>
+<p>​ Generate independently a set of <span class="math inline">\(m\)</span> random walks and represent the graph as
+a probability distribution over these walks. the <span class="math inline">\(m\)</span> can be decided if we want the
+distribution to have error of more than <span class="math inline">\(\epsilon\)</span> with probability less than <span class="math inline">\(\delta\)</span>: <span class="math display">\[
+m=[\frac{2}{\epsilon^2}(\log(2^\eta-2)-\log(\delta))]
+\]</span> where <span class="math inline">\(\eta\)</span> is the total
+number of anno. walks of length <span class="math inline">\(l\)</span>.</p>
+<p><strong>Learn walk embeddings</strong>:</p>
+<ul>
+<li>Run <span class="math inline">\(T\)</span> different random walks
+from <span class="math inline">\(u\)</span> each of length <span class="math inline">\(l\)</span>:</li>
+</ul>
+<p><span class="math display">\[
+N_R(u)={\{w_1^u,w_2^u,...,w_T^u\}}
+\]</span></p>
+<ul>
+<li><p>Learn to predict walks that co-occur in <span class="math inline">\(\Delta-size\)</span> window</p></li>
+<li><p>the objective function is similar to random walk but the
+difference is that we don't predict the neighbor but the sequence of
+anon. walks.</p></li>
+</ul>
+<p><span class="math display">\[
+\max_{Z,d}\frac{1}{T}\sum_{t=\Delta}^{T-\Delta}\log P(w_t|\{w_{t-\Delta
+},...,w_{t+\Delta},z_G\})
+\]</span></p>
+<p>where: <span class="math display">\[
+P(w_t|\{w_{t-\Delta
+},...,w_{t+\Delta},z_G\})=\frac{\exp(y(w_t))}{\sum_{i=1}^\eta\exp(y(w_i))}
+\]</span></p>
+<p><span class="math display">\[
+y(w_t)=b+U\cdot(cat(\frac{1}{2\Delta}\sum_{i=-\Delta}^{\Delta}z_i,z_G))
+\]</span></p>
+<p>and the <span class="math inline">\(b\in\R\)</span> and <span class="math inline">\(U\in\R^D\)</span> are learnable parameters.</p>
+<h2 id="graph-as-matrix">Graph as Matrix</h2>
+<h3 id="pagerank">PageRank</h3>
+<p>​ Web as a graph: nodes - web pages; edges - hyperlinks</p>
+<p><strong>The "Flow" model</strong>: A vote from an important page is
+worth more</p>
+<p><img src="/2022/04/06/Notes-for-Stanford-229W-course/image-20210729203110106.png" alt="image-20210729203110106" style="zoom:80%;"></p>
+<p>As above figure shows, the node <span class="math inline">\(i\)</span> has there out-links, and one of the
+links votes on node <span class="math inline">\(j\)</span>, therefore
+the 1/3 importance of <span class="math inline">\(i\)</span> (<span class="math inline">\(r_i\)</span>) flows to node <span class="math inline">\(j\)</span>. Similarly, the importance of node
+<span class="math inline">\(j\)</span> has 1/3 splits to other nodes.
+<span class="math display">\[
+r_j=\sum_{i\rightarrow j}\frac{r_i}{d_i}
+\]</span> where <span class="math inline">\(d_i\)</span> is the
+out-degree of node <span class="math inline">\(i\)</span>.</p>
+<p><em>Stochastic adjacency matrix M</em>: Let node <span class="math inline">\(j\)</span> have <span class="math inline">\(d_j\)</span> out-links. If <span class="math inline">\(j\rightarrow i\)</span>, then <span class="math inline">\(M_{ij}=\frac{1}{d_j}\)</span>. And <span class="math inline">\(M\)</span> is a column stochastic matrix because
+the columns sum to 1.</p>
+<p><em>Rank vector r</em>: An entry per page. <span class="math inline">\(\sum_i r_i=1\)</span>.</p>
+<p>Then the flow equations can be written as: <span class="math display">\[
+r=M\cdot r
+\]</span> <em>Connection to Random Walk</em>:</p>
+<p>​ Imagine a random web surfer who is on some page <span class="math inline">\(i\)</span> at time <span class="math inline">\(t\)</span>, and at time <span class="math inline">\(t+1\)</span>, it follows an out-link from <span class="math inline">\(i\)</span> uniformly at random, finally ends up on
+some page <span class="math inline">\(j\)</span> linked from <span class="math inline">\(i\)</span>. Process repeats indefinitely. Let
+<span class="math inline">\(p(t)\)</span> be the vector whose <span class="math inline">\(i^{th}\)</span> coordinates is the probability
+that the surfer is at page <span class="math inline">\(i\)</span> at
+time <span class="math inline">\(t\)</span>. The stationary distribution
+of a random walk is <span class="math display">\[
+p(t)=M\cdot p(t)
+\]</span> <em>Connection to eigenvector centrality</em>: <span class="math display">\[
+\lambda c=Ac
+\]</span> <em>Eigenvector formulation</em>: the rank vector <span class="math inline">\(r\)</span> is an eigenvector of the stochastic
+adjacent matrix <span class="math inline">\(M\)</span> with eigenvalue
+1. The <span class="math inline">\(r=M\cdot(M\cdot(...(M\cdot
+u)))\)</span> is the solution of above equation.</p>
+<h3 id="solve-the-pagerank-problem">Solve the PageRank problem</h3>
+<p><strong>Power iteration method</strong>:</p>
+<ul>
+<li><p>initialize: <span class="math inline">\(r^0=[1/N,...,1/N]^T\)</span></p></li>
+<li><p>iterate: <span class="math inline">\(r^{(t+1)}=M\cdot
+r^t\)</span></p></li>
+<li><p>stop when <span class="math inline">\(|r^{(t+1)}-r^t|_1&lt;\epsilon\)</span> (where
+<span class="math inline">\(|x|_1=\sum_1^N|x_1|\)</span> is the
+L<sub>1</sub> norm)</p></li>
+</ul>
+<p>about 50 iterations is sufficient to estimate the limiting
+solution.</p>
+<p><strong>Three questions</strong>:</p>
+<ul>
+<li>Does this converge?</li>
+<li>Does it converge to what we want?</li>
+<li>Are results reasonable?</li>
+</ul>
+<p><strong>Two problems</strong>:</p>
+<ul>
+<li>Some pages are dead ends (have no out-links), such pages cause
+importance to "leak out"</li>
+</ul>
+<p><img src="/2022/04/06/Notes-for-Stanford-229W-course/image-20210731133922246.png" alt="image-20210731133922246" style="zoom: 67%;"></p>
+<ul>
+<li>Spider traps: all out-links are within the group, and eventually
+spider traps absorb all importance.</li>
+</ul>
+<p><img src="/2022/04/06/Notes-for-Stanford-229W-course/image-20210731133906876.png" alt="image-20210731133906876" style="zoom:67%;"></p>
+<p><strong>Solution to two problems</strong>:</p>
+<p><em>Spider traps</em>: At each time step, the random surfer has two
+options. With probability <span class="math inline">\(\beta\)</span>
+follow a link at random, with <span class="math inline">\(1-\beta\)</span> jump to a random page (common
+values for <span class="math inline">\(\beta\)</span> are in the range
+0.8 to 0.9)</p>
+<p><em>Dead ends</em>: Follow random teleports links with total
+probability 1.0 from dead-ends</p>
+<p>Spider-traps are not a problem, but with traps PageRank scores are
+not what we want; Dead-ends are a problem because the matrix is not
+column stochastic so our initial assumptions are note met.</p>
+<p><em>Google's solution that does it all</em>: <span class="math display">\[
+r_j=\sum_{i\rightarrow j}\beta\frac{r_i}{d_i}+(1-\beta)\frac{1}{N}
+\]</span> Then the matrix <span class="math inline">\(M\)</span> change
+to the Google matrix <span class="math inline">\(G\)</span>: <span class="math display">\[
+G=\beta M+(1-\beta)[\frac{1}{N}]_{N\times N}
+\]</span></p>
+<h3 id="random-walk-with-restarts-and-personalized-pagerank">Random walk
+with restarts and personalized PageRank</h3>
+<p><strong>Tasks</strong>: Recommendation.</p>
+<p><strong>Goal</strong>: Proximity on graphs. What items should we
+recommend to a user who interacts with item Q?</p>
+<p>the intuition is if items Q and P are interacted by similar users,
+recommend P when user interacts with Q.</p>
+<p><strong>Personalized PageRank</strong>: The user teleports to nodes S
+which is the subset of the user may be interested in.</p>
+<p><strong>Random walks with restarts</strong>: teleport to the starting
+node: S = {Q} where Q is the starting node.</p>
+<ul>
+<li>Given a set of QUERY_NODES</li>
+<li>Make a step to a random neighbor and record the visit</li>
+<li>With probability ALPHA, restart the walk at one of the
+QUERY_NODES</li>
+<li>The nodes with the highest visit have highest proximity to the
+QUERY_NODES.</li>
+</ul>
+<h3 id="matrix-factorization-and-node-embeddings">Matrix factorization
+and node embeddings</h3>
+<p>​ For node embedding task, our goal is maximize <span class="math inline">\(z_u^Tz_v\)</span> if nodes <span class="math inline">\(u,v\)</span> are similar. And the key is how to
+judge the two nodes are similar.</p>
+<p><strong>Simplest node similarity</strong>: Nodes <span class="math inline">\(u,v\)</span> are similar if they are connected by
+an edge. (<span class="math inline">\(z_u^Tz_v=A_{v,u}\)</span>).
+Because learn a matrix satisfying <span class="math inline">\(A-Z^TZ\)</span> is generally impossible. We can
+learn <span class="math inline">\(Z\)</span> approximately. and the
+objective is <span class="math inline">\(\min_Z||A-Z^TZ||_2\)</span></p>
+<p><strong>Random walk-based similarity</strong>: <span class="math display">\[
+\log(vol(G)(\frac{1}{T}\sum_{r=1}^T(D^{-1}A)^r)D^{-1})-\log b
+\]</span>
+<img src="/2022/04/06/Notes-for-Stanford-229W-course/image-20210731193947925.png" alt="image-20210731193947925" style="zoom:67%;"></p>
+<p>If we change the matrix <span class="math inline">\(A\)</span> in the
+simplest similarity, then we actually do the Deep walk now.</p>
+<p><strong>Limitations of network embedding</strong>:</p>
+<ul>
+<li>Cannot obtain embeddings for nodes not in the training set. In other
+word, it is difficult for network embedding to solve the dynamic
+graph.</li>
+<li>DeepWalk and node2vec do not capture structural similarity</li>
+<li>Cannot utilize node, edge and graph features</li>
+</ul>
+<h2 id="message-passing-and-node-classification">Message passing and
+node classification</h2>
+<p><strong>Main question</strong>: Given a network with labels on some
+nodes, how do we predict labels to all other nodes in the network.
+(semi-supervised node classification)</p>
+<p><strong>Intuition</strong>: Correlations exist in networks, in other
+words, similar nodes are connected. The correlation means that nearby
+nodes have the same color (label).</p>
+<p><strong>Two dependencies that lead to correlation</strong>:</p>
+<ul>
+<li>Homophily: people of similar characteristics tend to link each
+other</li>
+<li>Influence: Social connections influence our own characteristic</li>
+</ul>
+<p><strong>Classification label of a node v may depend on</strong>:</p>
+<ul>
+<li>Features of <span class="math inline">\(v\)</span></li>
+<li>Labels of the nodes in <span class="math inline">\(v\)</span>'s
+neighborhood</li>
+<li>Features of the nodes in <span class="math inline">\(v\)</span>'s
+neighborhood</li>
+</ul>
+<p><strong>Example task</strong>:</p>
+<ul>
+<li>Let <span class="math inline">\(A\)</span> be a <span class="math inline">\(n\times n\)</span> adjacency matrix over <span class="math inline">\(n\)</span> nodes</li>
+<li>Let <span class="math inline">\(Y=\{0,1\}^n\)</span> be a vector of
+labels. (the unlabeled node is denoted by unlabeled)</li>
+<li>Goal: predict the unlabeled nodes are likely to be Class 0 or Class
+1</li>
+</ul>
+<p><strong>Markov assumption</strong>: (first order) the label <span class="math inline">\(Y_v\)</span> of node <span class="math inline">\(v\)</span> depends on the labels of its neighbor
+<span class="math inline">\(N_v\)</span></p>
+<p><strong>Solution</strong>: We use three classifier to give the
+solution of the task.</p>
+<figure>
+<img src="/2022/04/06/Notes-for-Stanford-229W-course/image-20210804201531938.png" alt="image-20210804201531938">
+<figcaption aria-hidden="true">image-20210804201531938</figcaption>
+</figure>
+<p><em>Local classifier</em>:</p>
+<ul>
+<li>predicts label based on node features</li>
+<li>standard classification task</li>
+<li>does not use network information</li>
+</ul>
+<p><em>Relational classifier</em>:</p>
+<ul>
+<li>predicts label based on the labels and node features of its
+neighbors</li>
+<li>use network information</li>
+</ul>
+<p><em>Collective inference</em>:</p>
+<ul>
+<li>apply relational classifier to each node iteratively</li>
+<li>iterate until the inconsistency between neighboring labels is
+minimized</li>
+<li>network structure affects the final prediction</li>
+</ul>
+<h3 id="probabilistic-relational-classifier">Probabilistic Relational
+Classifier</h3>
+<p><strong>Relational classifier</strong>:</p>
+<p><em>Basic idea</em>: Class probability <span class="math inline">\(Y_v\)</span> of node <span class="math inline">\(v\)</span> is a weighted average of class
+probabilities of its neighbors. (For unlabeled nodes, initialize <span class="math inline">\(Y_v\)</span>=0.5)</p>
+<p><em>Train</em>: Update for each node <span class="math inline">\(v\)</span> and label <span class="math inline">\(c\)</span> (e.g. 0 or 1) <span class="math display">\[
+P\left(Y_{v}=c\right)=\frac{1}{\sum_{(v, u) \in E} A_{v, u}} \sum_{(v,
+u) \in E} A_{v, u} P\left(Y_{u}=c\right)
+\]</span> <em>Challenges</em>:</p>
+<ul>
+<li>convergence is not guaranteed</li>
+<li>model cannot use node feature information</li>
+</ul>
+<p><strong>Iterative classification</strong>:</p>
+<p><em>main idea</em>: classify node <span class="math inline">\(v\)</span> based on its attributes <span class="math inline">\(f_v\)</span> as well as labels <span class="math inline">\(z_v\)</span> of neighbor set <span class="math inline">\(N_v\)</span>.</p>
+<p><em>approach</em>: train two classifiers</p>
+<ul>
+<li><span class="math inline">\(\Phi_1(f_v)\)</span> = predict node
+label based on node feature vector <span class="math inline">\(f_v\)</span></li>
+<li><span class="math inline">\(\Phi_2(f_v, z_v)\)</span> = predict
+label based on node feature vector <span class="math inline">\(f_v\)</span> and summary <span class="math inline">\(z_v\)</span> of labels of <span class="math inline">\(v\)</span>'s neighbors.</li>
+</ul>
+<p><em>architecture</em>:</p>
+<ul>
+<li>phase 1 (train): train classifiers (e.g. neural networks) <span class="math inline">\(\Phi_1(f_v)\)</span> and <span class="math inline">\(\Phi_2(f_v, z_v)\)</span></li>
+<li>phase 2 (test): iterate till convergence. set labels <span class="math inline">\(Y_v\)</span> based on the classifier <span class="math inline">\(\Phi_1\)</span>, compute <span class="math inline">\(z_v\)</span> and predict the labels with <span class="math inline">\(\Phi_2\)</span>. repeat for each node <span class="math inline">\(v\)</span>, and iterate until class labels
+stabilize or max number of iterations is reached.</li>
+</ul>
+<h3 id="belief-propagation-massage-passing">Belief propagation (massage
+passing)</h3>
+<p>​ <em>Belief propagation</em> is a dynamic programming approach to
+answering probability queries in a graph.</p>
+<p><strong>Notation</strong>:</p>
+<ul>
+<li>Label-label potential matrix <span class="math inline">\(\boldsymbol{\psi}\)</span> : <span class="math inline">\(\boldsymbol{\psi}\left(Y_{i},
+Y_{j}\right)\)</span> is proportional to the probability of a node <span class="math inline">\(j\)</span> being in class <span class="math inline">\(Y_j\)</span> given that it has neighbor <span class="math inline">\(i\)</span> in class <span class="math inline">\(Y_i\)</span>.</li>
+<li>Prior belief <span class="math inline">\(\boldsymbol{\phi}\)</span>:
+<span class="math inline">\(\boldsymbol {\phi}(Y_i)\)</span> is
+proportional to the probability of node <span class="math inline">\(i\)</span> being in class <span class="math inline">\(Y_i\)</span></li>
+<li><span class="math inline">\(m_{i\rightarrow j}(Y_j)\)</span> is
+<span class="math inline">\(i\)</span>'s message / estimate of node
+<span class="math inline">\(j\)</span> being in class <span class="math inline">\(Y_j\)</span></li>
+<li><span class="math inline">\(\mathcal{L}\)</span> is the set of all
+classes/labels</li>
+</ul>
+<p><strong>Loopy BP algorithm</strong>:</p>
+<ul>
+<li>Initialize all messages to 1</li>
+<li>Repeat for each node:</li>
+</ul>
+<p><span class="math display">\[
+m_{i \rightarrow j}\left(Y_{j}\right)=\sum_{Y_{i} \in \mathcal{L}}
+\psi\left(Y_{i}, Y_{j}\right) \phi_{i}\left(Y_{i}\right)\prod_{k \in
+N_{i} \backslash \mathbf{j}} m_{k \rightarrow i}\left(Y_{i}\right)\quad
+\forall Y_{j} \in \mathcal{L}
+\]</span></p>
+<ul>
+<li>After convergence:</li>
+</ul>
+<p><span class="math display">\[
+b_{i}\left(Y_{i}\right)=\phi_{i}\left(Y_{i}\right) \Pi_{j \in N_{i}}
+m_{j \rightarrow i}\left(Y_{j}\right), \forall Y_{i} \in \mathcal{L}
+\]</span></p>
+<p><strong>Limitations</strong>: hard to be applied in the loop-dominate
+graphs; convergence is not guaranteed, especially if many closed
+loops.</p>
+<p><strong>Advantages</strong>: Easy to program &amp; parallelize; can
+apply to any graph models with any form of potentials.</p>
+<h2 id="graph-neural-networks-1-gnn-model">Graph Neural Networks 1: GNN
+Model</h2>
+<h3 id="introduction-1">Introduction</h3>
+<p><strong>two key components</strong>: Encoder and decoder (similarity
+function)</p>
+<p><strong>shallow encoding</strong>: embedding vector for each node</p>
+<p><em>limitations</em>:</p>
+<ul>
+<li><span class="math inline">\(O(V)\)</span> parameters are needed.
+Every node has its own unique embedding, no parameters sharing</li>
+<li>inherently "transductive" : cannot generate embeddings for nodes
+that are not seen during training.</li>
+<li>do not incorporate node features</li>
+</ul>
+<p><strong>deep graph encoders</strong>:</p>
+<h3 id="basics">Basics</h3>
+<p><strong>machine learning as optimization</strong>: <span class="math display">\[
+\min_\Theta\mathcal{L}(y,f(x))
+\]</span></p>
+<h3 id="deep-learning-for-graphs">Deep learning for graphs</h3>
+<p><strong>Node features</strong>: when there is no node feature in the
+graph dataset, we can use <em>indicator vectors</em>. <em>vector of
+constant 1</em> or <em>node degree</em></p>
+<p><strong>A naive approach</strong>: use adjacency matrix and features
+as input, and feed them in to DNN. The issues with this idea</p>
+<ul>
+<li><span class="math inline">\(O(|V|)\)</span> parameters-</li>
+<li>not applicable to graph of different sizes</li>
+<li>sensitive to node ordering</li>
+</ul>
+<p><strong>Idea</strong>: aggregate neighbors (message passing)</p>
+<ul>
+<li>each node have a network architecture, the depth of the network can
+be arbitrary depth</li>
+<li>aggregation operator should be permutation invariant because the
+node don't have order</li>
+<li><ol type="1">
+<li>average messages from neighbors; 2) apply neural network</li>
+</ol></li>
+</ul>
+<p><strong>Example</strong>:</p>
+<p><img src="/2022/04/06/Notes-for-Stanford-229W-course/image-20210824211306785.png" alt="image-20210824211306785" style="zoom: 67%;"></p>
+<p><strong>How to train the model</strong>:</p>
+<ul>
+<li>all node use same parameter matrix <span class="math inline">\(W_l\)</span> and <span class="math inline">\(B_l\)</span></li>
+<li>written by matrix formula</li>
+</ul>
+<p><span class="math display">\[
+H^{(l+1)}=\sigma\left(\tilde{A} H^{(l)} W_{l}^{\mathrm{T}}+H^{(l)}
+B_{l}^{\mathrm{T}}\right)
+\]</span></p>
+<p>where <span class="math inline">\(\tilde{A}=D^{-1}A\)</span></p>
+<ul>
+<li>unsupervised training use the intuition that similar nodes have
+similar embeddings</li>
+</ul>
+<p><span class="math display">\[
+\mathcal{L}=\sum_{z_{u}, z_{v}} \operatorname{CE}\left(y_{u, v},
+\operatorname{DEC}\left(z_{u}, z_{v}\right)\right)
+\]</span></p>
+<p>where <span class="math inline">\(y_{u,v}=1\)</span> when node <span class="math inline">\(u\)</span> and <span class="math inline">\(v\)</span> are similar</p>
+<ul>
+<li>our model has inductive capability because the same parameters are
+shared for all nodes</li>
+<li>the amount of parameters only depend on the number of features but
+not the size of the graph</li>
+</ul>
+<h3 id="graphsage-idea">GraphSAGE idea</h3>
+<p><span class="math display">\[
+\mathrm{h}_{v}^{(l+1)}=\sigma\left(\left[\mathrm{W}_{l} \cdot
+\mathrm{AGG}\left(\left\{\mathrm{h}_{u}^{(l)}, \forall u \in
+N(v)\right\}\right), \mathrm{B}_{l} \mathrm{~h}_{v}^{(l)}\right]\right)
+\]</span></p>
+<p>where AGG can be: (AGG is the mean 创新点 of GraphSAGE)</p>
+<p><img src="/2022/04/06/Notes-for-Stanford-229W-course/image-20210824215101872.png" alt="image-20210824215101872" style="zoom: 33%;"></p>
+<h2 id="graph-neural-networks-2-design-space">Graph neural networks 2:
+design space</h2>
+<h3 id="a-generative-perspective-on-gnn">a generative perspective on
+GNN</h3>
+<ul>
+<li>node's neighborhood defines a computation graph</li>
+<li>nodes aggregate information from their neighbors using neural
+networks</li>
+<li>GNN Layer = message + aggregation</li>
+<li>raw input graph != computational graph</li>
+</ul>
+<h3 id="a-single-gnn-layer">a single GNN layer</h3>
+<p><strong>message computation</strong>: <span class="math display">\[
+\mathbf{m}_{u}^{(l)}=\mathrm{MSG}^{(l)}\left(\mathbf{h}_{u}^{(l-1)}\right)
+\]</span> for example: a linear layer <span class="math inline">\(m_u^{(l)}=W^{(l)}h_u^{(l-1)}\)</span>. usually it
+is a linear function</p>
+<p><strong>aggregation</strong>: <span class="math display">\[
+\mathbf{h}_{v}^{(l)}=\operatorname{AGG}^{(l)}\left(\left\{\mathbf{m}_{u}^{(l)},
+u \in N(v)\right\}\right)
+\]</span> for example: Sum, Mean or Max aggregator (order invariant)
+<span class="math display">\[
+\mathbf{h}_{v}^{(l)}=\operatorname{CONCAT}\left(\operatorname{AGG}\left(\left\{\mathbf{m}_{u}^{(l)},
+u \in N(v)\right\}\right),\mathbf{B}^{(l)}h_v^{l-1}\right)
+\]</span> <strong>issue</strong>: information from node <span class="math inline">\(v\)</span> itself could get lost. There are two
+solutions:</p>
+<ul>
+<li>compute message from node <span class="math inline">\(v\)</span>
+itself. Using a different message computation:</li>
+</ul>
+<p><span class="math display">\[
+\mathbf{m}_{v}^{(l)}=\mathbf{B}^{(l)} \mathbf{h}_{v}^{(l-1)}
+\]</span></p>
+<ul>
+<li>aggregate the message from node <span class="math inline">\(v\)</span> itself (concatenation or
+summation)</li>
+</ul>
+<p><span class="math display">\[
+\mathbf{h}_{v}^{(l)}=\operatorname{CONCAT}\left(\operatorname{AGG}\left(\left\{\mathbf{m}_{u}^{(l)},
+u \in N(v)\right\}\right), \mathbf{m}_{v}^{(i)}\right)
+\]</span></p>
+<ul>
+<li>Nonlinearity (activation): can be added to message or
+aggregation</li>
+</ul>
+<p><strong>Classical GNN Layer</strong>:</p>
+<p><em>GCN</em>: <span class="math display">\[
+\mathbf{h}_{v}^{(l)}=\sigma\left(\sum_{u \in N(v)} W^{(l)}
+\frac{\mathbf{h}_{u}^{(i-1)}}{|N(v)|})\right)
+\]</span> where message function is <span class="math inline">\(\mathbf{m}_{u}^{(l)}=\frac{1}{|N(v)|}
+\mathbf{W}^{(l)} \mathbf{h}_{u}^{(l-1)}\)</span>; and aggregation is
+summation then apply activation.</p>
+<p><em>GraphSAGE</em>: <span class="math display">\[
+\mathbf{h}_{v}^{(l)}=\sigma\left(\mathbf{W}^{(l)} \cdot
+\operatorname{CONCAT}\left(\mathbf{h}_{v}^{(l-1)},
+\operatorname{AGG}\left(\left\{\mathbf{h}_{u}^{(l-1)}, \forall u \in
+N(v)\right\}\right)\right)\right)
+\]</span> where message is computed within the <span class="math inline">\(\operatorname{AGG}(\cdot)\)</span>; the
+aggregation is two-stage that first aggregate from node neighbors and
+then aggregate over the node itself. Neighbor aggregation can be:</p>
+<ul>
+<li><p>Mean: <span class="math inline">\({\mathrm{AGG}}=\sum_{u \in
+N(v)} \frac{\mathbf{h}_{u}^{(l-1)}}{|N(v)|}\)</span></p></li>
+<li><p>Pool: <span class="math inline">\(\mathrm{AGG}=\operatorname{Mean}\left(\left\{\mathrm{MLP}\left(\mathbf{h}_{u}^{(l-1)}\right),
+\forall u \in N(v)\right\}\right)\)</span></p></li>
+<li><p>LSTM</p></li>
+</ul>
+<p>the model also use l2 normalization to <span class="math inline">\(h_v^{(l)}\)</span> at every layer: <span class="math display">\[
+\mathbf{h}_{v}^{(l)} \leftarrow
+\frac{\mathbf{h}_{v}^{(l)}}{\left\|\mathbf{h}_{v}^{(l)}\right\|_{2}}
+,\forall v \in V
+\]</span> it means the length of node vector is always equal to 1.</p>
+<p><em>GAT</em>: <span class="math display">\[
+\mathbf{h}_{v}^{(l)}=\sigma\left(\sum_{u \in N(v)} \alpha_{v u}
+\mathbf{W}^{(l)} \mathbf{h}_{u}^{(l-1)}\right)
+\]</span> for GCN/GraphSAGE, the <span class="math inline">\(\alpha_{uv}=1/|N(v)\)</span> <span class="math display">\[
+e_{v u}=a\left(\mathbf{W}^{(l)} \mathbf{h}_{u}^{(l-1)}, \mathbf{W}^{(l)}
+\boldsymbol{h}_{v}^{(l-1)}\right)
+\]</span></p>
+<p><span class="math display">\[
+\alpha_{v u}=\frac{\exp \left(e_{v u}\right)}{\sum_{k \in N(v)} \exp
+\left(e_{v k}\right)}
+\]</span></p>
+<p><strong>GNN Layer in Practice</strong>:</p>
+<p><em>Batch Normalization</em>: given a batch of inputs, re-center the
+node embeddings into zero mean, re-scale the variance into unit
+variance, finally apply a linear transform on node embedding.</p>
+<p><em>Dropout</em>: during training with some probability <span class="math inline">\(p\)</span>, randomly set neurons to zeros</p>
+<p><em>Activation</em>: PReLU empirically performs better than ReLU</p>
+<h3 id="stacking-layers-in-gnn">Stacking Layers in GNN</h3>
+<p>The issue of stacking many GNN layers: GNN suffers from the
+over-smoothing problem, that is to say all the node embeddings converge
+to the same value.</p>
+<p><strong>receptive field</strong>: the set of nodes that determine the
+embedding of a node of interest.</p>
+<p><strong>over-smoothing</strong>: if stack many GNN layers, nodes will
+have highly-overlapped receptive fields, the node embeddings will be
+highly similar.</p>
+<p><strong>how to overcome over-smoothing problem</strong>:</p>
+<ul>
+<li>Be cautious when adding GNN layers</li>
+<li>increase the expressive power within each GNN layer. which means we
+can make aggregation / transformation become a deep neural network!</li>
+<li>add layers that do not pass messages: we can add MLP layers before
+after GNN layers as pre-process layers and post-process layers</li>
+<li>add skip connections in GNNs</li>
+</ul>
+<h2 id="graph-augmentation-and-training">Graph augmentation and
+training</h2>
+<h3 id="graph-augmentation-for-gnns">Graph augmentation for GNNs</h3>
+<p><strong>Idea</strong>: input graph != computation graph</p>
+<p><img src="/2022/04/06/Notes-for-Stanford-229W-course/image-20211008160356576.png" alt="image-20211008160356576" style="zoom:80%;"></p>
+<p><strong>feature augmentation</strong>: for the input graph does not
+have node featur</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/04/06/%E9%A6%96%E9%A1%B5/" rel="prev" title="Welcome to Ten's Blog">
+      <i class="fa fa-chevron-left"></i> Welcome to Ten's Blog
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/04/06/Notes-for-Stanford-CS229-course/" rel="next" title="Notes for Stanford CS229 course">
+      Notes for Stanford CS229 course <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#what-is-this-course-about"><span class="nav-number">1.</span> <span class="nav-text">What is this course about?</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#introduction"><span class="nav-number"></span> <span class="nav-text">Introduction</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#why-graphs"><span class="nav-number">1.</span> <span class="nav-text">Why graphs?</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#why-is-it-hard"><span class="nav-number">2.</span> <span class="nav-text">Why is it hard?</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#different-types-of-tasks"><span class="nav-number">3.</span> <span class="nav-text">Different types of tasks</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#choice-of-graph-representation"><span class="nav-number">4.</span> <span class="nav-text">Choice of graph
+representation</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#traditional-methods-for-ml-on-graphs"><span class="nav-number"></span> <span class="nav-text">Traditional methods for ML
+on graphs</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#traditional-feature-based-method---edges"><span class="nav-number">1.</span> <span class="nav-text">Traditional
+feature-based method - edges</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#graph-level-features-and-graph-kernels"><span class="nav-number">2.</span> <span class="nav-text">Graph-level features and
+graph kernels</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#graph-representation-learning"><span class="nav-number"></span> <span class="nav-text">Graph representation
+learning</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#node-embedding"><span class="nav-number">1.</span> <span class="nav-text">Node embedding</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#random-walk-approaches-for-node-embeddings"><span class="nav-number">2.</span> <span class="nav-text">Random walk
+approaches for node embeddings</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#embedding-entire-graph"><span class="nav-number">3.</span> <span class="nav-text">Embedding entire graph</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#graph-as-matrix"><span class="nav-number"></span> <span class="nav-text">Graph as Matrix</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#pagerank"><span class="nav-number">1.</span> <span class="nav-text">PageRank</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#solve-the-pagerank-problem"><span class="nav-number">2.</span> <span class="nav-text">Solve the PageRank problem</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#random-walk-with-restarts-and-personalized-pagerank"><span class="nav-number">3.</span> <span class="nav-text">Random walk
+with restarts and personalized PageRank</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#matrix-factorization-and-node-embeddings"><span class="nav-number">4.</span> <span class="nav-text">Matrix factorization
+and node embeddings</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#message-passing-and-node-classification"><span class="nav-number"></span> <span class="nav-text">Message passing and
+node classification</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#probabilistic-relational-classifier"><span class="nav-number">1.</span> <span class="nav-text">Probabilistic Relational
+Classifier</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#belief-propagation-massage-passing"><span class="nav-number">2.</span> <span class="nav-text">Belief propagation (massage
+passing)</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#graph-neural-networks-1-gnn-model"><span class="nav-number"></span> <span class="nav-text">Graph Neural Networks 1: GNN
+Model</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#introduction-1"><span class="nav-number">1.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#basics"><span class="nav-number">2.</span> <span class="nav-text">Basics</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#deep-learning-for-graphs"><span class="nav-number">3.</span> <span class="nav-text">Deep learning for graphs</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#graphsage-idea"><span class="nav-number">4.</span> <span class="nav-text">GraphSAGE idea</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#graph-neural-networks-2-design-space"><span class="nav-number"></span> <span class="nav-text">Graph neural networks 2:
+design space</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#a-generative-perspective-on-gnn"><span class="nav-number">1.</span> <span class="nav-text">a generative perspective on
+GNN</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#a-single-gnn-layer"><span class="nav-number">2.</span> <span class="nav-text">a single GNN layer</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#stacking-layers-in-gnn"><span class="nav-number">3.</span> <span class="nav-text">Stacking Layers in GNN</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#graph-augmentation-and-training"><span class="nav-number"></span> <span class="nav-text">Graph augmentation and
+training</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#graph-augmentation-for-gnns"><span class="nav-number">1.</span> <span class="nav-text">Graph augmentation for GNNs</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Fate_10号"
+      src="/images/FLCL.jfif">
+  <p class="site-author-name" itemprop="name">Fate_10号</p>
+  <div class="site-description" itemprop="description">想象力改变一切</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">9</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Fate_10号</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+</body>
+</html>
