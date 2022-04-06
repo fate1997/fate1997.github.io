@@ -1,550 +1,121 @@
 <?xml version="1.0" encoding="utf-8"?>
-<search>
-  <entry>
-    <title>CLIP笔记</title>
-    <url>/2022/03/30/CLIP/</url>
-    <content><![CDATA[<h2 id="learning-transferable-visual-models-from-natural-language-supervision">Learning
-Transferable Visual Models From Natural Language Supervision</h2>
-<p><a href="https://arxiv.org/abs/2103.00020">paper</a> <a href="https://github.com/OpenAI/CLIP">Github</a></p>
-<p><img src="/2022/03/30/CLIP/CLIP.png"></p>
-<hr>
-<span id="more"></span>
-<h3 id="关键点">关键点</h3>
-<ol type="1">
-<li>结合自然文本和图片生成数据集</li>
-<li>无需人工标注</li>
-<li>对比学习</li>
-<li>多模态工作</li>
-<li>标签不是提前定义好的列表式的标签</li>
-</ol>
-<h3 id="综述">综述</h3>
-<ol type="1">
-<li>之前通过自然语言协助图片分类的工作有着最大的问题就是规模不够大</li>
-<li>之前的工作多是用文本带来的弱监督信号去帮助图片的有监督学习，但是这类任务仍然针对的是固定类别的类，没有zero-shot的能力</li>
-</ol>
-<h3 id="方法">方法</h3>
-<p><font color="red" size="4">概述</font></p>
-<ol type="1">
-<li>核心是用自然语言的有监督讯号训练视觉任务</li>
-<li>Transformer和BERT的兴起使得自然语言模型更加强大</li>
-<li>数据集有4个亿的图片单词数据对</li>
-<li>训练效率对多模态工作的结果非常重要</li>
-<li>预测学习（给定图片预测文本）与对比学习相比需要巨大的计算资源</li>
-</ol>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># image_encoder - ResNet or Vision Transformer</span><br><span class="line"># text_encoder - CBOW or Text Transformer</span><br><span class="line"># I[n, h, w, c] - minibatch of aligned images</span><br><span class="line"># T[n, l] - minibatch of aligned texts</span><br><span class="line"># W_i[d_i, d_e] - 将图片特征投影到多模态的空间</span><br><span class="line"># W_t[d_t, d_e] - 将文本特征投影到多模态的空间</span><br><span class="line"># t - 学得的温度参数 ???</span><br><span class="line"></span><br><span class="line"># 抽取特征</span><br><span class="line">I_f = image_encoder(I) # [n, d_i]</span><br><span class="line">T_f = text_encoder(T) # [n, d_t]</span><br><span class="line"></span><br><span class="line"># 使模型能够学习到多模态的特征</span><br><span class="line">I_e = l2_normalize(np.dot(I_f, W_i), axis=1)</span><br><span class="line">T_e = l2_normalize(np.dot(T_f, W_t), axis=1)</span><br><span class="line"></span><br><span class="line"># 算下相似度</span><br><span class="line">logits = np.dot(I_e, T_e) * np.exp(t)</span><br><span class="line"></span><br><span class="line"># 生成真值并计算损失</span><br><span class="line">labels = np.arange(n) # 因为都是在对角线上配的的</span><br><span class="line">loss_i = cross_entropy_loss(logits, labels, axis=0)</span><br><span class="line">loss_t = cross_entropy_loss(logits, labels, axis=1)</span><br><span class="line">loss = (loss_i + loss_t) / 2</span><br></pre></td></tr></table></figure>
-<ol start="6" type="1">
-<li>在这个工作中，最后用的是线性投射层，而没有使用非线性透射层</li>
-</ol>
-<p><font color="red" size="4">训练</font></p>
-<ol type="1">
-<li>调参都是用小模型训练一个周期的结果来调的</li>
-<li>batch_size = 32768</li>
-<li>混精度训练 (???)</li>
-<li>GPU并行计算</li>
-</ol>
-<p><a href="https://lilianweng.github.io/posts/2021-09-25-train-large/">大模型训练技巧</a></p>
-<ol start="5" type="1">
-<li>训练ViT比训练残差网络效率更高</li>
-<li>最后又在更大的图片上微调了一下</li>
-</ol>
-<h3 id="实验">实验</h3>
-<ol type="1">
-<li>如何作zero-shot推理?</li>
-</ol>
-<p>A: 图片通过编码器得到一个特征，感兴趣的类别输入到"A photo of a
-{object}"中，然后经过一个文本编码器，得到n个特征，将这n个特征和图片特征点乘后作Softmax，得到在每个类别的概率。
-P.S.
-为什么不直接用这个类别这一个单词呢？因为训练就是用的句子，存在distribution
-gap。</p>
-<ol start="2" type="1">
-<li>Prompt (提示) engineering and ensembling ???</li>
-</ol>
-<ul>
-<li>语言歧义性的问题，比如boxer可以是一种狗也可以是拳击运动员。使用"A
-photo of a
-{object}"则使得object一定是名词，因此一定程度上缓解了语言歧义性的问题。</li>
-<li>另外在宠物的数据集加上一句"a type of
-pet"作为提示也会得到更好的效果</li>
-<li>对prompt进行ensemble，即使用很多prompt，最后的结果取他们的平均，则会得到更好的效果。本文用了80个提示模板
-P.S. Linear probe指冻住主干网络，只微调最后一个全连接层的操作</li>
-</ul>
-<ol start="3" type="1">
-<li>用全部数据和之前的特征学习方法进行对比</li>
-</ol>
-<ul>
-<li>仍然使用linear
-probe而不采用fine-tune，因为fine-tune要训练整个网络，这样就不能分辨预训练模型的好坏了；另外也不用调参。</li>
-<li>模型非常好</li>
-</ul>
-<h3 id="limitation">Limitation</h3>
-<ol type="1">
-<li>和各个数据集的SOTA结果还是有一定差距的，扩大规模不太现实</li>
-<li>在有些数据集上表现不太好，无法处理抽象的概念（比如数物体或者判断异常）</li>
-<li>在MNIST这类数据集上不太好，和自然图像还是有点差距的，是一个out-of-distribution的数据集</li>
-<li>只是从给定类别去做推理，而不能直接写出图片的标签</li>
-<li>对数据的利用不是很高效，可以用数据增强、伪标签或自监督减小数据用量</li>
-<li>数据没有经过清洗，很可能会带一些社会偏见</li>
-<li>很多任务用语言都无法描述的</li>
-<li>如何在few-shot也能具有更好的效果</li>
-</ol>
-<center>
-<font color="brown" size="5"> 打破了固定标签类别的范式 </font>
-</center>
-]]></content>
+<search> 
+  
+  
+    
+    <entry>
+      <title>G-SphereNet笔记</title>
+      <link href="/2022/04/06/GSphereNet%E7%AC%94%E8%AE%B0/"/>
+      <url>/2022/04/06/GSphereNet%E7%AC%94%E8%AE%B0/</url>
+      
+        <content type="html"><![CDATA[<h3 id="an-autoregressive-flow-model-for-3d-molecular-geometry-generation-from-scratch">AnAutoregressive Flow Model for 3D Molecular Geometry Generation fromScratch</h3><p><a href="https://openreview.net/forum?id=C03Ajc-NS5W">[Paper]</a> <a href="https://github.com/divelab/DIG">[Github]</a></p><p><a href="1.png"></a></p><span id="more"></span><ul><li><p><strong>目标</strong>：从头生成3D分子结构</p></li><li><p><strong>现有模型</strong></p><ol type="1"><li>生成2D分子</li><li>通过已有的2D分子生成3D结构</li></ol></li><li><p><strong>模型概要</strong></p><ol type="1"><li>模型一部分来自于SphereNet</li><li>序列地放置原子</li><li>分子的3D坐标隐式地通过距离、角度和二面角体现</li><li>通过SphereNet和注意力机制提取条件信息</li></ol></li><li><p><strong>相关工作</strong></p><ol type="1"><li>通过序列模型生成SMILES</li><li>通过图生成模型去得到原子类型、邻接矩阵</li><li>3D分子从头生成，这个任务可以被分为两个任务，一个是从3D分子结构中学习到一个随机生成模型使得其能够生成有效的3D分子结构；另一个是学习到一个目标分子发现模型使得量子性质分数最大化</li><li>G-SchNet使用自回归模型序列地生成新的原子，并放置到网格点上</li><li>EDMNet和3DMolNet分别通过GAN和VAE生成两个原子间的距离</li><li>E-NFs将flow模型和E(n)不变图神经网络结合，生成所有原子的one-hot坐标并且定义了在隐空间的子空间的先验概率去保证平移不变性</li></ol></li><li><p><a href="https://lilianweng.github.io/posts/2018-10-13-flow-models/"><strong>流模型</strong></a></p><ol type="1"><li>直接学习p(x)</li><li>给定一个随机变量<span class="math inline">\(z\)</span>满足<span class="math inline">\(z \sim \pi(z)\)</span>，建立一个新的随机变量<span class="math inline">\(x\)</span>，满足<span class="math inline">\(x=f(z)\)</span>其中<span class="math inline">\(f\)</span>是可逆的有，因此<span class="math inline">\(z=f^{-1}(x)\)</span>，那么目前的问题就变成了如何推断这个未知概率密度的<span class="math inline">\(x\)</span>可以看到，因为两个随机变量都满足归一化，对<span class="math inline">\(x\)</span>求导数后把<span class="math inline">\(z=f^{-1}(x)\)</span>代入，就可以得到<span class="math inline">\(p(x)\)</span>的表达式了<span class="math display">\[\begin{aligned}&amp;\int p(x) d x=\int \pi(z) d z=1 ; \text { Definition of probabilitydistribution. } \\&amp;p(x)=\pi(z) \frac{d z}{d x}=\pi\left(f^{-1}(x)\right) \frac{df^{-1}}{dx}=\pi\left(f^{-1}(x)\right)\left|\left(f^{-1}\right)^{\prime}(x)\right|\end{aligned}\]</span></li><li>Normalizing Flows：用可逆函数把已知分布的<span class="math inline">\(z_{i-1}\)</span>映射到<span class="math inline">\(z_i\)</span>，也就是上面那个式子，为了简单起见，对等式两边取<span class="math inline">\(\log\)</span>函数<span class="math display">\[\logp_{i}\left(\mathbf{z}_{i}\right)=\logp_{i-1}\left(\mathbf{z}_{i-1}\right)-\log \operatorname{det} \frac{df_{i}}{d \mathbf{z}_{i-1}}\]</span>因此第<span class="math inline">\(K\)</span>个变量的概率密度可写为：<span class="math display">\[\begin{aligned}\mathbf{x}=\mathbf{z}_{K} &amp;=f_{K} \circ f_{K-1} \circ \cdots \circf_{1}\left(\mathbf{z}_{0}\right) \\\log p(\mathbf{x})=\log \pi_{K}\left(\mathbf{z}_{K}\right) &amp;=\log\pi_{K-1}\left(\mathbf{z}_{K-1}\right)-\log \operatorname{det} \frac{df_{K}}{d \mathbf{z}_{K-1}} \\&amp;=\log \pi_{K-2}\left(\mathbf{z}_{K-2}\right)-\log\operatorname{det} \frac{d f_{K-1}}{d \mathbf{z}_{K-2}}-\log\operatorname{det} \frac{d f_{K}}{d \mathbf{z}_{K-1}} \\&amp;=\ldots \\&amp;=\log \pi_{0}\left(\mathbf{z}_{0}\right)-\sum_{i=1}^{K} \log\operatorname{det} \frac{d f_{i}}{d \mathbf{z}_{i-1}}\end{aligned}\]</span>这样就可以得到一个新的概率分布，但是需要注意的是转换函数<span class="math inline">\(f_i\)</span>应满足两个性质，一是它的可逆比较好算，二是它的雅克比行列式比较好算。NormalizingFlows的损失函数可以通过下式进行计算：<span class="math display">\[\mathcal{L}(\mathcal{D})=-\frac{1}{|\mathcal{D}|}\sum_{\mathbf{x} \in \mathcal{D}} \log p(\mathbf{x})\]</span></li><li>根据这个<span class="math inline">\(f\)</span>的选择，目前有几个模型可供选择：</li></ol><ol type="1"><li>RealNVP：使用bijection(或者叫affine couplinglayer)，这种映射关系是一对一的，也就是输入与输出是成对存在的。这个模型采用的bijection是：<span class="math display">\[\begin{aligned}\mathbf{y}_{1: d} &amp;=\mathbf{x}_{1: d} \\\mathbf{y}_{d+1: D} &amp;=\mathbf{x}_{d+1: D} \odot \exp\left(s\left(\mathbf{x}_{1: d}\right)\right)+t\left(\mathbf{x}_{1:d}\right)\end{aligned}\]</span>这里<span class="math inline">\(s(.)\)</span>和<span class="math inline">\(t(.)\)</span>分别是放大和平移函数。这个映射的雅克比行列式是一个下三角矩阵<span class="math display">\[\operatorname{det}(\mathbf{J})=\prod_{j=1}^{D-d}\exp \left(s\left(\mathbf{x}_{1: d}\right)\right)_{j}=\exp\left(\sum_{j=1}^{D-d} s\left(\mathbf{x}_{1:d}\right)_{j}\right)\]</span>因为不用计算<span class="math inline">\(s(.)\)</span>和<span class="math inline">\(t(.)\)</span>的雅克比行列式，因此他们都可以是神经网络。由于在一个仿射层中一些维度是保持不变的，因此为了让所有的输入都有机会改变，我们可以在每次应用放射层时翻转输入。对于大规模的输入，可以在仿射层中采用采样的方法，具体可见<a href="https://arxiv.org/abs/1605.08803">paper</a></li><li><a href="https://arxiv.org/abs/1807.03039">Glow</a>：拓展了ReakNVP模型，总共有三个部分，第一个部分是Activationnormalization，和BN很像，但是只在1个batch下进行计算，将每个channel的输出归一化后使用新的放大和偏置参数去训练；第二个部分是可逆的1x1卷积，它的雅克比行列式可写为<span class="math display">\[\log \operatorname{det} \frac{\partial\operatorname{conv} 2 \mathrm{~d}(\mathbf{h} ; \mathbf{W})}{\partial\mathbf{h}}=\log \left(|\operatorname{det} \mathbf{W}|^{h \cdot w}\mid\right)=h \cdot w \cdot \log |\operatorname{det}\mathbf{W}|\]</span>其中<span class="math inline">\(h\)</span>和<span class="math inline">\(w\)</span>分别是张量的高和宽，<span class="math inline">\(\mathbf{h};\mathbf{W}\)</span>分别是输入张量和参数矩阵；第三个部分就是Bijection层</li></ol><ol start="5" type="1"><li>自回归流模型：自回归是为了处理序列数据，就是在给定之前的状态预测下一时刻的状态，即<span class="math inline">\(p(x_i|x_{1:i-1})\)</span>。如果使用一个自回归模型作为flow的变换时这个模型就叫做自回归流模型，下面将先介绍几个自回归模型MADE,PixelRNN，WaveNet，然后再讲几个自回归流模型MAF和IAF</li></ol><ol type="1"><li><a href="https://arxiv.org/abs/1502.03509">MADE</a>：把Autoencoder里面的权重矩阵乘以一个binary-masked的矩阵，从而使得输出只考虑之前的信息</li><li><a href="https://arxiv.org/abs/1601.06759">PixalRNN</a>：针对图像的深度生成模型，一次产生一个像素，在生成当前像素点时，模型会看到之前生成的像素点。使用对角的BiLSTM去获取之前的Context，但是没办法并行了</li><li><a href="https://arxiv.org/abs/1705.07057">MAF</a>：生成数据的概率是已知概率分布的仿射变换</li><li><a href="https://arxiv.org/abs/1606.04934">IAF</a>：与MAF相反，使用相逆的仿射函数</li></ol></li><li><p><strong>方法</strong></p><ol type="1"><li>使用点云作为输入，也就是<span class="math inline">\(G=(A,R)\)</span>其中<span class="math inline">\(A\)</span>是原子类型矩阵，<span class="math inline">\(R\)</span>是原子坐标矩阵</li><li>将分子生成任务作为一个序列决策任务，在第<span class="math inline">\(i\)</span>个步骤，使用之前的点云信息得到隐变量，根据这个隐变量生成分子<span class="math display">\[a_{i}=g^{a}\left(z_{i}^{a} ; A_{i}, R_{i}\right),r_{i}=g^{r}\left(z_{i}^{r} ; A_{i}, R_{i}\right), \quad i \geq1\]</span></li><li>通过自回归流进行分子生成，首先需要把原子类型转为连续变量<span class="math display">\[\tilde{a}_{i}=a_{i}+u, u \sim U(0,1)^{k}, \quad i\geq 1\]</span>为了生成<span class="math inline">\(\tilde{a}_{i}\)</span>，首先从标准正态分布中取值得到一个隐变量<span class="math inline">\(z_i\)</span>，然后通过映射函数<span class="math display">\[\tilde{a}_{i}=s_{i}^{a} \odotz_{i}^{a}+t_{i}^{a}, \quad i \geq1\]</span>其中缩放因子和偏置都是根据之前生成的原子得到的条件信息</li><li>与分子类型同理，可以生成距离，角度和二面角</li><li>首先通过G-SphereNet得到每个原子更新后的表达，然后经过一个MLP分类器，如果分类的分数比0.5大，那就放在待选列表里，如果待选列表为空，表明不需要生成分子了，否则应随机地从待选列表里选择一个原子</li><li>作者表示如果直接进行atom-wiseFFNN的话生成的新原子的位置不靠谱，因此使用了多头自注意力机制使focalatom可以得到其他原子的信息</li><li>特别地，对于空间的上下文信息，作者将其与原子类型的embedding相乘</li></ol></li><li><p><strong>训练</strong></p><ol type="1"><li>使用Prim算法使得采样的focal atom总是离最新的原子最近</li><li>损失函数如下：<span class="math display">\[\begin{aligned}\log p(G) &amp;=\sum_{i=1}^{n-1}\left[\logp_{Z_{a}}\left(z_{i}^{a}\right)+\log \left|\frac{\partial\tilde{a}_{i}}{\partialz_{i}^{a}}\right|\right]+\sum_{i=1}^{n-1}\left[\logp_{Z_{d}}\left(z_{i}^{d}\right)+\log \left|\frac{\partiald_{i}}{\partial z_{i}^{d}}\right|\right] \\&amp;+\sum_{i=2}^{n-1}\left[\logp_{Z_{\theta}}\left(z_{i}^{\theta}\right)+\log \left|\frac{\partial\theta_{i}}{\partialz_{i}^{\theta}}\right|\right]+\sum_{i=3}^{n-1}\left[\logp_{Z_{\varphi}}\left(z_{i}^{\varphi}\right)+\log \left|\frac{\partial\varphi_{i}}{\partial z_{i}^{\varphi}}\right|\right]\end{aligned}\]</span>其中<span class="math inline">\(z_i\)</span>可以通过映射的反函数求得</li></ol></li><li><p><strong>实验</strong></p><ol type="1"><li>随机3D分子几何生成，使用QM9数据集。3D分子几何通过<a href="https://onlinelibrary.wiley.com/doi/abs/10.1002/bkcs.10334">Kim</a>提出的方法变为3D分子，使用有效性作为评价指标，有效性是指所有不违反化学价规则的分子占所有生成分子的比例。通过键长分布的MMD距离，把距离与常见的化学键距离做比较，从而确定生成的到底是什么键(好麻烦，不如直接用化学键生成)，有效性才88%</li><li>目标分子发现，用了两个任务，一个是最小化HOMO-LUMOgap，另一个是最大化各向异构极化性。将QM9里面小的HOMO-LUMO和大的各向异构极化性的分子拿出来，然后去做分子生成。评价的指标是看生成的分子中比QM9里最小的HOMO-LUMO以及最大的各向异构极化性分子还大的分子的比例</li><li>消融实验：local feature &lt; global feature；without 3D information&lt; with 3D information；focal atom从50%里面选择 &gt;直接采用softmax后最大比例的分子</li></ol></li><li><p><strong>Limitations</strong></p><ol type="1"><li>原子类型有没有都考虑</li><li>化学键的选择对于生成的位置坐标的精度要求有点高</li><li>由点云-&gt;分子图的方法是否合理</li><li>反向设计是否不太现实</li></ol></li><li><p><strong>Development</strong></p><ol type="1"><li>不要用点云，保留键的信息，从而避免从点云-&gt;分子图这个过程</li><li>反向设计可以使用动态规划、强化学习等序贯决策过程进行设计</li><li>需要考虑多个原子类型</li><li>综上所述，context encoder应满足几个条件</li></ol><ol type="1"><li>能够处理不同原子类型</li><li>使用角度、距离、二面角生成分子</li><li>不使用点云而使用分子结构</li><li>为了生成合适的键，需要考虑原子的杂化类型</li></ol></li></ul>]]></content>
+      
+      
       <categories>
-        <category>计算机视觉</category>
+          
+          <category> 分子生成 </category>
+          
       </categories>
-  </entry>
-  <entry>
-    <title>MoCo笔记</title>
-    <url>/2022/03/30/MoCo/</url>
-    <content><![CDATA[<h2 id="momentum-contrast-for-unsupervised-visual-representation-learning">Momentum
-Contrast for Unsupervised Visual Representation Learning</h2>
-<p><a href="https://openaccess.thecvf.com/content_CVPR_2020/html/He_Momentum_Contrast_for_Unsupervised_Visual_Representation_Learning_CVPR_2020_paper.html">paper</a>
-<a href="https://github.com/facebookresearch/moco">code</a></p>
-<p><img src="/2022/03/30/MoCo/MOCO.png" title="模型总览与zero-shot推理"></p>
-<hr>
-<span id="more"></span>
-<h3 id="什么是对比学习">什么是对比学习</h3>
-<ol type="1">
-<li>通过相似度来进行无监督学习</li>
-<li>通过代理任务来得到两个图片是否相似，如instance
-discrimination：将一张图片进行随机裁剪和数据增强得到两个处理后的图片，将这两张图片认为是正样本，其他图片对这两张图片而言是负样本</li>
-<li>对比学习在找完正负样本后所做的就是抽取特征，接着使用常见的损失函数如NCE反向传播</li>
-<li>关键在于找到定义正样本和负样本的规则(代理任务, pretext tasks)</li>
-</ol>
-<h3 id="介绍">介绍</h3>
-<ol type="1">
-<li>无监督模型在NLP上的表现很好，如GPT，BERT</li>
-<li>对比学习可以被当做动态字典查询问题，即对于目标图片特征(anchor/key)寻找与最相似的图片特征(positive-negative/value)</li>
-<li>动态字典越大越好-能够更好地在高维空间进行采样</li>
-<li>字典中的keys应该用相同或相似的编码器得到</li>
-<li>受限于显存，用队列表示keys，即得到mini-batch样本的特征后，将其放入队列，然后把最早的mini-batch的特征移出队列</li>
-<li>使用队列的话字典里的特征就不一致了，因为一部分来自老的，一部分来自新的，采用动量的编码器解决这个问题，即参数一部分来query的编码器，一部分来自前一步的参数，通过调整两者的比例，也就是使参数更多地来自前一步的参数，那么参数将会更新地非常缓慢，从而缓解了队列特征不一致的问题</li>
-<li>代理任务选择的是instance discrimination方法</li>
-<li>最后MoCo可以在中型数据集ImageNet或者大型数据集Instagram
-image得到非常好的效果</li>
-</ol>
-<h3 id="讨论和结论">讨论和结论</h3>
-<ol type="1">
-<li>数据集的增大对于效果的提升没有很多，可能是代理任务的问题</li>
-<li>有没有可能把MoCo和NLP里的masked auto-encoding结合起来
-(kaiming大神-MAE)</li>
-</ol>
-<h3 id="方法">方法</h3>
-<ol type="1">
-<li>noise contrasive estimation
-(NCE)，能够解决softmax类别过多而无法过大的问题。NCE将多分类问题当作一个二分类问题，一共有两类，一类是data
-sample，另一类是noisy contrastive。</li>
-<li>InfoNCE <span class="math display">\[\mathcal{L}_{q}=-\log
-\frac{\exp \left(q \cdot k_{+} / \tau\right)}{\sum_{i=0}^{K} \exp
-\left(q \cdot k_{i} / \tau\right)}\]</span> where <span class="math inline">\(\tau\)</span>
-是一个温度超参数，也就是控制分布的形状，<span class="math inline">\(K\)</span>指的是负样本的数量</li>
-<li>动量对比
-<ul>
-<li>使用队列能够使字典大小和batch size分离开，从而使用标准的batch
-size。</li>
-<li>使用队列能够使字典使用之前编码好的key，而不用重新进行计算</li>
-<li>字典是整个数据集的一个子集，对应了前面提到的NCE中的estimation，即只选用一部分样本作为负例，从而减小计算开销</li>
-<li>使用队列可以移走最老的特征，从而保持了字典的一致性，即几乎都是用一个编码器编的</li>
-<li>因为这个队列非常大，因此很难去通过反向传播去更新所有key的编码器</li>
-<li>能不能直接吧query的编码器直接给key用呢？结果并不好，可能是因为编码器太快改变了，因此使得队列中元素的一致性遭到破坏。由此引出动量更新：<span class="math inline">\(\theta_{\mathrm{k}} \leftarrow m
-\theta_{\mathrm{k}}+(1-m) \theta_{\mathrm{q}}\)</span></li>
-<li>用一个非常大的动量(0.999)就可以使得参数更新得很慢</li>
-<li>端到端的对比学习，也就是key和query的编码器使用同一个，并使用梯度回传更新参数。优点是字典的一致性非常高，缺点就是字典的大小需要和mini-batch的size一样，从而限制了字典的大小</li>
-<li>memory bank。对于query使用编码器，对于key建立一个memory
-bank，这个bank是将所有的key储存起来，接着在训练的时候抽样一些算出来contrastive
-loss后更新query的编码器，接着用这个编码器将抽样后的样本重新计算特征，将计算完的特征再扔回memory
-bank里。这样会使得key的特征的一致性非常差。同时不太容易处理数据集非常大的任务</li>
-</ul></li>
-</ol>
-<p>P.S. trivial solution - 捷径解 (TSTiNet)</p>
-<ol start="4" type="1">
-<li>伪代码</li>
-</ol>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># f_q, f_k: encoder networks for query and key</span><br><span class="line"># queue: dictionary as a queue of K keys (CxK)</span><br><span class="line"># m: momentum</span><br><span class="line"># t: temperature</span><br><span class="line"></span><br><span class="line">f_k.param = f_q.params # initialize</span><br><span class="line">for x in loader: # load a minibatch x with N samples</span><br><span class="line">	x_q = aug(x) # a randomly augmented version</span><br><span class="line">	x_k = aug(x) # another randomly augmented version</span><br><span class="line"></span><br><span class="line">	q = f_q.forward(x_q)  # queries: NxC</span><br><span class="line">	k = f_k.forward(x_k)  # keys: NxC</span><br><span class="line">	k = k.detach() # k进行梯度回传操作</span><br><span class="line"></span><br><span class="line">	# positive logits: Nx1</span><br><span class="line">	l_pos = bmm(q.view(N, 1, C), k.view(N, C, 1))</span><br><span class="line"></span><br><span class="line">	# negative logits: NxK</span><br><span class="line">	l_neg = mm(q.view(N, C), queue.view(C, K))</span><br><span class="line"></span><br><span class="line">	# logits: Nx(1+K)</span><br><span class="line">	logits = cat([l_pos, l_neg], dim=1)</span><br><span class="line"></span><br><span class="line">	# contrastive loss</span><br><span class="line">	labels = zeros(N) # positives are the 0-th</span><br><span class="line">	loss = CrossEntropyLoss(logits/t, labels)</span><br><span class="line"></span><br><span class="line">	# query网络的更新</span><br><span class="line">	loss.backward()</span><br><span class="line">	update(f_q.params)</span><br><span class="line"></span><br><span class="line">	# momentum update: key network</span><br><span class="line">	f_k.params = m*f_k.params + (1-m)*f_q.params</span><br><span class="line"></span><br><span class="line">	# 更新字典</span><br><span class="line">	enqueue(queue, k) # 让minibatch进入队列</span><br><span class="line">	dequeue(queue) # 让minibatch走出队列</span><br></pre></td></tr></table></figure>
-<ol start="5" type="1">
-<li>Shuffle BN: 为了防止模型学到捷径，因为BN会算当前样本的running
-mean和running
-variance，从而泄露信息，那么模型就会根据这些泄露的信息很容易找到那个正样本。因此Shuffle
-BN采用先把样本的顺序打乱，送到各个GPU上，最后再恢复顺序</li>
-</ol>
-<h3 id="实验与结果">实验与结果</h3>
-<ol type="1">
-<li>在ImageNet-1k和Instegram-1B进行训练</li>
-<li>学习率设为了30，可能有监督对比学习和无监督对比学习学到的特征非常不一致</li>
-<li>MoCo的扩展性好，硬件要求低</li>
-<li>无监督学习最主要的目标最重要的就是生成可泛化的特征</li>
-<li>用了特征归一化，然后用有监督训练的超参数做微调</li>
-</ol>
-]]></content>
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>SBDD笔记</title>
+      <link href="/2022/04/06/SBDD%E7%AC%94%E8%AE%B0/"/>
+      <url>/2022/04/06/SBDD%E7%AC%94%E8%AE%B0/</url>
+      
+        <content type="html"><![CDATA[<h3 id="a-3d-generative-model-for-structure-based-drug-design">A 3DGenerative Model for Structure-Based Drug Design</h3><p><a href="https://proceedings.neurips.cc/paper/2021/hash/314450613369e0ee72d0da7f6fee773c-Abstract.html">[Paper]</a><a href="https://github.com/luost26/3D-Generative-SBDD">[Github]</a></p><p><img src="/2022/04/06/SBDD%E7%AC%94%E8%AE%B0/SBDD.png"></p><span id="more"></span><ul><li><strong>目标</strong>：生成与特定蛋白质位点结合的<em>小分子</em></li><li><strong>已有模型</strong>：<ol type="1"><li>基于SMILES和基于图的方法，但是这两种方法没办法考虑到空间信息(?图应该可以)</li><li>直接在3D空间生成分子，但是他们一般生成的分子比较小</li><li>立体像素化的模型，但采样的质量受限于立体像素</li></ol></li><li><strong>SBDD模型概要</strong>：<ol type="1"><li>将目标变为对分子在3D空间出现的概率分布进行建模，即<span class="math inline">\(p(e, \boldsymbol{r} \mid\mathcal{C})\)</span>，其中<span class="math inline">\(\mathcal{C}\)</span>是输入的结合位点，<span class="math inline">\(\boldsymbol{r}\)</span>是原子的空间坐标，<span class="math inline">\(e\)</span>是原子类型</li><li>建立了一个网络，给定空间坐标，在给定结合位点的情况下预测原子类型的概率</li><li>为了让结合位点具有旋转不变性，使用了图神经网络</li><li>上述模型有两个缺点：在生成空间上原子的概率后由于每个原子与其他原子不相连，因此暂且不是一个有效的分子；期望的采样方法应该能够生成多样的分子集</li><li>为了解决上面的缺点，作者提出了自回归采样算法，这个算法就是每次在上面那个概率分布下采样一个原子，把它加入到context(可以理解为已有信息)中，直到没有空间容纳新的原子，这种采样方法与VAE和GAN相比避免使用了隐变量，减少了模型复杂度</li></ol></li><li><strong>相关工作</strong>：<ol type="1"><li>基于字符串的模型，比如用RNN对SMILES进行建模，然而这个这种表示无法捕捉分子的相似度</li><li>基于图的模型，比如VAE，强化学习等是通过自回归的方式来序列地增加原子</li><li>直接在3D空间生成分子的模型，比如用部分生成好的分子作为输入，然后预测下一个原子的种类和与之前原子的位置；也有用强化学习把分子生成作为一个时序任务，这个模型以原子的势能函数作为奖励函数，能够生成真实的3D分子，但是对相对而言大一些的分子不太有效(?可以查来看看)</li><li>把三维分子放在网格中的方法，这样子任务就编程了图像生成方法，因此可以使用VAE、GAN等方法去生成分子图像，这个方法得到的分子可以很大，然而生成分子的质量受限于分辨率的大小是得不到保证的</li></ol></li><li><strong>方法</strong><ol type="1"><li>结合位点可以用一系列原子来表示<span class="math inline">\(\mathcal{C}=\left\{\left(\boldsymbol{a}_{i},\boldsymbol{r}_{i}\right)\right\}_{i=1}^{N_{b}}\)</span>其中<span class="math inline">\(N_b\)</span>表示原子数目，<span class="math inline">\(\boldsymbol{a}_{i}\)</span>表示第<span class="math inline">\(i\)</span>个原子的特征</li><li>如上所述，模型要学习的目标是给定结合位点和原子位置，给出这个位置属于哪种原子的问题，这个问题本质上是一个分类问题，即预测在这些不同类别的原子的概率</li><li>模型由两部分组成，一个是ContextEncoder，其实就是得到结合位点中每一个原子的表示；另一个是SpatialClassifier，把坐标信息作为输入，然后聚合靠近这个原子的信息，并预测该原子的类型</li><li>Context Encoder：用的就是SchNet</li><li>SpatialClassifier：聚集周围原子的信息，然后经过一个MLP预测得到未经归一化的概率，最后每个元素的概率等于类似SoftMax的一个函数，区别是在分母加了一个1，用于表示不放元素的概率(=exp(0))</li><li>现在已经有概率云了，需要从概率云中进行采样，来得到分子。首先得到联合概率分布，<span class="math display">\[p(e, \boldsymbol{r} \mid\mathcal{C})=\frac{\exp (\boldsymbol{c}[e])}{Z}\]</span> 其中<span class="math inline">\(Z\)</span>是一个归一化参数，<span class="math inline">\(c\)</span>是上面进行spaitalclassifier时最后的MLP。(注：作者可能就没有用到这里的<span class="math inline">\(Z\)</span>)，采样的流程如下：在t时刻，Context包括已经被选中的t个原子；在t+1时刻，根据原子种类和位置的联合概率分布在已知Context的条件下(公式是上面那个吗?t时刻的Context如何体现?)，抽样得到t+1时刻的原子种类和位置。</li><li>最后还需要一个分类器用于判断是否已经走到头了</li></ol></li><li><strong>训练</strong><ol type="1"><li>使用了完形填空式的训练方法，也就是在训练过程中遮盖掉一些原子，然后让神经网络去预测这部分</li><li>采用BCELoss来判断原子是否在正确的位置上，采用标准列表式交叉熵损失判断元素的种类，采用BCE在最后的Frontier分类器上</li></ol></li><li><strong>实验</strong><ol type="1"><li>用了两个任务，一个是分子设计，也就是给定结合位点去生成分子；第二个是连接预测，也就是生成子结构去连接在结合位点的两个片段</li><li>数据集使用的是<em>CrossDocked</em>数据集，做了一些预处理，比如把RMSD大于1埃的数据点去掉，采用<em>mmseqs2</em>取得有30%的蛋白质序列相同的数据点，最后就留下100000蛋白质-配体对用于训练，100个蛋白质用于测试</li><li>采用的评价指标有，亲和力、Vina分数、药物可能性、合成性；又定义了两个新的指标，一个是高结合力样本的概率以及多样性</li></ol></li><li><strong>Limitations</strong><ol type="1"><li>原子类型太少了</li><li>模型每次都要把蛋白质计算一遍，计算量太大了</li></ol></li></ul>]]></content>
+      
+      
       <categories>
-        <category>计算机视觉</category>
+          
+          <category> 分子生成 </category>
+          
       </categories>
-  </entry>
-  <entry>
-    <title>SBDD笔记</title>
-    <url>/2022/04/06/SBDD%E7%AC%94%E8%AE%B0/</url>
-    <content><![CDATA[<h3 id="a-3d-generative-model-for-structure-based-drug-design">A 3D
-Generative Model for Structure-Based Drug Design</h3>
-<p><a href="https://proceedings.neurips.cc/paper/2021/hash/314450613369e0ee72d0da7f6fee773c-Abstract.html">[Paper]</a>
-<a href="https://github.com/luost26/3D-Generative-SBDD">[Github]</a></p>
-<p><img src="/2022/04/06/SBDD%E7%AC%94%E8%AE%B0/SBDD.png"></p>
-<span id="more"></span>
-<ul>
-<li><strong>目标</strong>：生成与特定蛋白质位点结合的<em>小分子</em></li>
-<li><strong>已有模型</strong>：
-<ol type="1">
-<li>基于SMILES和基于图的方法，但是这两种方法没办法考虑到空间信息(?图应该可以)</li>
-<li>直接在3D空间生成分子，但是他们一般生成的分子比较小</li>
-<li>立体像素化的模型，但采样的质量受限于立体像素</li>
-</ol></li>
-<li><strong>SBDD模型概要</strong>：
-<ol type="1">
-<li>将目标变为对分子在3D空间出现的概率分布进行建模，即<span class="math inline">\(p(e, \boldsymbol{r} \mid
-\mathcal{C})\)</span>，其中<span class="math inline">\(\mathcal{C}\)</span>是输入的结合位点，<span class="math inline">\(\boldsymbol{r}\)</span>是原子的空间坐标，<span class="math inline">\(e\)</span>是原子类型</li>
-<li>建立了一个网络，给定空间坐标，在给定结合位点的情况下预测原子类型的概率</li>
-<li>为了让结合位点具有旋转不变性，使用了图神经网络</li>
-<li>上述模型有两个缺点：在生成空间上原子的概率后由于每个原子与其他原子不相连，因此暂且不是一个有效的分子；期望的采样方法应该能够生成多样的分子集</li>
-<li>为了解决上面的缺点，作者提出了自回归采样算法，这个算法就是每次在上面那个概率分布下采样一个原子，把它加入到context(可以理解为已有信息)中，直到没有空间容纳新的原子，这种采样方法与VAE和GAN相比避免使用了隐变量，减少了模型复杂度</li>
-</ol></li>
-<li><strong>相关工作</strong>：
-<ol type="1">
-<li>基于字符串的模型，比如用RNN对SMILES进行建模，然而这个这种表示无法捕捉分子的相似度</li>
-<li>基于图的模型，比如VAE，强化学习等是通过自回归的方式来序列地增加原子</li>
-<li>直接在3D空间生成分子的模型，比如用部分生成好的分子作为输入，然后预测下一个原子的种类和与之前原子的位置；也有用强化学习把分子生成作为一个时序任务，这个模型以原子的势能函数作为奖励函数，能够生成真实的3D分子，但是对相对而言大一些的分子不太有效(?可以查来看看)</li>
-<li>把三维分子放在网格中的方法，这样子任务就编程了图像生成方法，因此可以使用VAE、GAN等方法去生成分子图像，这个方法得到的分子可以很大，然而生成分子的质量受限于分辨率的大小是得不到保证的</li>
-</ol></li>
-<li><strong>方法</strong>
-<ol type="1">
-<li>结合位点可以用一系列原子来表示<span class="math inline">\(\mathcal{C}=\left\{\left(\boldsymbol{a}_{i},
-\boldsymbol{r}_{i}\right)\right\}_{i=1}^{N_{b}}\)</span>其中<span class="math inline">\(N_b\)</span>表示原子数目，<span class="math inline">\(\boldsymbol{a}_{i}\)</span>表示第<span class="math inline">\(i\)</span>个原子的特征</li>
-<li>如上所述，模型要学习的目标是给定结合位点和原子位置，给出这个位置属于哪种原子的问题，这个问题本质上是一个分类问题，即预测在这些不同类别的原子的概率</li>
-<li>模型由两部分组成，一个是Context
-Encoder，其实就是得到结合位点中每一个原子的表示；另一个是Spatial
-Classifier，把坐标信息作为输入，然后聚合靠近这个原子的信息，并预测该原子的类型</li>
-<li>Context Encoder：用的就是SchNet</li>
-<li>Spatial
-Classifier：聚集周围原子的信息，然后经过一个MLP预测得到未经归一化的概率，最后每个元素的概率等于类似SoftMax的一个函数，区别是在分母加了一个1，用于表示不放元素的概率(=exp(0))</li>
-<li>现在已经有概率云了，需要从概率云中进行采样，来得到分子。首先得到联合概率分布，
-<span class="math display">\[p(e, \boldsymbol{r} \mid
-\mathcal{C})=\frac{\exp (\boldsymbol{c}[e])}{Z}\]</span> 其中<span class="math inline">\(Z\)</span>是一个归一化参数，<span class="math inline">\(c\)</span>是上面进行spaital
-classifier时最后的MLP。(注：作者可能就没有用到这里的<span class="math inline">\(Z\)</span>)，采样的流程如下：在t时刻，Context包括已经被选中的t个原子；在t+1时刻，根据原子种类和位置的联合概率分布在已知Context的条件下(公式是上面那个吗?t时刻的Context如何体现?)，抽样得到t+1时刻的原子种类和位置。</li>
-<li>最后还需要一个分类器用于判断是否已经走到头了</li>
-</ol></li>
-<li><strong>训练</strong>
-<ol type="1">
-<li>使用了完形填空式的训练方法，也就是在训练过程中遮盖掉一些原子，然后让神经网络去预测这部分</li>
-<li>采用BCELoss来判断原子是否在正确的位置上，采用标准列表式交叉熵损失判断元素的种类，采用BCE在最后的Frontier分类器上</li>
-</ol></li>
-<li><strong>实验</strong>
-<ol type="1">
-<li>用了两个任务，一个是分子设计，也就是给定结合位点去生成分子；第二个是连接预测，也就是生成子结构去连接在结合位点的两个片段</li>
-<li>数据集使用的是<em>CrossDocked</em>数据集，做了一些预处理，比如把RMSD大于1埃的数据点去掉，采用<em>mmseqs2</em>取得有30%的蛋白质序列相同的数据点，最后就留下100000蛋白质-配体对用于训练，100个蛋白质用于测试</li>
-<li>采用的评价指标有，亲和力、Vina分数、药物可能性、合成性；又定义了两个新的指标，一个是高结合力样本的概率以及多样性</li>
-</ol></li>
-<li><strong>Limitations</strong>
-<ol type="1">
-<li>原子类型太少了</li>
-<li>模型每次都要把蛋白质计算一遍，计算量太大了</li>
-</ol></li>
-</ul>
-]]></content>
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>MoCo笔记</title>
+      <link href="/2022/03/30/MoCo/"/>
+      <url>/2022/03/30/MoCo/</url>
+      
+        <content type="html"><![CDATA[<h2 id="momentum-contrast-for-unsupervised-visual-representation-learning">MomentumContrast for Unsupervised Visual Representation Learning</h2><p><a href="https://openaccess.thecvf.com/content_CVPR_2020/html/He_Momentum_Contrast_for_Unsupervised_Visual_Representation_Learning_CVPR_2020_paper.html">paper</a><a href="https://github.com/facebookresearch/moco">code</a></p><p><img src="/2022/03/30/MoCo/MOCO.png" title="模型总览与zero-shot推理"></p><hr><span id="more"></span><h3 id="什么是对比学习">什么是对比学习</h3><ol type="1"><li>通过相似度来进行无监督学习</li><li>通过代理任务来得到两个图片是否相似，如instancediscrimination：将一张图片进行随机裁剪和数据增强得到两个处理后的图片，将这两张图片认为是正样本，其他图片对这两张图片而言是负样本</li><li>对比学习在找完正负样本后所做的就是抽取特征，接着使用常见的损失函数如NCE反向传播</li><li>关键在于找到定义正样本和负样本的规则(代理任务, pretext tasks)</li></ol><h3 id="介绍">介绍</h3><ol type="1"><li>无监督模型在NLP上的表现很好，如GPT，BERT</li><li>对比学习可以被当做动态字典查询问题，即对于目标图片特征(anchor/key)寻找与最相似的图片特征(positive-negative/value)</li><li>动态字典越大越好-能够更好地在高维空间进行采样</li><li>字典中的keys应该用相同或相似的编码器得到</li><li>受限于显存，用队列表示keys，即得到mini-batch样本的特征后，将其放入队列，然后把最早的mini-batch的特征移出队列</li><li>使用队列的话字典里的特征就不一致了，因为一部分来自老的，一部分来自新的，采用动量的编码器解决这个问题，即参数一部分来query的编码器，一部分来自前一步的参数，通过调整两者的比例，也就是使参数更多地来自前一步的参数，那么参数将会更新地非常缓慢，从而缓解了队列特征不一致的问题</li><li>代理任务选择的是instance discrimination方法</li><li>最后MoCo可以在中型数据集ImageNet或者大型数据集Instagramimage得到非常好的效果</li></ol><h3 id="讨论和结论">讨论和结论</h3><ol type="1"><li>数据集的增大对于效果的提升没有很多，可能是代理任务的问题</li><li>有没有可能把MoCo和NLP里的masked auto-encoding结合起来(kaiming大神-MAE)</li></ol><h3 id="方法">方法</h3><ol type="1"><li>noise contrasive estimation(NCE)，能够解决softmax类别过多而无法过大的问题。NCE将多分类问题当作一个二分类问题，一共有两类，一类是datasample，另一类是noisy contrastive。</li><li>InfoNCE <span class="math display">\[\mathcal{L}_{q}=-\log\frac{\exp \left(q \cdot k_{+} / \tau\right)}{\sum_{i=0}^{K} \exp\left(q \cdot k_{i} / \tau\right)}\]</span> where <span class="math inline">\(\tau\)</span>是一个温度超参数，也就是控制分布的形状，<span class="math inline">\(K\)</span>指的是负样本的数量</li><li>动量对比<ul><li>使用队列能够使字典大小和batch size分离开，从而使用标准的batchsize。</li><li>使用队列能够使字典使用之前编码好的key，而不用重新进行计算</li><li>字典是整个数据集的一个子集，对应了前面提到的NCE中的estimation，即只选用一部分样本作为负例，从而减小计算开销</li><li>使用队列可以移走最老的特征，从而保持了字典的一致性，即几乎都是用一个编码器编的</li><li>因为这个队列非常大，因此很难去通过反向传播去更新所有key的编码器</li><li>能不能直接吧query的编码器直接给key用呢？结果并不好，可能是因为编码器太快改变了，因此使得队列中元素的一致性遭到破坏。由此引出动量更新：<span class="math inline">\(\theta_{\mathrm{k}} \leftarrow m\theta_{\mathrm{k}}+(1-m) \theta_{\mathrm{q}}\)</span></li><li>用一个非常大的动量(0.999)就可以使得参数更新得很慢</li><li>端到端的对比学习，也就是key和query的编码器使用同一个，并使用梯度回传更新参数。优点是字典的一致性非常高，缺点就是字典的大小需要和mini-batch的size一样，从而限制了字典的大小</li><li>memory bank。对于query使用编码器，对于key建立一个memorybank，这个bank是将所有的key储存起来，接着在训练的时候抽样一些算出来contrastiveloss后更新query的编码器，接着用这个编码器将抽样后的样本重新计算特征，将计算完的特征再扔回memorybank里。这样会使得key的特征的一致性非常差。同时不太容易处理数据集非常大的任务</li></ul></li></ol><p>P.S. trivial solution - 捷径解 (TSTiNet)</p><ol start="4" type="1"><li>伪代码</li></ol><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"># f_q, f_k: encoder networks for query and key</span><br><span class="line"># queue: dictionary as a queue of K keys (CxK)</span><br><span class="line"># m: momentum</span><br><span class="line"># t: temperature</span><br><span class="line"></span><br><span class="line">f_k.param = f_q.params # initialize</span><br><span class="line">for x in loader: # load a minibatch x with N samples</span><br><span class="line">x_q = aug(x) # a randomly augmented version</span><br><span class="line">x_k = aug(x) # another randomly augmented version</span><br><span class="line"></span><br><span class="line">q = f_q.forward(x_q)  # queries: NxC</span><br><span class="line">k = f_k.forward(x_k)  # keys: NxC</span><br><span class="line">k = k.detach() # k进行梯度回传操作</span><br><span class="line"></span><br><span class="line"># positive logits: Nx1</span><br><span class="line">l_pos = bmm(q.view(N, 1, C), k.view(N, C, 1))</span><br><span class="line"></span><br><span class="line"># negative logits: NxK</span><br><span class="line">l_neg = mm(q.view(N, C), queue.view(C, K))</span><br><span class="line"></span><br><span class="line"># logits: Nx(1+K)</span><br><span class="line">logits = cat([l_pos, l_neg], dim=1)</span><br><span class="line"></span><br><span class="line"># contrastive loss</span><br><span class="line">labels = zeros(N) # positives are the 0-th</span><br><span class="line">loss = CrossEntropyLoss(logits/t, labels)</span><br><span class="line"></span><br><span class="line"># query网络的更新</span><br><span class="line">loss.backward()</span><br><span class="line">update(f_q.params)</span><br><span class="line"></span><br><span class="line"># momentum update: key network</span><br><span class="line">f_k.params = m*f_k.params + (1-m)*f_q.params</span><br><span class="line"></span><br><span class="line"># 更新字典</span><br><span class="line">enqueue(queue, k) # 让minibatch进入队列</span><br><span class="line">dequeue(queue) # 让minibatch走出队列</span><br></pre></td></tr></table></figure><ol start="5" type="1"><li>Shuffle BN: 为了防止模型学到捷径，因为BN会算当前样本的runningmean和runningvariance，从而泄露信息，那么模型就会根据这些泄露的信息很容易找到那个正样本。因此ShuffleBN采用先把样本的顺序打乱，送到各个GPU上，最后再恢复顺序</li></ol><h3 id="实验与结果">实验与结果</h3><ol type="1"><li>在ImageNet-1k和Instegram-1B进行训练</li><li>学习率设为了30，可能有监督对比学习和无监督对比学习学到的特征非常不一致</li><li>MoCo的扩展性好，硬件要求低</li><li>无监督学习最主要的目标最重要的就是生成可泛化的特征</li><li>用了特征归一化，然后用有监督训练的超参数做微调</li></ol>]]></content>
+      
+      
       <categories>
-        <category>分子生成</category>
+          
+          <category> 计算机视觉 </category>
+          
       </categories>
-  </entry>
-  <entry>
-    <title>G-SphereNet笔记</title>
-    <url>/2022/04/06/GSphereNet%E7%AC%94%E8%AE%B0/</url>
-    <content><![CDATA[<h3 id="an-autoregressive-flow-model-for-3d-molecular-geometry-generation-from-scratch">An
-Autoregressive Flow Model for 3D Molecular Geometry Generation from
-Scratch</h3>
-<p><a href="https://openreview.net/forum?id=C03Ajc-NS5W">[Paper]</a> <a href="https://github.com/divelab/DIG">[Github]</a></p>
-<p><a href="1.png"></a></p>
-<span id="more"></span>
-<ul>
-<li><p><strong>目标</strong>：从头生成3D分子结构</p></li>
-<li><p><strong>现有模型</strong></p>
-<ol type="1">
-<li>生成2D分子</li>
-<li>通过已有的2D分子生成3D结构</li>
-</ol></li>
-<li><p><strong>模型概要</strong></p>
-<ol type="1">
-<li>模型一部分来自于SphereNet</li>
-<li>序列地放置原子</li>
-<li>分子的3D坐标隐式地通过距离、角度和二面角体现</li>
-<li>通过SphereNet和注意力机制提取条件信息</li>
-</ol></li>
-<li><p><strong>相关工作</strong></p>
-<ol type="1">
-<li>通过序列模型生成SMILES</li>
-<li>通过图生成模型去得到原子类型、邻接矩阵</li>
-<li>3D分子从头生成，这个任务可以被分为两个任务，一个是从3D分子结构中学习到一个随机生成模型使得其能够生成有效的3D分子结构；另一个是学习到一个目标分子发现模型使得量子性质分数最大化</li>
-<li>G-SchNet使用自回归模型序列地生成新的原子，并放置到网格点上</li>
-<li>EDMNet和3DMolNet分别通过GAN和VAE生成两个原子间的距离</li>
-<li>E-NFs将flow模型和E(n)不变图神经网络结合，生成所有原子的one-hot坐标并且定义了在隐空间的子空间的先验概率去保证平移不变性</li>
-</ol></li>
-<li><p><a href="https://lilianweng.github.io/posts/2018-10-13-flow-models/"><strong>流模型</strong></a></p>
-<ol type="1">
-<li>直接学习p(x)</li>
-<li>给定一个随机变量<span class="math inline">\(z\)</span>满足<span class="math inline">\(z \sim \pi(z)\)</span>，建立一个新的随机变量<span class="math inline">\(x\)</span>，满足<span class="math inline">\(x=f(z)\)</span>其中<span class="math inline">\(f\)</span>是可逆的有，因此<span class="math inline">\(z=f^{-1}(x)\)</span>，那么目前的问题就变成了如何推断这个未知概率密度的<span class="math inline">\(x\)</span>
-可以看到，因为两个随机变量都满足归一化，对<span class="math inline">\(x\)</span>求导数后把<span class="math inline">\(z=f^{-1}(x)\)</span>代入，就可以得到<span class="math inline">\(p(x)\)</span>的表达式了<span class="math display">\[\begin{aligned}
-&amp;\int p(x) d x=\int \pi(z) d z=1 ; \text { Definition of probability
-distribution. } \\
-&amp;p(x)=\pi(z) \frac{d z}{d x}=\pi\left(f^{-1}(x)\right) \frac{d
-f^{-1}}{d
-x}=\pi\left(f^{-1}(x)\right)\left|\left(f^{-1}\right)^{\prime}(x)\right|
-\end{aligned}\]</span></li>
-<li>Normalizing Flows：用可逆函数把已知分布的<span class="math inline">\(z_{i-1}\)</span>映射到<span class="math inline">\(z_i\)</span>，也就是上面那个式子，为了简单起见，对等式两边取<span class="math inline">\(\log\)</span>函数<span class="math display">\[\log
-p_{i}\left(\mathbf{z}_{i}\right)=\log
-p_{i-1}\left(\mathbf{z}_{i-1}\right)-\log \operatorname{det} \frac{d
-f_{i}}{d \mathbf{z}_{i-1}}\]</span>因此第<span class="math inline">\(K\)</span>个变量的概率密度可写为：<span class="math display">\[\begin{aligned}
-\mathbf{x}=\mathbf{z}_{K} &amp;=f_{K} \circ f_{K-1} \circ \cdots \circ
-f_{1}\left(\mathbf{z}_{0}\right) \\
-\log p(\mathbf{x})=\log \pi_{K}\left(\mathbf{z}_{K}\right) &amp;=\log
-\pi_{K-1}\left(\mathbf{z}_{K-1}\right)-\log \operatorname{det} \frac{d
-f_{K}}{d \mathbf{z}_{K-1}} \\
-&amp;=\log \pi_{K-2}\left(\mathbf{z}_{K-2}\right)-\log
-\operatorname{det} \frac{d f_{K-1}}{d \mathbf{z}_{K-2}}-\log
-\operatorname{det} \frac{d f_{K}}{d \mathbf{z}_{K-1}} \\
-&amp;=\ldots \\
-&amp;=\log \pi_{0}\left(\mathbf{z}_{0}\right)-\sum_{i=1}^{K} \log
-\operatorname{det} \frac{d f_{i}}{d \mathbf{z}_{i-1}}
-\end{aligned}\]</span>这样就可以得到一个新的概率分布，但是需要注意的是转换函数<span class="math inline">\(f_i\)</span>应满足两个性质，一是它的可逆比较好算，二是它的雅克比行列式比较好算。Normalizing
-Flows的损失函数可以通过下式进行计算：<span class="math display">\[\mathcal{L}(\mathcal{D})=-\frac{1}{|\mathcal{D}|}
-\sum_{\mathbf{x} \in \mathcal{D}} \log p(\mathbf{x})\]</span></li>
-<li>根据这个<span class="math inline">\(f\)</span>的选择，目前有几个模型可供选择：</li>
-</ol>
-<ol type="1">
-<li>RealNVP：使用bijection(或者叫affine coupling
-layer)，这种映射关系是一对一的，也就是输入与输出是成对存在的。这个模型采用的bijection是：<span class="math display">\[\begin{aligned}
-\mathbf{y}_{1: d} &amp;=\mathbf{x}_{1: d} \\
-\mathbf{y}_{d+1: D} &amp;=\mathbf{x}_{d+1: D} \odot \exp
-\left(s\left(\mathbf{x}_{1: d}\right)\right)+t\left(\mathbf{x}_{1:
-d}\right)
-\end{aligned}\]</span>这里<span class="math inline">\(s(.)\)</span>和<span class="math inline">\(t(.)\)</span>分别是放大和平移函数。这个映射的雅克比行列式是一个下三角矩阵<span class="math display">\[\operatorname{det}(\mathbf{J})=\prod_{j=1}^{D-d}
-\exp \left(s\left(\mathbf{x}_{1: d}\right)\right)_{j}=\exp
-\left(\sum_{j=1}^{D-d} s\left(\mathbf{x}_{1:
-d}\right)_{j}\right)\]</span>因为不用计算<span class="math inline">\(s(.)\)</span>和<span class="math inline">\(t(.)\)</span>的雅克比行列式，因此他们都可以是神经网络。由于在一个仿射层中一些维度是保持不变的，因此为了让所有的输入都有机会改变，我们可以在每次应用放射层时翻转输入。对于大规模的输入，可以在仿射层中采用采样的方法，具体可见<a href="https://arxiv.org/abs/1605.08803">paper</a></li>
-<li><a href="https://arxiv.org/abs/1807.03039">Glow</a>：拓展了ReakNVP模型，总共有三个部分，第一个部分是Activation
-normalization，和BN很像，但是只在1个batch下进行计算，将每个channel的输出归一化后使用新的放大和偏置参数去训练；第二个部分是可逆的1x1卷积，它的雅克比行列式可写为<span class="math display">\[\log \operatorname{det} \frac{\partial
-\operatorname{conv} 2 \mathrm{~d}(\mathbf{h} ; \mathbf{W})}{\partial
-\mathbf{h}}=\log \left(|\operatorname{det} \mathbf{W}|^{h \cdot w}
-\mid\right)=h \cdot w \cdot \log |\operatorname{det}
-\mathbf{W}|\]</span>其中<span class="math inline">\(h\)</span>和<span class="math inline">\(w\)</span>分别是张量的高和宽，<span class="math inline">\(\mathbf{h};\mathbf{W}\)</span>分别是输入张量和参数矩阵；第三个部分就是Bijection层</li>
-</ol>
-<ol start="5" type="1">
-<li>自回归流模型：自回归是为了处理序列数据，就是在给定之前的状态预测下一时刻的状态，即<span class="math inline">\(p(x_i|x_{1:i-1})\)</span>。如果使用一个自回归模型作为flow的变换时这个模型就叫做自回归流模型，下面将先介绍几个自回归模型MADE,PixelRNN，WaveNet，然后再讲几个自回归流模型MAF和IAF</li>
-</ol>
-<ol type="1">
-<li><a href="https://arxiv.org/abs/1502.03509">MADE</a>：把Autoencoder里面的权重矩阵乘以一个binary-masked的矩阵，从而使得输出只考虑之前的信息</li>
-<li><a href="https://arxiv.org/abs/1601.06759">PixalRNN</a>：针对图像的深度生成模型，一次产生一个像素，在生成当前像素点时，
-模型会看到之前生成的像素点。使用对角的BiLSTM去获取之前的Context，但是没办法并行了</li>
-<li><a href="https://arxiv.org/abs/1705.07057">MAF</a>：生成数据的概率是已知概率分布的仿射变换</li>
-<li><a href="https://arxiv.org/abs/1606.04934">IAF</a>：与MAF相反，使用相逆的仿射函数</li>
-</ol></li>
-<li><p><strong>方法</strong></p>
-<ol type="1">
-<li>使用点云作为输入，也就是<span class="math inline">\(G=(A,R)\)</span>其中<span class="math inline">\(A\)</span>是原子类型矩阵，<span class="math inline">\(R\)</span>是原子坐标矩阵</li>
-<li>将分子生成任务作为一个序列决策任务，在第<span class="math inline">\(i\)</span>个步骤，使用之前的点云信息得到隐变量，根据这个隐变量生成分子<span class="math display">\[a_{i}=g^{a}\left(z_{i}^{a} ; A_{i}, R_{i}\right),
-r_{i}=g^{r}\left(z_{i}^{r} ; A_{i}, R_{i}\right), \quad i \geq
-1\]</span></li>
-<li>通过自回归流进行分子生成，首先需要把原子类型转为连续变量<span class="math display">\[\tilde{a}_{i}=a_{i}+u, u \sim U(0,1)^{k}, \quad i
-\geq 1\]</span>为了生成<span class="math inline">\(\tilde{a}_{i}\)</span>，首先从标准正态分布中取值得到一个隐变量<span class="math inline">\(z_i\)</span>，然后通过映射函数<span class="math display">\[\tilde{a}_{i}=s_{i}^{a} \odot
-z_{i}^{a}+t_{i}^{a}, \quad i \geq
-1\]</span>其中缩放因子和偏置都是根据之前生成的原子得到的条件信息</li>
-<li>与分子类型同理，可以生成距离，角度和二面角</li>
-<li>首先通过G-SphereNet得到每个原子更新后的表达，然后经过一个MLP分类器，如果分类的分数比0.5大，那就放在待选列表里，如果待选列表为空，表明不需要生成分子了，否则应随机地从待选列表里选择一个原子</li>
-<li>作者表示如果直接进行atom-wise
-FFNN的话生成的新原子的位置不靠谱，因此使用了多头自注意力机制使focal
-atom可以得到其他原子的信息</li>
-<li>特别地，对于空间的上下文信息，作者将其与原子类型的embedding相乘</li>
-</ol></li>
-<li><p><strong>训练</strong></p>
-<ol type="1">
-<li>使用Prim算法使得采样的focal atom总是离最新的原子最近</li>
-<li>损失函数如下：<span class="math display">\[\begin{aligned}
-\log p(G) &amp;=\sum_{i=1}^{n-1}\left[\log
-p_{Z_{a}}\left(z_{i}^{a}\right)+\log \left|\frac{\partial
-\tilde{a}_{i}}{\partial
-z_{i}^{a}}\right|\right]+\sum_{i=1}^{n-1}\left[\log
-p_{Z_{d}}\left(z_{i}^{d}\right)+\log \left|\frac{\partial
-d_{i}}{\partial z_{i}^{d}}\right|\right] \\
-&amp;+\sum_{i=2}^{n-1}\left[\log
-p_{Z_{\theta}}\left(z_{i}^{\theta}\right)+\log \left|\frac{\partial
-\theta_{i}}{\partial
-z_{i}^{\theta}}\right|\right]+\sum_{i=3}^{n-1}\left[\log
-p_{Z_{\varphi}}\left(z_{i}^{\varphi}\right)+\log \left|\frac{\partial
-\varphi_{i}}{\partial z_{i}^{\varphi}}\right|\right]
-\end{aligned}\]</span>其中<span class="math inline">\(z_i\)</span>可以通过映射的反函数求得</li>
-</ol></li>
-<li><p><strong>实验</strong></p>
-<ol type="1">
-<li>随机3D分子几何生成，使用QM9数据集。3D分子几何通过<a href="https://onlinelibrary.wiley.com/doi/abs/10.1002/bkcs.10334">Kim</a>提出的方法变为3D分子，使用有效性作为评价指标，有效性是指所有不违反化学价规则的分子占所有生成分子的比例。通过键长分布的MMD距离，把距离与常见的化学键距离做比较，从而确定生成的到底是什么键(好麻烦，不如直接用化学键生成)，有效性才88%</li>
-<li>目标分子发现，用了两个任务，一个是最小化HOMO-LUMO
-gap，另一个是最大化各向异构极化性。将QM9里面小的HOMO-LUMO和大的各向异构极化性的分子拿出来，然后去做分子生成。评价的指标是看生成的分子中比QM9里最小的HOMO-LUMO以及最大的各向异构极化性分子还大的分子的比例</li>
-<li>消融实验：local feature &lt; global feature；without 3D information
-&lt; with 3D information；focal atom从50%里面选择 &gt;
-直接采用softmax后最大比例的分子</li>
-</ol></li>
-<li><p><strong>Limitations</strong></p>
-<ol type="1">
-<li>原子类型有没有都考虑</li>
-<li>化学键的选择对于生成的位置坐标的精度要求有点高</li>
-<li>由点云-&gt;分子图的方法是否合理</li>
-<li>反向设计是否不太现实</li>
-</ol></li>
-<li><p><strong>Development</strong></p>
-<ol type="1">
-<li>不要用点云，保留键的信息，从而避免从点云-&gt;分子图这个过程</li>
-<li>反向设计可以使用动态规划、强化学习等序贯决策过程进行设计</li>
-<li>需要考虑多个原子类型</li>
-<li>综上所述，context encoder应满足几个条件</li>
-</ol>
-<ol type="1">
-<li>能够处理不同原子类型</li>
-<li>使用角度、距离、二面角生成分子</li>
-<li>不使用点云而使用分子结构</li>
-<li>为了生成合适的键，需要考虑原子的杂化类型</li>
-</ol></li>
-</ul>
-]]></content>
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>CLIP笔记</title>
+      <link href="/2022/03/30/CLIP/"/>
+      <url>/2022/03/30/CLIP/</url>
+      
+        <content type="html"><![CDATA[<h2 id="learning-transferable-visual-models-from-natural-language-supervision">LearningTransferable Visual Models From Natural Language Supervision</h2><p><a href="https://arxiv.org/abs/2103.00020">paper</a> <a href="https://github.com/OpenAI/CLIP">Github</a></p><p><img src="/2022/03/30/CLIP/CLIP.png"></p><hr><span id="more"></span><h3 id="关键点">关键点</h3><ol type="1"><li>结合自然文本和图片生成数据集</li><li>无需人工标注</li><li>对比学习</li><li>多模态工作</li><li>标签不是提前定义好的列表式的标签</li></ol><h3 id="综述">综述</h3><ol type="1"><li>之前通过自然语言协助图片分类的工作有着最大的问题就是规模不够大</li><li>之前的工作多是用文本带来的弱监督信号去帮助图片的有监督学习，但是这类任务仍然针对的是固定类别的类，没有zero-shot的能力</li></ol><h3 id="方法">方法</h3><p><font color="red" size="4">概述</font></p><ol type="1"><li>核心是用自然语言的有监督讯号训练视觉任务</li><li>Transformer和BERT的兴起使得自然语言模型更加强大</li><li>数据集有4个亿的图片单词数据对</li><li>训练效率对多模态工作的结果非常重要</li><li>预测学习（给定图片预测文本）与对比学习相比需要巨大的计算资源</li></ol><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"># image_encoder - ResNet or Vision Transformer</span><br><span class="line"># text_encoder - CBOW or Text Transformer</span><br><span class="line"># I[n, h, w, c] - minibatch of aligned images</span><br><span class="line"># T[n, l] - minibatch of aligned texts</span><br><span class="line"># W_i[d_i, d_e] - 将图片特征投影到多模态的空间</span><br><span class="line"># W_t[d_t, d_e] - 将文本特征投影到多模态的空间</span><br><span class="line"># t - 学得的温度参数 ???</span><br><span class="line"></span><br><span class="line"># 抽取特征</span><br><span class="line">I_f = image_encoder(I) # [n, d_i]</span><br><span class="line">T_f = text_encoder(T) # [n, d_t]</span><br><span class="line"></span><br><span class="line"># 使模型能够学习到多模态的特征</span><br><span class="line">I_e = l2_normalize(np.dot(I_f, W_i), axis=1)</span><br><span class="line">T_e = l2_normalize(np.dot(T_f, W_t), axis=1)</span><br><span class="line"></span><br><span class="line"># 算下相似度</span><br><span class="line">logits = np.dot(I_e, T_e) * np.exp(t)</span><br><span class="line"></span><br><span class="line"># 生成真值并计算损失</span><br><span class="line">labels = np.arange(n) # 因为都是在对角线上配的的</span><br><span class="line">loss_i = cross_entropy_loss(logits, labels, axis=0)</span><br><span class="line">loss_t = cross_entropy_loss(logits, labels, axis=1)</span><br><span class="line">loss = (loss_i + loss_t) / 2</span><br></pre></td></tr></table></figure><ol start="6" type="1"><li>在这个工作中，最后用的是线性投射层，而没有使用非线性透射层</li></ol><p><font color="red" size="4">训练</font></p><ol type="1"><li>调参都是用小模型训练一个周期的结果来调的</li><li>batch_size = 32768</li><li>混精度训练 (???)</li><li>GPU并行计算</li></ol><p><a href="https://lilianweng.github.io/posts/2021-09-25-train-large/">大模型训练技巧</a></p><ol start="5" type="1"><li>训练ViT比训练残差网络效率更高</li><li>最后又在更大的图片上微调了一下</li></ol><h3 id="实验">实验</h3><ol type="1"><li>如何作zero-shot推理?</li></ol><p>A: 图片通过编码器得到一个特征，感兴趣的类别输入到"A photo of a{object}"中，然后经过一个文本编码器，得到n个特征，将这n个特征和图片特征点乘后作Softmax，得到在每个类别的概率。P.S.为什么不直接用这个类别这一个单词呢？因为训练就是用的句子，存在distributiongap。</p><ol start="2" type="1"><li>Prompt (提示) engineering and ensembling ???</li></ol><ul><li>语言歧义性的问题，比如boxer可以是一种狗也可以是拳击运动员。使用"Aphoto of a{object}"则使得object一定是名词，因此一定程度上缓解了语言歧义性的问题。</li><li>另外在宠物的数据集加上一句"a type ofpet"作为提示也会得到更好的效果</li><li>对prompt进行ensemble，即使用很多prompt，最后的结果取他们的平均，则会得到更好的效果。本文用了80个提示模板P.S. Linear probe指冻住主干网络，只微调最后一个全连接层的操作</li></ul><ol start="3" type="1"><li>用全部数据和之前的特征学习方法进行对比</li></ol><ul><li>仍然使用linearprobe而不采用fine-tune，因为fine-tune要训练整个网络，这样就不能分辨预训练模型的好坏了；另外也不用调参。</li><li>模型非常好</li></ul><h3 id="limitation">Limitation</h3><ol type="1"><li>和各个数据集的SOTA结果还是有一定差距的，扩大规模不太现实</li><li>在有些数据集上表现不太好，无法处理抽象的概念（比如数物体或者判断异常）</li><li>在MNIST这类数据集上不太好，和自然图像还是有点差距的，是一个out-of-distribution的数据集</li><li>只是从给定类别去做推理，而不能直接写出图片的标签</li><li>对数据的利用不是很高效，可以用数据增强、伪标签或自监督减小数据用量</li><li>数据没有经过清洗，很可能会带一些社会偏见</li><li>很多任务用语言都无法描述的</li><li>如何在few-shot也能具有更好的效果</li></ol><center><font color="brown" size="5"> 打破了固定标签类别的范式 </font></center>]]></content>
+      
+      
       <categories>
-        <category>分子生成</category>
+          
+          <category> 计算机视觉 </category>
+          
       </categories>
-  </entry>
-  <entry>
-    <title>机器学习与量子物理</title>
-    <url>/2022/03/29/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E4%B8%8E%E9%87%8F%E5%AD%90%E7%89%A9%E7%90%86/</url>
-    <content><![CDATA[<p><a href="https://link.springer.com/book/10.1007/978-3-030-40245-7">[SOURCE]</a></p>
-<p>介绍机器学习在量子物理(主要是量子化学)中的应用，如分子性质预测等</p>
-<span id="more"></span>
-<h2 id="introduction">Introduction</h2>
-<h3 id="结构-性质关系">结构-性质关系</h3>
-<ul>
-<li>分子的反向设计通常难于正向预测</li>
-<li><em>水蒸气</em>的性质可以只取决于单个水分子
-(即两个O-H距离和一个H-O-H角度)，这些空间信息以极窄的分布存在；至于<em>液态水</em>，事实上单个水分子的状态仍没有什么变化，引起液态水和水蒸气性质差异的是分子间相互作用；至于<em>冰</em>，水分子内的自由度仍然没有改变，水分子间的自由度发生了变化，他们不像在气相或液相那样可以随意移动。冰是一种晶体，这意味着每个水分子以一定的周期形式排列着，单个晶体有时会对其性质产生影响。</li>
-<li>至于其他的无定型固体，如蛋白质，它是由氨基酸序列折叠而来的，我们可以通过把蛋白质放到溶液中去结晶化，从而获得更加精确的分子结构。</li>
-<li>分子中的自由度可以分为强自由度和弱自由度，弱自由度具有较大的方差(如分子间相互作用)，这种自由度可以不作为分子结构的构成；强自由度有着窄的概率分布(低方差)，且他们的平均值组成了分子。</li>
-<li>通常我们考虑的结构-性质关系不考虑弱自由度。</li>
-<li>一般针对正向问题和反向问题，我们的目标都是去求概率分布，而非一个确定的函数。</li>
-<li>分子性质可以分为两类，电子性质和热力学性质，电子性质通常是由电子云分布决定的，热力学性质是由弱自由度(也就是原子核的移动)统计得到的。热力学性质可以分为平衡性质与不平衡性质，平衡性质比如说沸点、溶点等，非平衡性质指化学反应或者物质传递等。</li>
-</ul>
-<h3 id="量子力学">量子力学</h3>
-<ul>
-<li>希尔伯特空间(Hilbert Space)
-<ol type="1">
-<li>是一个线性向量空间</li>
-<li>向量间的内积满足如下性质
-<ol type="a">
-<li>共轭对称，即一对向量和他们交换后的复共轭向量是相等的 <span class="math inline">\(\langle y, x\rangle=\overline{\langle x,
-y\rangle}\)</span></li>
-<li>线性的 <span class="math inline">\(\left\langle a x_{1}+b x_{2},
-y\right\rangle=a\left\langle x_{1}, y\right\rangle+b\left\langle x_{2},
-y\right\rangle\)</span></li>
-<li>正定的 <span class="math inline">\(\left\langle
-x,x\right\rangle=|x|^2\ge 0\)</span></li>
-<li>共轭线性的 <span class="math inline">\(\left\langle x, a y_{1}+b
-y_{2}\right\rangle=\bar{a}\left\langle x,
-y_{1}\right\rangle+\bar{b}\left\langle x,
-y_{2}\right\rangle\)</span></li>
-<li>两点之间的距离定义为 <span class="math inline">\(d(x,y)=\|x-y\|=\sqrt{\langle x-y,
-x-y\rangle}\)</span></li>
-</ol></li>
-<li>该空间是可分离的，包含一个可数的、稠密的子集</li>
-<li>是完备的（没有间隔）</li>
-</ol></li>
-<li>在希尔伯特空间表示一个物体的状态通过下式：<span class="math display">\[\begin{equation}
-|\psi\rangle:=\int \operatorname{d\mathbf{r}}
-\psi(\mathbf{r})|\mathbf{r}\rangle
-\end{equation}\]</span></li>
-<li>与特征值和特征向量满足的关系类似(<span class="math inline">\(\hat{L}\left|\psi_{i}\right\rangle=\lambda_{i}\left|\psi_{i}\right\rangle\)</span>)，将其中的线性算子改为哈密顿算子(Hamiltonian)，对应的特征值变为能量E，并将状态用波函数<span class="math inline">\(\psi(\mathbf{r})\)</span>来代替： <span class="math display">\[\hat{H} \psi_{i}(\mathbf{r})=E_{i}
-\psi_{i}(\mathbf{r})\]</span></li>
-<li>目前大部分的量子力学方法，如密度泛函等，最快也只能到O(<span class="math inline">\(N^3\)</span>)</li>
-<li>哈密顿算子中取决于原子核位置的项被叫做势能面(potential energy
-surface)</li>
-</ul>
-<h3 id="统计力学">统计力学</h3>
-<ul>
-<li>统计力学对于弱自由度上的移动的建模非常有效，核心思想就是大部分的移动都可以合理省去，与物理性质相关的特征可以用较少的自由度来表示。</li>
-<li>统计力学最主要的结果就是：对于一个材料，给定一个温度，那么他的微观态的概率密度分布与玻尔兹曼因子成比例
-<span class="math display">\[P(\mathbf{s}) \propto
-\mathrm{e}^{-\frac{V(\mathbf{s})}{T}}\]</span></li>
-<li>归一化的概率分布为： <span class="math display">\[Z(T)=\int
-\mathrm{ds} \mathrm{}^{\frac{-E(\mathrm{~s})}{T}}, \quad
-P(\mathrm{~s})=\frac{1}{Z(T)}
-\mathrm{e}^{-\frac{E(\mathrm{~s})}{T}}\]</span></li>
-<li>然后平均能量就可以写为： <span class="math display">\[\langle
-E\rangle=\int \mathrm{ds} P(\mathrm{~s}) E(\mathrm{~s})=T^{2}
-\frac{\partial \ln Z}{\partial T}\]</span></li>
-<li>统计力学的计算复杂度主要就集中于上面的积分过程，对于具有较多原子的材料也有着计算复杂度高的问题。但是这通常可以通过蒙特卡洛模拟来减少计算量，也就是选取一些代表性的sample，计算他们的概率。因此统计力学的任务就变成了得到一些统计意义上重要的微观状态(也就是有着大的玻尔兹曼因子的微观状态)。</li>
-<li>最常用的得到这种微观状态的方法就是分子动力学，这种方法让原子受到势能面的影响而进行经典力学上的移动，然后我们可以通过截取原子们运动的快照来获得微观状态。</li>
-</ul>
-<h2 id="kernel-methods-for-quantum-chemistry">Kernel Methods for Quantum
-Chemistry</h2>
-<p>To be continued ...</p>
-]]></content>
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>机器学习与量子物理</title>
+      <link href="/2022/03/29/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E4%B8%8E%E9%87%8F%E5%AD%90%E7%89%A9%E7%90%86/"/>
+      <url>/2022/03/29/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E4%B8%8E%E9%87%8F%E5%AD%90%E7%89%A9%E7%90%86/</url>
+      
+        <content type="html"><![CDATA[<p><a href="https://link.springer.com/book/10.1007/978-3-030-40245-7">[SOURCE]</a></p><p>介绍机器学习在量子物理(主要是量子化学)中的应用，如分子性质预测等</p><span id="more"></span><h2 id="introduction">Introduction</h2><h3 id="结构-性质关系">结构-性质关系</h3><ul><li>分子的反向设计通常难于正向预测</li><li><em>水蒸气</em>的性质可以只取决于单个水分子(即两个O-H距离和一个H-O-H角度)，这些空间信息以极窄的分布存在；至于<em>液态水</em>，事实上单个水分子的状态仍没有什么变化，引起液态水和水蒸气性质差异的是分子间相互作用；至于<em>冰</em>，水分子内的自由度仍然没有改变，水分子间的自由度发生了变化，他们不像在气相或液相那样可以随意移动。冰是一种晶体，这意味着每个水分子以一定的周期形式排列着，单个晶体有时会对其性质产生影响。</li><li>至于其他的无定型固体，如蛋白质，它是由氨基酸序列折叠而来的，我们可以通过把蛋白质放到溶液中去结晶化，从而获得更加精确的分子结构。</li><li>分子中的自由度可以分为强自由度和弱自由度，弱自由度具有较大的方差(如分子间相互作用)，这种自由度可以不作为分子结构的构成；强自由度有着窄的概率分布(低方差)，且他们的平均值组成了分子。</li><li>通常我们考虑的结构-性质关系不考虑弱自由度。</li><li>一般针对正向问题和反向问题，我们的目标都是去求概率分布，而非一个确定的函数。</li><li>分子性质可以分为两类，电子性质和热力学性质，电子性质通常是由电子云分布决定的，热力学性质是由弱自由度(也就是原子核的移动)统计得到的。热力学性质可以分为平衡性质与不平衡性质，平衡性质比如说沸点、溶点等，非平衡性质指化学反应或者物质传递等。</li></ul><h3 id="量子力学">量子力学</h3><ul><li>希尔伯特空间(Hilbert Space)<ol type="1"><li>是一个线性向量空间</li><li>向量间的内积满足如下性质<ol type="a"><li>共轭对称，即一对向量和他们交换后的复共轭向量是相等的 <span class="math inline">\(\langle y, x\rangle=\overline{\langle x,y\rangle}\)</span></li><li>线性的 <span class="math inline">\(\left\langle a x_{1}+b x_{2},y\right\rangle=a\left\langle x_{1}, y\right\rangle+b\left\langle x_{2},y\right\rangle\)</span></li><li>正定的 <span class="math inline">\(\left\langlex,x\right\rangle=|x|^2\ge 0\)</span></li><li>共轭线性的 <span class="math inline">\(\left\langle x, a y_{1}+by_{2}\right\rangle=\bar{a}\left\langle x,y_{1}\right\rangle+\bar{b}\left\langle x,y_{2}\right\rangle\)</span></li><li>两点之间的距离定义为 <span class="math inline">\(d(x,y)=\|x-y\|=\sqrt{\langle x-y,x-y\rangle}\)</span></li></ol></li><li>该空间是可分离的，包含一个可数的、稠密的子集</li><li>是完备的（没有间隔）</li></ol></li><li>在希尔伯特空间表示一个物体的状态通过下式：<span class="math display">\[\begin{equation}|\psi\rangle:=\int \operatorname{d\mathbf{r}}\psi(\mathbf{r})|\mathbf{r}\rangle\end{equation}\]</span></li><li>与特征值和特征向量满足的关系类似(<span class="math inline">\(\hat{L}\left|\psi_{i}\right\rangle=\lambda_{i}\left|\psi_{i}\right\rangle\)</span>)，将其中的线性算子改为哈密顿算子(Hamiltonian)，对应的特征值变为能量E，并将状态用波函数<span class="math inline">\(\psi(\mathbf{r})\)</span>来代替： <span class="math display">\[\hat{H} \psi_{i}(\mathbf{r})=E_{i}\psi_{i}(\mathbf{r})\]</span></li><li>目前大部分的量子力学方法，如密度泛函等，最快也只能到O(<span class="math inline">\(N^3\)</span>)</li><li>哈密顿算子中取决于原子核位置的项被叫做势能面(potential energysurface)</li></ul><h3 id="统计力学">统计力学</h3><ul><li>统计力学对于弱自由度上的移动的建模非常有效，核心思想就是大部分的移动都可以合理省去，与物理性质相关的特征可以用较少的自由度来表示。</li><li>统计力学最主要的结果就是：对于一个材料，给定一个温度，那么他的微观态的概率密度分布与玻尔兹曼因子成比例<span class="math display">\[P(\mathbf{s}) \propto\mathrm{e}^{-\frac{V(\mathbf{s})}{T}}\]</span></li><li>归一化的概率分布为： <span class="math display">\[Z(T)=\int\mathrm{ds} \mathrm{}^{\frac{-E(\mathrm{~s})}{T}}, \quadP(\mathrm{~s})=\frac{1}{Z(T)}\mathrm{e}^{-\frac{E(\mathrm{~s})}{T}}\]</span></li><li>然后平均能量就可以写为： <span class="math display">\[\langleE\rangle=\int \mathrm{ds} P(\mathrm{~s}) E(\mathrm{~s})=T^{2}\frac{\partial \ln Z}{\partial T}\]</span></li><li>统计力学的计算复杂度主要就集中于上面的积分过程，对于具有较多原子的材料也有着计算复杂度高的问题。但是这通常可以通过蒙特卡洛模拟来减少计算量，也就是选取一些代表性的sample，计算他们的概率。因此统计力学的任务就变成了得到一些统计意义上重要的微观状态(也就是有着大的玻尔兹曼因子的微观状态)。</li><li>最常用的得到这种微观状态的方法就是分子动力学，这种方法让原子受到势能面的影响而进行经典力学上的移动，然后我们可以通过截取原子们运动的快照来获得微观状态。</li></ul><h2 id="kernel-methods-for-quantum-chemistry">Kernel Methods for QuantumChemistry</h2><p>To be continued ...</p>]]></content>
+      
+      
       <categories>
-        <category>量子力学</category>
+          
+          <category> 量子力学 </category>
+          
       </categories>
-  </entry>
-  <entry>
-    <title>搭建个人博客</title>
-    <url>/2022/03/29/%E5%88%9B%E5%BB%BA%E5%8D%9A%E5%AE%A2/</url>
-    <content><![CDATA[<p>这是个人博客搭建的向导</p>
-<span id="more"></span>
-<h3 id="相关工具下载">相关工具下载</h3>
-<ul>
-<li><a href="https://nodejs.org/en/">Node.js</a>
-：使用<code>node -v</code>和<code>npm -v</code>查看是否安装成功</li>
-<li><a href="https://git-scm.com/download/win">git</a>：使用<code>git --version</code>查看是否安装成功</li>
-<li>Hexo：<code>npm install -g hexo-cli</code></li>
-</ul>
-<h3 id="github仓库搭建">Github仓库搭建</h3>
-<ul>
-<li>新建一个仓库，仓库名为<code>&lt;Github用户名&gt;.github.io</code></li>
-<li>连接本地与Github服务器：
-<ol type="1">
-<li>打开Gitbash输入<code>ssh-keygen -t rsa -C "&lt;Github注册邮箱地址&gt;"</code></li>
-<li>在<code>C:/users/&lt;用户名&gt;/.ssh</code>文件夹下，复制<em>id_rsa.pub</em>文件中的内容</li>
-<li>拷贝内容至Github的settings中</li>
-</ol></li>
-</ul>
-<p>注：在.ssh新建文件config，在里面填入</p>
-<figure class="highlight plaintext"><figcaption><span>github.com</span></figcaption><table><tr><td class="code"><pre><span class="line">User 注册github的邮箱</span><br><span class="line">Hostname ssh.github.com</span><br><span class="line">PreferredAuthentications publickey</span><br><span class="line">IdentityFile ~/.ssh/id_rsa</span><br><span class="line">Port 443</span><br></pre></td></tr></table></figure>
-<h3 id="搭建个人博客">搭建个人博客</h3>
-<ul>
-<li><code>hexo init</code> 初始化本地博客文件夹，注意该文件夹应为空</li>
-<li><code>hexo g</code> 生成网页</li>
-<li><code>hexo s</code>
-把生成的网页放在本地服务器，输入[http://localhost:4000/]查看效果</li>
-<li><code>ctrl + c</code> 结束本地网页</li>
-</ul>
-<h3 id="更改主题-next">更改主题 (NexT)</h3>
-<ul>
-<li>在本地博客文件夹下载next：
-<code>git clone https://github.com/theme-next/hexo-theme-next themes/next</code></li>
-<li>更改Hexo的config中的scheme值为next</li>
-<li>修改头像：在next/_config.yml中找到<code>avatar</code></li>
-<li>添加搜索：在next/_config.yml中找到<code>local search</code>，并根据上面网页下载搜索插件</li>
-<li>添加分类：在next/_config.yml中找到<code>menu</code>，取消掉相关注释，然后<code>hexo new page &lt;&gt;</code></li>
-</ul>
-<h3 id="其他操作">其他操作</h3>
-<ul>
-<li><p>删除文件：删除本地文件后键入<code>hexo clean</code></p></li>
-<li><p>将当前博客上传到github上</p>
-<ol type="1">
-<li>安装部署工具：<code>npm install hexo-deployer-git --save</code></li>
-<li>修改hexo的_config.yml文件中的deploy部分</li>
-<li>使用<code>hexo clean</code>、<code>hexo g</code>、<code>hexo d</code></li>
-</ol></li>
-</ul>
-]]></content>
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>搭建个人博客</title>
+      <link href="/2022/03/29/%E5%88%9B%E5%BB%BA%E5%8D%9A%E5%AE%A2/"/>
+      <url>/2022/03/29/%E5%88%9B%E5%BB%BA%E5%8D%9A%E5%AE%A2/</url>
+      
+        <content type="html"><![CDATA[<p>这是个人博客搭建的向导</p><span id="more"></span><h3 id="相关工具下载">相关工具下载</h3><ul><li><a href="https://nodejs.org/en/">Node.js</a>：使用<code>node -v</code>和<code>npm -v</code>查看是否安装成功</li><li><a href="https://git-scm.com/download/win">git</a>：使用<code>git --version</code>查看是否安装成功</li><li>Hexo：<code>npm install -g hexo-cli</code></li></ul><h3 id="github仓库搭建">Github仓库搭建</h3><ul><li>新建一个仓库，仓库名为<code>&lt;Github用户名&gt;.github.io</code></li><li>连接本地与Github服务器：<ol type="1"><li>打开Gitbash输入<code>ssh-keygen -t rsa -C "&lt;Github注册邮箱地址&gt;"</code></li><li>在<code>C:/users/&lt;用户名&gt;/.ssh</code>文件夹下，复制<em>id_rsa.pub</em>文件中的内容</li><li>拷贝内容至Github的settings中</li></ol></li></ul><p>注：在.ssh新建文件config，在里面填入</p><figure class="highlight plaintext"><figcaption><span>github.com</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">User 注册github的邮箱</span><br><span class="line">Hostname ssh.github.com</span><br><span class="line">PreferredAuthentications publickey</span><br><span class="line">IdentityFile ~/.ssh/id_rsa</span><br><span class="line">Port 443</span><br></pre></td></tr></table></figure><h3 id="搭建个人博客">搭建个人博客</h3><ul><li><code>hexo init</code> 初始化本地博客文件夹，注意该文件夹应为空</li><li><code>hexo g</code> 生成网页</li><li><code>hexo s</code>把生成的网页放在本地服务器，输入[http://localhost:4000/]查看效果</li><li><code>ctrl + c</code> 结束本地网页</li></ul><h3 id="更改主题-next">更改主题 (NexT)</h3><ul><li>在本地博客文件夹下载next：<code>git clone https://github.com/theme-next/hexo-theme-next themes/next</code></li><li>更改Hexo的config中的scheme值为next</li><li>修改头像：在next/_config.yml中找到<code>avatar</code></li><li>添加搜索：在next/_config.yml中找到<code>local search</code>，并根据上面网页下载搜索插件</li><li>添加分类：在next/_config.yml中找到<code>menu</code>，取消掉相关注释，然后<code>hexo new page &lt;&gt;</code></li></ul><h3 id="其他操作">其他操作</h3><ul><li><p>删除文件：删除本地文件后键入<code>hexo clean</code></p></li><li><p>将当前博客上传到github上</p><ol type="1"><li>安装部署工具：<code>npm install hexo-deployer-git --save</code></li><li>修改hexo的_config.yml文件中的deploy部分</li><li>使用<code>hexo clean</code>、<code>hexo g</code>、<code>hexo d</code></li></ol></li></ul>]]></content>
+      
+      
       <categories>
-        <category>博客</category>
+          
+          <category> 博客 </category>
+          
       </categories>
-  </entry>
+      
+      
+    </entry>
+    
+    
+  
+  
 </search>
