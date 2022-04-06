@@ -96,6 +96,165 @@ probe而不采用fine-tune，因为fine-tune要训练整个网络，这样就不
       </categories>
   </entry>
   <entry>
+    <title>MoCo笔记</title>
+    <url>/2022/03/30/MoCo/</url>
+    <content><![CDATA[<h2 id="momentum-contrast-for-unsupervised-visual-representation-learning">Momentum
+Contrast for Unsupervised Visual Representation Learning</h2>
+<p><a href="https://openaccess.thecvf.com/content_CVPR_2020/html/He_Momentum_Contrast_for_Unsupervised_Visual_Representation_Learning_CVPR_2020_paper.html">paper</a>
+<a href="https://github.com/facebookresearch/moco">code</a></p>
+<p><img src="/2022/03/30/MoCo/MOCO.png" title="模型总览与zero-shot推理"></p>
+<hr>
+<span id="more"></span>
+<h3 id="什么是对比学习">什么是对比学习</h3>
+<ol type="1">
+<li>通过相似度来进行无监督学习</li>
+<li>通过代理任务来得到两个图片是否相似，如instance
+discrimination：将一张图片进行随机裁剪和数据增强得到两个处理后的图片，将这两张图片认为是正样本，其他图片对这两张图片而言是负样本</li>
+<li>对比学习在找完正负样本后所做的就是抽取特征，接着使用常见的损失函数如NCE反向传播</li>
+<li>关键在于找到定义正样本和负样本的规则(代理任务, pretext tasks)</li>
+</ol>
+<h3 id="介绍">介绍</h3>
+<ol type="1">
+<li>无监督模型在NLP上的表现很好，如GPT，BERT</li>
+<li>对比学习可以被当做动态字典查询问题，即对于目标图片特征(anchor/key)寻找与最相似的图片特征(positive-negative/value)</li>
+<li>动态字典越大越好-能够更好地在高维空间进行采样</li>
+<li>字典中的keys应该用相同或相似的编码器得到</li>
+<li>受限于显存，用队列表示keys，即得到mini-batch样本的特征后，将其放入队列，然后把最早的mini-batch的特征移出队列</li>
+<li>使用队列的话字典里的特征就不一致了，因为一部分来自老的，一部分来自新的，采用动量的编码器解决这个问题，即参数一部分来query的编码器，一部分来自前一步的参数，通过调整两者的比例，也就是使参数更多地来自前一步的参数，那么参数将会更新地非常缓慢，从而缓解了队列特征不一致的问题</li>
+<li>代理任务选择的是instance discrimination方法</li>
+<li>最后MoCo可以在中型数据集ImageNet或者大型数据集Instagram
+image得到非常好的效果</li>
+</ol>
+<h3 id="讨论和结论">讨论和结论</h3>
+<ol type="1">
+<li>数据集的增大对于效果的提升没有很多，可能是代理任务的问题</li>
+<li>有没有可能把MoCo和NLP里的masked auto-encoding结合起来
+(kaiming大神-MAE)</li>
+</ol>
+<h3 id="方法">方法</h3>
+<ol type="1">
+<li>noise contrasive estimation
+(NCE)，能够解决softmax类别过多而无法过大的问题。NCE将多分类问题当作一个二分类问题，一共有两类，一类是data
+sample，另一类是noisy contrastive。</li>
+<li>InfoNCE <span class="math display">\[\mathcal{L}_{q}=-\log
+\frac{\exp \left(q \cdot k_{+} / \tau\right)}{\sum_{i=0}^{K} \exp
+\left(q \cdot k_{i} / \tau\right)}\]</span> where <span class="math inline">\(\tau\)</span>
+是一个温度超参数，也就是控制分布的形状，<span class="math inline">\(K\)</span>指的是负样本的数量</li>
+<li>动量对比
+<ul>
+<li>使用队列能够使字典大小和batch size分离开，从而使用标准的batch
+size。</li>
+<li>使用队列能够使字典使用之前编码好的key，而不用重新进行计算</li>
+<li>字典是整个数据集的一个子集，对应了前面提到的NCE中的estimation，即只选用一部分样本作为负例，从而减小计算开销</li>
+<li>使用队列可以移走最老的特征，从而保持了字典的一致性，即几乎都是用一个编码器编的</li>
+<li>因为这个队列非常大，因此很难去通过反向传播去更新所有key的编码器</li>
+<li>能不能直接吧query的编码器直接给key用呢？结果并不好，可能是因为编码器太快改变了，因此使得队列中元素的一致性遭到破坏。由此引出动量更新：<span class="math inline">\(\theta_{\mathrm{k}} \leftarrow m
+\theta_{\mathrm{k}}+(1-m) \theta_{\mathrm{q}}\)</span></li>
+<li>用一个非常大的动量(0.999)就可以使得参数更新得很慢</li>
+<li>端到端的对比学习，也就是key和query的编码器使用同一个，并使用梯度回传更新参数。优点是字典的一致性非常高，缺点就是字典的大小需要和mini-batch的size一样，从而限制了字典的大小</li>
+<li>memory bank。对于query使用编码器，对于key建立一个memory
+bank，这个bank是将所有的key储存起来，接着在训练的时候抽样一些算出来contrastive
+loss后更新query的编码器，接着用这个编码器将抽样后的样本重新计算特征，将计算完的特征再扔回memory
+bank里。这样会使得key的特征的一致性非常差。同时不太容易处理数据集非常大的任务</li>
+</ul></li>
+</ol>
+<p>P.S. trivial solution - 捷径解 (TSTiNet)</p>
+<ol start="4" type="1">
+<li>伪代码</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># f_q, f_k: encoder networks for query and key</span><br><span class="line"># queue: dictionary as a queue of K keys (CxK)</span><br><span class="line"># m: momentum</span><br><span class="line"># t: temperature</span><br><span class="line"></span><br><span class="line">f_k.param = f_q.params # initialize</span><br><span class="line">for x in loader: # load a minibatch x with N samples</span><br><span class="line">	x_q = aug(x) # a randomly augmented version</span><br><span class="line">	x_k = aug(x) # another randomly augmented version</span><br><span class="line"></span><br><span class="line">	q = f_q.forward(x_q)  # queries: NxC</span><br><span class="line">	k = f_k.forward(x_k)  # keys: NxC</span><br><span class="line">	k = k.detach() # k进行梯度回传操作</span><br><span class="line"></span><br><span class="line">	# positive logits: Nx1</span><br><span class="line">	l_pos = bmm(q.view(N, 1, C), k.view(N, C, 1))</span><br><span class="line"></span><br><span class="line">	# negative logits: NxK</span><br><span class="line">	l_neg = mm(q.view(N, C), queue.view(C, K))</span><br><span class="line"></span><br><span class="line">	# logits: Nx(1+K)</span><br><span class="line">	logits = cat([l_pos, l_neg], dim=1)</span><br><span class="line"></span><br><span class="line">	# contrastive loss</span><br><span class="line">	labels = zeros(N) # positives are the 0-th</span><br><span class="line">	loss = CrossEntropyLoss(logits/t, labels)</span><br><span class="line"></span><br><span class="line">	# query网络的更新</span><br><span class="line">	loss.backward()</span><br><span class="line">	update(f_q.params)</span><br><span class="line"></span><br><span class="line">	# momentum update: key network</span><br><span class="line">	f_k.params = m*f_k.params + (1-m)*f_q.params</span><br><span class="line"></span><br><span class="line">	# 更新字典</span><br><span class="line">	enqueue(queue, k) # 让minibatch进入队列</span><br><span class="line">	dequeue(queue) # 让minibatch走出队列</span><br></pre></td></tr></table></figure>
+<ol start="5" type="1">
+<li>Shuffle BN: 为了防止模型学到捷径，因为BN会算当前样本的running
+mean和running
+variance，从而泄露信息，那么模型就会根据这些泄露的信息很容易找到那个正样本。因此Shuffle
+BN采用先把样本的顺序打乱，送到各个GPU上，最后再恢复顺序</li>
+</ol>
+<h3 id="实验与结果">实验与结果</h3>
+<ol type="1">
+<li>在ImageNet-1k和Instegram-1B进行训练</li>
+<li>学习率设为了30，可能有监督对比学习和无监督对比学习学到的特征非常不一致</li>
+<li>MoCo的扩展性好，硬件要求低</li>
+<li>无监督学习最主要的目标最重要的就是生成可泛化的特征</li>
+<li>用了特征归一化，然后用有监督训练的超参数做微调</li>
+</ol>
+]]></content>
+      <categories>
+        <category>计算机视觉</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>SBDD笔记</title>
+    <url>/2022/04/06/SBDD%E7%AC%94%E8%AE%B0/</url>
+    <content><![CDATA[<h3 id="a-3d-generative-model-for-structure-based-drug-design">A 3D
+Generative Model for Structure-Based Drug Design</h3>
+<p><a href="https://proceedings.neurips.cc/paper/2021/hash/314450613369e0ee72d0da7f6fee773c-Abstract.html">[Paper]</a>
+<a href="https://github.com/luost26/3D-Generative-SBDD">[Github]</a></p>
+<p><img src="/2022/04/06/SBDD%E7%AC%94%E8%AE%B0/SBDD.png"></p>
+<span id="more"></span>
+<ul>
+<li><strong>目标</strong>：生成与特定蛋白质位点结合的<em>小分子</em></li>
+<li><strong>已有模型</strong>：
+<ol type="1">
+<li>基于SMILES和基于图的方法，但是这两种方法没办法考虑到空间信息(?图应该可以)</li>
+<li>直接在3D空间生成分子，但是他们一般生成的分子比较小</li>
+<li>立体像素化的模型，但采样的质量受限于立体像素</li>
+</ol></li>
+<li><strong>SBDD模型概要</strong>：
+<ol type="1">
+<li>将目标变为对分子在3D空间出现的概率分布进行建模，即<span class="math inline">\(p(e, \boldsymbol{r} \mid
+\mathcal{C})\)</span>，其中<span class="math inline">\(\mathcal{C}\)</span>是输入的结合位点，<span class="math inline">\(\boldsymbol{r}\)</span>是原子的空间坐标，<span class="math inline">\(e\)</span>是原子类型</li>
+<li>建立了一个网络，给定空间坐标，在给定结合位点的情况下预测原子类型的概率</li>
+<li>为了让结合位点具有旋转不变性，使用了图神经网络</li>
+<li>上述模型有两个缺点：在生成空间上原子的概率后由于每个原子与其他原子不相连，因此暂且不是一个有效的分子；期望的采样方法应该能够生成多样的分子集</li>
+<li>为了解决上面的缺点，作者提出了自回归采样算法，这个算法就是每次在上面那个概率分布下采样一个原子，把它加入到context(可以理解为已有信息)中，直到没有空间容纳新的原子，这种采样方法与VAE和GAN相比避免使用了隐变量，减少了模型复杂度</li>
+</ol></li>
+<li><strong>相关工作</strong>：
+<ol type="1">
+<li>基于字符串的模型，比如用RNN对SMILES进行建模，然而这个这种表示无法捕捉分子的相似度</li>
+<li>基于图的模型，比如VAE，强化学习等是通过自回归的方式来序列地增加原子</li>
+<li>直接在3D空间生成分子的模型，比如用部分生成好的分子作为输入，然后预测下一个原子的种类和与之前原子的位置；也有用强化学习把分子生成作为一个时序任务，这个模型以原子的势能函数作为奖励函数，能够生成真实的3D分子，但是对相对而言大一些的分子不太有效(?可以查来看看)</li>
+<li>把三维分子放在网格中的方法，这样子任务就编程了图像生成方法，因此可以使用VAE、GAN等方法去生成分子图像，这个方法得到的分子可以很大，然而生成分子的质量受限于分辨率的大小是得不到保证的</li>
+</ol></li>
+<li><strong>方法</strong>
+<ol type="1">
+<li>结合位点可以用一系列原子来表示<span class="math inline">\(\mathcal{C}=\left\{\left(\boldsymbol{a}_{i},
+\boldsymbol{r}_{i}\right)\right\}_{i=1}^{N_{b}}\)</span>其中<span class="math inline">\(N_b\)</span>表示原子数目，<span class="math inline">\(\boldsymbol{a}_{i}\)</span>表示第<span class="math inline">\(i\)</span>个原子的特征</li>
+<li>如上所述，模型要学习的目标是给定结合位点和原子位置，给出这个位置属于哪种原子的问题，这个问题本质上是一个分类问题，即预测在这些不同类别的原子的概率</li>
+<li>模型由两部分组成，一个是Context
+Encoder，其实就是得到结合位点中每一个原子的表示；另一个是Spatial
+Classifier，把坐标信息作为输入，然后聚合靠近这个原子的信息，并预测该原子的类型</li>
+<li>Context Encoder：用的就是SchNet</li>
+<li>Spatial
+Classifier：聚集周围原子的信息，然后经过一个MLP预测得到未经归一化的概率，最后每个元素的概率等于类似SoftMax的一个函数，区别是在分母加了一个1，用于表示不放元素的概率(=exp(0))</li>
+<li>现在已经有概率云了，需要从概率云中进行采样，来得到分子。首先得到联合概率分布，
+<span class="math display">\[p(e, \boldsymbol{r} \mid
+\mathcal{C})=\frac{\exp (\boldsymbol{c}[e])}{Z}\]</span> 其中<span class="math inline">\(Z\)</span>是一个归一化参数，<span class="math inline">\(c\)</span>是上面进行spaital
+classifier时最后的MLP。(注：作者可能就没有用到这里的<span class="math inline">\(Z\)</span>)，采样的流程如下：在t时刻，Context包括已经被选中的t个原子；在t+1时刻，根据原子种类和位置的联合概率分布在已知Context的条件下(公式是上面那个吗?t时刻的Context如何体现?)，抽样得到t+1时刻的原子种类和位置。</li>
+<li>最后还需要一个分类器用于判断是否已经走到头了</li>
+</ol></li>
+<li><strong>训练</strong>
+<ol type="1">
+<li>使用了完形填空式的训练方法，也就是在训练过程中遮盖掉一些原子，然后让神经网络去预测这部分</li>
+<li>采用BCELoss来判断原子是否在正确的位置上，采用标准列表式交叉熵损失判断元素的种类，采用BCE在最后的Frontier分类器上</li>
+</ol></li>
+<li><strong>实验</strong>
+<ol type="1">
+<li>用了两个任务，一个是分子设计，也就是给定结合位点去生成分子；第二个是连接预测，也就是生成子结构去连接在结合位点的两个片段</li>
+<li>数据集使用的是<em>CrossDocked</em>数据集，做了一些预处理，比如把RMSD大于1埃的数据点去掉，采用<em>mmseqs2</em>取得有30%的蛋白质序列相同的数据点，最后就留下100000蛋白质-配体对用于训练，100个蛋白质用于测试</li>
+<li>采用的评价指标有，亲和力、Vina分数、药物可能性、合成性；又定义了两个新的指标，一个是高结合力样本的概率以及多样性</li>
+</ol></li>
+<li><strong>Limitations</strong>
+<ol type="1">
+<li>原子类型太少了</li>
+<li>模型每次都要把蛋白质计算一遍，计算量太大了</li>
+</ol></li>
+</ul>
+]]></content>
+      <categories>
+        <category>分子生成</category>
+      </categories>
+  </entry>
+  <entry>
     <title>G-SphereNet笔记</title>
     <url>/2022/04/06/GSphereNet%E7%AC%94%E8%AE%B0/</url>
     <content><![CDATA[<h3 id="an-autoregressive-flow-model-for-3d-molecular-geometry-generation-from-scratch">An
@@ -249,165 +408,6 @@ gap，另一个是最大化各向异构极化性。将QM9里面小的HOMO-LUMO�
 <li>使用角度、距离、二面角生成分子</li>
 <li>不使用点云而使用分子结构</li>
 <li>为了生成合适的键，需要考虑原子的杂化类型</li>
-</ol></li>
-</ul>
-]]></content>
-      <categories>
-        <category>分子生成</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>MoCo笔记</title>
-    <url>/2022/03/30/MoCo/</url>
-    <content><![CDATA[<h2 id="momentum-contrast-for-unsupervised-visual-representation-learning">Momentum
-Contrast for Unsupervised Visual Representation Learning</h2>
-<p><a href="https://openaccess.thecvf.com/content_CVPR_2020/html/He_Momentum_Contrast_for_Unsupervised_Visual_Representation_Learning_CVPR_2020_paper.html">paper</a>
-<a href="https://github.com/facebookresearch/moco">code</a></p>
-<p><img src="/2022/03/30/MoCo/MOCO.png" title="模型总览与zero-shot推理"></p>
-<hr>
-<span id="more"></span>
-<h3 id="什么是对比学习">什么是对比学习</h3>
-<ol type="1">
-<li>通过相似度来进行无监督学习</li>
-<li>通过代理任务来得到两个图片是否相似，如instance
-discrimination：将一张图片进行随机裁剪和数据增强得到两个处理后的图片，将这两张图片认为是正样本，其他图片对这两张图片而言是负样本</li>
-<li>对比学习在找完正负样本后所做的就是抽取特征，接着使用常见的损失函数如NCE反向传播</li>
-<li>关键在于找到定义正样本和负样本的规则(代理任务, pretext tasks)</li>
-</ol>
-<h3 id="介绍">介绍</h3>
-<ol type="1">
-<li>无监督模型在NLP上的表现很好，如GPT，BERT</li>
-<li>对比学习可以被当做动态字典查询问题，即对于目标图片特征(anchor/key)寻找与最相似的图片特征(positive-negative/value)</li>
-<li>动态字典越大越好-能够更好地在高维空间进行采样</li>
-<li>字典中的keys应该用相同或相似的编码器得到</li>
-<li>受限于显存，用队列表示keys，即得到mini-batch样本的特征后，将其放入队列，然后把最早的mini-batch的特征移出队列</li>
-<li>使用队列的话字典里的特征就不一致了，因为一部分来自老的，一部分来自新的，采用动量的编码器解决这个问题，即参数一部分来query的编码器，一部分来自前一步的参数，通过调整两者的比例，也就是使参数更多地来自前一步的参数，那么参数将会更新地非常缓慢，从而缓解了队列特征不一致的问题</li>
-<li>代理任务选择的是instance discrimination方法</li>
-<li>最后MoCo可以在中型数据集ImageNet或者大型数据集Instagram
-image得到非常好的效果</li>
-</ol>
-<h3 id="讨论和结论">讨论和结论</h3>
-<ol type="1">
-<li>数据集的增大对于效果的提升没有很多，可能是代理任务的问题</li>
-<li>有没有可能把MoCo和NLP里的masked auto-encoding结合起来
-(kaiming大神-MAE)</li>
-</ol>
-<h3 id="方法">方法</h3>
-<ol type="1">
-<li>noise contrasive estimation
-(NCE)，能够解决softmax类别过多而无法过大的问题。NCE将多分类问题当作一个二分类问题，一共有两类，一类是data
-sample，另一类是noisy contrastive。</li>
-<li>InfoNCE <span class="math display">\[\mathcal{L}_{q}=-\log
-\frac{\exp \left(q \cdot k_{+} / \tau\right)}{\sum_{i=0}^{K} \exp
-\left(q \cdot k_{i} / \tau\right)}\]</span> where <span class="math inline">\(\tau\)</span>
-是一个温度超参数，也就是控制分布的形状，<span class="math inline">\(K\)</span>指的是负样本的数量</li>
-<li>动量对比
-<ul>
-<li>使用队列能够使字典大小和batch size分离开，从而使用标准的batch
-size。</li>
-<li>使用队列能够使字典使用之前编码好的key，而不用重新进行计算</li>
-<li>字典是整个数据集的一个子集，对应了前面提到的NCE中的estimation，即只选用一部分样本作为负例，从而减小计算开销</li>
-<li>使用队列可以移走最老的特征，从而保持了字典的一致性，即几乎都是用一个编码器编的</li>
-<li>因为这个队列非常大，因此很难去通过反向传播去更新所有key的编码器</li>
-<li>能不能直接吧query的编码器直接给key用呢？结果并不好，可能是因为编码器太快改变了，因此使得队列中元素的一致性遭到破坏。由此引出动量更新：<span class="math inline">\(\theta_{\mathrm{k}} \leftarrow m
-\theta_{\mathrm{k}}+(1-m) \theta_{\mathrm{q}}\)</span></li>
-<li>用一个非常大的动量(0.999)就可以使得参数更新得很慢</li>
-<li>端到端的对比学习，也就是key和query的编码器使用同一个，并使用梯度回传更新参数。优点是字典的一致性非常高，缺点就是字典的大小需要和mini-batch的size一样，从而限制了字典的大小</li>
-<li>memory bank。对于query使用编码器，对于key建立一个memory
-bank，这个bank是将所有的key储存起来，接着在训练的时候抽样一些算出来contrastive
-loss后更新query的编码器，接着用这个编码器将抽样后的样本重新计算特征，将计算完的特征再扔回memory
-bank里。这样会使得key的特征的一致性非常差。同时不太容易处理数据集非常大的任务</li>
-</ul></li>
-</ol>
-<p>P.S. trivial solution - 捷径解 (TSTiNet)</p>
-<ol start="4" type="1">
-<li>伪代码</li>
-</ol>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># f_q, f_k: encoder networks for query and key</span><br><span class="line"># queue: dictionary as a queue of K keys (CxK)</span><br><span class="line"># m: momentum</span><br><span class="line"># t: temperature</span><br><span class="line"></span><br><span class="line">f_k.param = f_q.params # initialize</span><br><span class="line">for x in loader: # load a minibatch x with N samples</span><br><span class="line">	x_q = aug(x) # a randomly augmented version</span><br><span class="line">	x_k = aug(x) # another randomly augmented version</span><br><span class="line"></span><br><span class="line">	q = f_q.forward(x_q)  # queries: NxC</span><br><span class="line">	k = f_k.forward(x_k)  # keys: NxC</span><br><span class="line">	k = k.detach() # k进行梯度回传操作</span><br><span class="line"></span><br><span class="line">	# positive logits: Nx1</span><br><span class="line">	l_pos = bmm(q.view(N, 1, C), k.view(N, C, 1))</span><br><span class="line"></span><br><span class="line">	# negative logits: NxK</span><br><span class="line">	l_neg = mm(q.view(N, C), queue.view(C, K))</span><br><span class="line"></span><br><span class="line">	# logits: Nx(1+K)</span><br><span class="line">	logits = cat([l_pos, l_neg], dim=1)</span><br><span class="line"></span><br><span class="line">	# contrastive loss</span><br><span class="line">	labels = zeros(N) # positives are the 0-th</span><br><span class="line">	loss = CrossEntropyLoss(logits/t, labels)</span><br><span class="line"></span><br><span class="line">	# query网络的更新</span><br><span class="line">	loss.backward()</span><br><span class="line">	update(f_q.params)</span><br><span class="line"></span><br><span class="line">	# momentum update: key network</span><br><span class="line">	f_k.params = m*f_k.params + (1-m)*f_q.params</span><br><span class="line"></span><br><span class="line">	# 更新字典</span><br><span class="line">	enqueue(queue, k) # 让minibatch进入队列</span><br><span class="line">	dequeue(queue) # 让minibatch走出队列</span><br></pre></td></tr></table></figure>
-<ol start="5" type="1">
-<li>Shuffle BN: 为了防止模型学到捷径，因为BN会算当前样本的running
-mean和running
-variance，从而泄露信息，那么模型就会根据这些泄露的信息很容易找到那个正样本。因此Shuffle
-BN采用先把样本的顺序打乱，送到各个GPU上，最后再恢复顺序</li>
-</ol>
-<h3 id="实验与结果">实验与结果</h3>
-<ol type="1">
-<li>在ImageNet-1k和Instegram-1B进行训练</li>
-<li>学习率设为了30，可能有监督对比学习和无监督对比学习学到的特征非常不一致</li>
-<li>MoCo的扩展性好，硬件要求低</li>
-<li>无监督学习最主要的目标最重要的就是生成可泛化的特征</li>
-<li>用了特征归一化，然后用有监督训练的超参数做微调</li>
-</ol>
-]]></content>
-      <categories>
-        <category>计算机视觉</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>SBDD笔记</title>
-    <url>/2022/04/06/SBDD%E7%AC%94%E8%AE%B0/</url>
-    <content><![CDATA[<h3 id="a-3d-generative-model-for-structure-based-drug-design">A 3D
-Generative Model for Structure-Based Drug Design</h3>
-<p><a href="https://proceedings.neurips.cc/paper/2021/hash/314450613369e0ee72d0da7f6fee773c-Abstract.html">[Paper]</a>
-<a href="https://github.com/luost26/3D-Generative-SBDD">[Github]</a></p>
-<p><img src="/2022/04/06/SBDD%E7%AC%94%E8%AE%B0/SBDD.png"></p>
-<span id="more"></span>
-<ul>
-<li><strong>目标</strong>：生成与特定蛋白质位点结合的<em>小分子</em></li>
-<li><strong>已有模型</strong>：
-<ol type="1">
-<li>基于SMILES和基于图的方法，但是这两种方法没办法考虑到空间信息(?图应该可以)</li>
-<li>直接在3D空间生成分子，但是他们一般生成的分子比较小</li>
-<li>立体像素化的模型，但采样的质量受限于立体像素</li>
-</ol></li>
-<li><strong>SBDD模型概要</strong>：
-<ol type="1">
-<li>将目标变为对分子在3D空间出现的概率分布进行建模，即<span class="math inline">\(p(e, \boldsymbol{r} \mid
-\mathcal{C})\)</span>，其中<span class="math inline">\(\mathcal{C}\)</span>是输入的结合位点，<span class="math inline">\(\boldsymbol{r}\)</span>是原子的空间坐标，<span class="math inline">\(e\)</span>是原子类型</li>
-<li>建立了一个网络，给定空间坐标，在给定结合位点的情况下预测原子类型的概率</li>
-<li>为了让结合位点具有旋转不变性，使用了图神经网络</li>
-<li>上述模型有两个缺点：在生成空间上原子的概率后由于每个原子与其他原子不相连，因此暂且不是一个有效的分子；期望的采样方法应该能够生成多样的分子集</li>
-<li>为了解决上面的缺点，作者提出了自回归采样算法，这个算法就是每次在上面那个概率分布下采样一个原子，把它加入到context(可以理解为已有信息)中，直到没有空间容纳新的原子，这种采样方法与VAE和GAN相比避免使用了隐变量，减少了模型复杂度</li>
-</ol></li>
-<li><strong>相关工作</strong>：
-<ol type="1">
-<li>基于字符串的模型，比如用RNN对SMILES进行建模，然而这个这种表示无法捕捉分子的相似度</li>
-<li>基于图的模型，比如VAE，强化学习等是通过自回归的方式来序列地增加原子</li>
-<li>直接在3D空间生成分子的模型，比如用部分生成好的分子作为输入，然后预测下一个原子的种类和与之前原子的位置；也有用强化学习把分子生成作为一个时序任务，这个模型以原子的势能函数作为奖励函数，能够生成真实的3D分子，但是对相对而言大一些的分子不太有效(?可以查来看看)</li>
-<li>把三维分子放在网格中的方法，这样子任务就编程了图像生成方法，因此可以使用VAE、GAN等方法去生成分子图像，这个方法得到的分子可以很大，然而生成分子的质量受限于分辨率的大小是得不到保证的</li>
-</ol></li>
-<li><strong>方法</strong>
-<ol type="1">
-<li>结合位点可以用一系列原子来表示<span class="math inline">\(\mathcal{C}=\left\{\left(\boldsymbol{a}_{i},
-\boldsymbol{r}_{i}\right)\right\}_{i=1}^{N_{b}}\)</span>其中<span class="math inline">\(N_b\)</span>表示原子数目，<span class="math inline">\(\boldsymbol{a}_{i}\)</span>表示第<span class="math inline">\(i\)</span>个原子的特征</li>
-<li>如上所述，模型要学习的目标是给定结合位点和原子位置，给出这个位置属于哪种原子的问题，这个问题本质上是一个分类问题，即预测在这些不同类别的原子的概率</li>
-<li>模型由两部分组成，一个是Context
-Encoder，其实就是得到结合位点中每一个原子的表示；另一个是Spatial
-Classifier，把坐标信息作为输入，然后聚合靠近这个原子的信息，并预测该原子的类型</li>
-<li>Context Encoder：用的就是SchNet</li>
-<li>Spatial
-Classifier：聚集周围原子的信息，然后经过一个MLP预测得到未经归一化的概率，最后每个元素的概率等于类似SoftMax的一个函数，区别是在分母加了一个1，用于表示不放元素的概率(=exp(0))</li>
-<li>现在已经有概率云了，需要从概率云中进行采样，来得到分子。首先得到联合概率分布，
-<span class="math display">\[p(e, \boldsymbol{r} \mid
-\mathcal{C})=\frac{\exp (\boldsymbol{c}[e])}{Z}\]</span> 其中<span class="math inline">\(Z\)</span>是一个归一化参数，<span class="math inline">\(c\)</span>是上面进行spaital
-classifier时最后的MLP。(注：作者可能就没有用到这里的<span class="math inline">\(Z\)</span>)，采样的流程如下：在t时刻，Context包括已经被选中的t个原子；在t+1时刻，根据原子种类和位置的联合概率分布在已知Context的条件下(公式是上面那个吗?t时刻的Context如何体现?)，抽样得到t+1时刻的原子种类和位置。</li>
-<li>最后还需要一个分类器用于判断是否已经走到头了</li>
-</ol></li>
-<li><strong>训练</strong>
-<ol type="1">
-<li>使用了完形填空式的训练方法，也就是在训练过程中遮盖掉一些原子，然后让神经网络去预测这部分</li>
-<li>采用BCELoss来判断原子是否在正确的位置上，采用标准列表式交叉熵损失判断元素的种类，采用BCE在最后的Frontier分类器上</li>
-</ol></li>
-<li><strong>实验</strong>
-<ol type="1">
-<li>用了两个任务，一个是分子设计，也就是给定结合位点去生成分子；第二个是连接预测，也就是生成子结构去连接在结合位点的两个片段</li>
-<li>数据集使用的是<em>CrossDocked</em>数据集，做了一些预处理，比如把RMSD大于1埃的数据点去掉，采用<em>mmseqs2</em>取得有30%的蛋白质序列相同的数据点，最后就留下100000蛋白质-配体对用于训练，100个蛋白质用于测试</li>
-<li>采用的评价指标有，亲和力、Vina分数、药物可能性、合成性；又定义了两个新的指标，一个是高结合力样本的概率以及多样性</li>
-</ol></li>
-<li><strong>Limitations</strong>
-<ol type="1">
-<li>原子类型太少了</li>
-<li>模型每次都要把蛋白质计算一遍，计算量太大了</li>
 </ol></li>
 </ul>
 ]]></content>
