@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Consolas Serif SC:300,300italic,400,400italic,700,700italic|Consolas:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="An Autoregressive Flow Model for 3D Molecular Geometry Generation from Scratch [Paper] [Github]">
+<meta property="og:type" content="article">
+<meta property="og:title" content="G-SphereNet笔记">
+<meta property="og:url" content="http://example.com/2022/04/06/G-SphereNet%E7%AC%94%E8%AE%B0/index.html">
+<meta property="og:site_name" content="Ten&#39;s Blog">
+<meta property="og:description" content="An Autoregressive Flow Model for 3D Molecular Geometry Generation from Scratch [Paper] [Github]">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-04-06T06:10:15.000Z">
+<meta property="article:modified_time" content="2022-04-06T06:19:12.698Z">
+<meta property="article:author" content="Fate_10号">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2022/04/06/G-SphereNet%E7%AC%94%E8%AE%B0/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>G-SphereNet笔记 | Ten's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Ten's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/fate1997" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/04/06/G-SphereNet%E7%AC%94%E8%AE%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/FLCL.jfif">
+      <meta itemprop="name" content="Fate_10号">
+      <meta itemprop="description" content="想象力改变一切">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Ten's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          G-SphereNet笔记
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-04-06 14:10:15 / 修改时间：14:19:12" itemprop="dateCreated datePublished" datetime="2022-04-06T14:10:15+08:00">2022-04-06</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%88%86%E5%AD%90%E7%94%9F%E6%88%90/" itemprop="url" rel="index"><span itemprop="name">分子生成</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="an-autoregressive-flow-model-for-3d-molecular-geometry-generation-from-scratch">An
+Autoregressive Flow Model for 3D Molecular Geometry Generation from
+Scratch</h3>
+<p><a target="_blank" rel="noopener" href="https://openreview.net/forum?id=C03Ajc-NS5W">[Paper]</a> <a target="_blank" rel="noopener" href="https://github.com/divelab/DIG">[Github]</a></p>
+<p><a href="G-SphereNet.png"></a></p>
+<span id="more"></span>
+<ul>
+<li><p><strong>目标</strong>：从头生成3D分子结构</p></li>
+<li><p><strong>现有模型</strong></p>
+<ol type="1">
+<li>生成2D分子</li>
+<li>通过已有的2D分子生成3D结构</li>
+</ol></li>
+<li><p><strong>模型概要</strong></p>
+<ol type="1">
+<li>模型一部分来自于SphereNet</li>
+<li>序列地放置原子</li>
+<li>分子的3D坐标隐式地通过距离、角度和二面角体现</li>
+<li>通过SphereNet和注意力机制提取条件信息</li>
+</ol></li>
+<li><p><strong>相关工作</strong></p>
+<ol type="1">
+<li>通过序列模型生成SMILES</li>
+<li>通过图生成模型去得到原子类型、邻接矩阵</li>
+<li>3D分子从头生成，这个任务可以被分为两个任务，一个是从3D分子结构中学习到一个随机生成模型使得其能够生成有效的3D分子结构；另一个是学习到一个目标分子发现模型使得量子性质分数最大化</li>
+<li>G-SchNet使用自回归模型序列地生成新的原子，并放置到网格点上</li>
+<li>EDMNet和3DMolNet分别通过GAN和VAE生成两个原子间的距离</li>
+<li>E-NFs将flow模型和E(n)不变图神经网络结合，生成所有原子的one-hot坐标并且定义了在隐空间的子空间的先验概率去保证平移不变性</li>
+</ol></li>
+<li><p><a target="_blank" rel="noopener" href="https://lilianweng.github.io/posts/2018-10-13-flow-models/"><strong>流模型</strong></a></p>
+<ol type="1">
+<li>直接学习p(x)</li>
+<li>给定一个随机变量<span class="math inline">\(z\)</span>满足<span class="math inline">\(z \sim \pi(z)\)</span>，建立一个新的随机变量<span class="math inline">\(x\)</span>，满足<span class="math inline">\(x=f(z)\)</span>其中<span class="math inline">\(f\)</span>是可逆的有，因此<span class="math inline">\(z=f^{-1}(x)\)</span>，那么目前的问题就变成了如何推断这个未知概率密度的<span class="math inline">\(x\)</span>
+可以看到，因为两个随机变量都满足归一化，对<span class="math inline">\(x\)</span>求导数后把<span class="math inline">\(z=f^{-1}(x)\)</span>代入，就可以得到<span class="math inline">\(p(x)\)</span>的表达式了<span class="math display">\[\begin{aligned}
+&amp;\int p(x) d x=\int \pi(z) d z=1 ; \text { Definition of probability
+distribution. } \\
+&amp;p(x)=\pi(z) \frac{d z}{d x}=\pi\left(f^{-1}(x)\right) \frac{d
+f^{-1}}{d
+x}=\pi\left(f^{-1}(x)\right)\left|\left(f^{-1}\right)^{\prime}(x)\right|
+\end{aligned}\]</span></li>
+<li>Normalizing Flows：用可逆函数把已知分布的<span class="math inline">\(z_{i-1}\)</span>映射到<span class="math inline">\(z_i\)</span>，也就是上面那个式子，为了简单起见，对等式两边取<span class="math inline">\(\log\)</span>函数<span class="math display">\[\log
+p_{i}\left(\mathbf{z}_{i}\right)=\log
+p_{i-1}\left(\mathbf{z}_{i-1}\right)-\log \operatorname{det} \frac{d
+f_{i}}{d \mathbf{z}_{i-1}}\]</span>因此第<span class="math inline">\(K\)</span>个变量的概率密度可写为：<span class="math display">\[\begin{aligned}
+\mathbf{x}=\mathbf{z}_{K} &amp;=f_{K} \circ f_{K-1} \circ \cdots \circ
+f_{1}\left(\mathbf{z}_{0}\right) \\
+\log p(\mathbf{x})=\log \pi_{K}\left(\mathbf{z}_{K}\right) &amp;=\log
+\pi_{K-1}\left(\mathbf{z}_{K-1}\right)-\log \operatorname{det} \frac{d
+f_{K}}{d \mathbf{z}_{K-1}} \\
+&amp;=\log \pi_{K-2}\left(\mathbf{z}_{K-2}\right)-\log
+\operatorname{det} \frac{d f_{K-1}}{d \mathbf{z}_{K-2}}-\log
+\operatorname{det} \frac{d f_{K}}{d \mathbf{z}_{K-1}} \\
+&amp;=\ldots \\
+&amp;=\log \pi_{0}\left(\mathbf{z}_{0}\right)-\sum_{i=1}^{K} \log
+\operatorname{det} \frac{d f_{i}}{d \mathbf{z}_{i-1}}
+\end{aligned}\]</span>这样就可以得到一个新的概率分布，但是需要注意的是转换函数<span class="math inline">\(f_i\)</span>应满足两个性质，一是它的可逆比较好算，二是它的雅克比行列式比较好算。Normalizing
+Flows的损失函数可以通过下式进行计算：<span class="math display">\[\mathcal{L}(\mathcal{D})=-\frac{1}{|\mathcal{D}|}
+\sum_{\mathbf{x} \in \mathcal{D}} \log p(\mathbf{x})\]</span></li>
+<li>根据这个<span class="math inline">\(f\)</span>的选择，目前有几个模型可供选择：</li>
+</ol>
+<ol type="1">
+<li>RealNVP：使用bijection(或者叫affine coupling
+layer)，这种映射关系是一对一的，也就是输入与输出是成对存在的。这个模型采用的bijection是：<span class="math display">\[\begin{aligned}
+\mathbf{y}_{1: d} &amp;=\mathbf{x}_{1: d} \\
+\mathbf{y}_{d+1: D} &amp;=\mathbf{x}_{d+1: D} \odot \exp
+\left(s\left(\mathbf{x}_{1: d}\right)\right)+t\left(\mathbf{x}_{1:
+d}\right)
+\end{aligned}\]</span>这里<span class="math inline">\(s(.)\)</span>和<span class="math inline">\(t(.)\)</span>分别是放大和平移函数。这个映射的雅克比行列式是一个下三角矩阵<span class="math display">\[\operatorname{det}(\mathbf{J})=\prod_{j=1}^{D-d}
+\exp \left(s\left(\mathbf{x}_{1: d}\right)\right)_{j}=\exp
+\left(\sum_{j=1}^{D-d} s\left(\mathbf{x}_{1:
+d}\right)_{j}\right)\]</span>因为不用计算<span class="math inline">\(s(.)\)</span>和<span class="math inline">\(t(.)\)</span>的雅克比行列式，因此他们都可以是神经网络。由于在一个仿射层中一些维度是保持不变的，因此为了让所有的输入都有机会改变，我们可以在每次应用放射层时翻转输入。对于大规模的输入，可以在仿射层中采用采样的方法，具体可见<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1605.08803">paper</a></li>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1807.03039">Glow</a>：拓展了ReakNVP模型，总共有三个部分，第一个部分是Activation
+normalization，和BN很像，但是只在1个batch下进行计算，将每个channel的输出归一化后使用新的放大和偏置参数去训练；第二个部分是可逆的1x1卷积，它的雅克比行列式可写为<span class="math display">\[\log \operatorname{det} \frac{\partial
+\operatorname{conv} 2 \mathrm{~d}(\mathbf{h} ; \mathbf{W})}{\partial
+\mathbf{h}}=\log \left(|\operatorname{det} \mathbf{W}|^{h \cdot w}
+\mid\right)=h \cdot w \cdot \log |\operatorname{det}
+\mathbf{W}|\]</span>其中<span class="math inline">\(h\)</span>和<span class="math inline">\(w\)</span>分别是张量的高和宽，<span class="math inline">\(\mathbf{h};\mathbf{W}\)</span>分别是输入张量和参数矩阵；第三个部分就是Bijection层</li>
+</ol>
+<ol start="5" type="1">
+<li>自回归流模型：自回归是为了处理序列数据，就是在给定之前的状态预测下一时刻的状态，即<span class="math inline">\(p(x_i|x_{1:i-1})\)</span>。如果使用一个自回归模型作为flow的变换时这个模型就叫做自回归流模型，下面将先介绍几个自回归模型MADE,PixelRNN，WaveNet，然后再讲几个自回归流模型MAF和IAF</li>
+</ol>
+<ol type="1">
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1502.03509">MADE</a>：把Autoencoder里面的权重矩阵乘以一个binary-masked的矩阵，从而使得输出只考虑之前的信息</li>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1601.06759">PixalRNN</a>：针对图像的深度生成模型，一次产生一个像素，在生成当前像素点时，
+模型会看到之前生成的像素点。使用对角的BiLSTM去获取之前的Context，但是没办法并行了</li>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1705.07057">MAF</a>：生成数据的概率是已知概率分布的仿射变换</li>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1606.04934">IAF</a>：与MAF相反，使用相逆的仿射函数</li>
+</ol></li>
+<li><p><strong>方法</strong></p>
+<ol type="1">
+<li>使用点云作为输入，也就是<span class="math inline">\(G=(A,R)\)</span>其中<span class="math inline">\(A\)</span>是原子类型矩阵，<span class="math inline">\(R\)</span>是原子坐标矩阵</li>
+<li>将分子生成任务作为一个序列决策任务，在第<span class="math inline">\(i\)</span>个步骤，使用之前的点云信息得到隐变量，根据这个隐变量生成分子<span class="math display">\[a_{i}=g^{a}\left(z_{i}^{a} ; A_{i}, R_{i}\right),
+r_{i}=g^{r}\left(z_{i}^{r} ; A_{i}, R_{i}\right), \quad i \geq
+1\]</span></li>
+<li>通过自回归流进行分子生成，首先需要把原子类型转为连续变量<span class="math display">\[\tilde{a}_{i}=a_{i}+u, u \sim U(0,1)^{k}, \quad i
+\geq 1\]</span>为了生成<span class="math inline">\(\tilde{a}_{i}\)</span>，首先从标准正态分布中取值得到一个隐变量<span class="math inline">\(z_i\)</span>，然后通过映射函数<span class="math display">\[\tilde{a}_{i}=s_{i}^{a} \odot
+z_{i}^{a}+t_{i}^{a}, \quad i \geq
+1\]</span>其中缩放因子和偏置都是根据之前生成的原子得到的条件信息</li>
+<li>与分子类型同理，可以生成距离，角度和二面角</li>
+<li>首先通过G-SphereNet得到每个原子更新后的表达，然后经过一个MLP分类器，如果分类的分数比0.5大，那就放在待选列表里，如果待选列表为空，表明不需要生成分子了，否则应随机地从待选列表里选择一个原子</li>
+<li>作者表示如果直接进行atom-wise
+FFNN的话生成的新原子的位置不靠谱，因此使用了多头自注意力机制使focal
+atom可以得到其他原子的信息</li>
+<li>特别地，对于空间的上下文信息，作者将其与原子类型的embedding相乘</li>
+</ol></li>
+<li><p><strong>训练</strong></p>
+<ol type="1">
+<li>使用Prim算法使得采样的focal atom总是离最新的原子最近</li>
+<li>损失函数如下：<span class="math display">\[\begin{aligned}
+\log p(G) &amp;=\sum_{i=1}^{n-1}\left[\log
+p_{Z_{a}}\left(z_{i}^{a}\right)+\log \left|\frac{\partial
+\tilde{a}_{i}}{\partial
+z_{i}^{a}}\right|\right]+\sum_{i=1}^{n-1}\left[\log
+p_{Z_{d}}\left(z_{i}^{d}\right)+\log \left|\frac{\partial
+d_{i}}{\partial z_{i}^{d}}\right|\right] \\
+&amp;+\sum_{i=2}^{n-1}\left[\log
+p_{Z_{\theta}}\left(z_{i}^{\theta}\right)+\log \left|\frac{\partial
+\theta_{i}}{\partial
+z_{i}^{\theta}}\right|\right]+\sum_{i=3}^{n-1}\left[\log
+p_{Z_{\varphi}}\left(z_{i}^{\varphi}\right)+\log \left|\frac{\partial
+\varphi_{i}}{\partial z_{i}^{\varphi}}\right|\right]
+\end{aligned}\]</span>其中<span class="math inline">\(z_i\)</span>可以通过映射的反函数求得</li>
+</ol></li>
+<li><p><strong>实验</strong></p>
+<ol type="1">
+<li>随机3D分子几何生成，使用QM9数据集。3D分子几何通过<a target="_blank" rel="noopener" href="https://onlinelibrary.wiley.com/doi/abs/10.1002/bkcs.10334">Kim</a>提出的方法变为3D分子，使用有效性作为评价指标，有效性是指所有不违反化学价规则的分子占所有生成分子的比例。通过键长分布的MMD距离，把距离与常见的化学键距离做比较，从而确定生成的到底是什么键(好麻烦，不如直接用化学键生成)，有效性才88%</li>
+<li>目标分子发现，用了两个任务，一个是最小化HOMO-LUMO
+gap，另一个是最大化各向异构极化性。将QM9里面小的HOMO-LUMO和大的各向异构极化性的分子拿出来，然后去做分子生成。评价的指标是看生成的分子中比QM9里最小的HOMO-LUMO以及最大的各向异构极化性分子还大的分子的比例</li>
+<li>消融实验：local feature &lt; global feature；without 3D information
+&lt; with 3D information；focal atom从50%里面选择 &gt;
+直接采用softmax后最大比例的分子</li>
+</ol></li>
+<li><p><strong>Limitations</strong></p>
+<ol type="1">
+<li>原子类型有没有都考虑</li>
+<li>化学键的选择对于生成的位置坐标的精度要求有点高</li>
+<li>由点云-&gt;分子图的方法是否合理</li>
+<li>反向设计是否不太现实</li>
+</ol></li>
+<li><p><strong>Development</strong></p>
+<ol type="1">
+<li>不要用点云，保留键的信息，从而避免从点云-&gt;分子图这个过程</li>
+<li>反向设计可以使用动态规划、强化学习等序贯决策过程进行设计</li>
+<li>需要考虑多个原子类型</li>
+<li>综上所述，context encoder应满足几个条件</li>
+</ol>
+<ol type="1">
+<li>能够处理不同原子类型</li>
+<li>使用角度、距离、二面角生成分子</li>
+<li>不使用点云而使用分子结构</li>
+<li>为了生成合适的键，需要考虑原子的杂化类型</li>
+</ol></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/04/06/SBDD%E7%AC%94%E8%AE%B0/" rel="prev" title="SBDD笔记">
+      <i class="fa fa-chevron-left"></i> SBDD笔记
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#an-autoregressive-flow-model-for-3d-molecular-geometry-generation-from-scratch"><span class="nav-number">1.</span> <span class="nav-text">An
+Autoregressive Flow Model for 3D Molecular Geometry Generation from
+Scratch</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Fate_10号"
+      src="/images/FLCL.jfif">
+  <p class="site-author-name" itemprop="name">Fate_10号</p>
+  <div class="site-description" itemprop="description">想象力改变一切</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">6</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Fate_10号</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+</body>
+</html>
