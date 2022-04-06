@@ -240,51 +240,54 @@
       
         <p>这是个人博客搭建的向导</p>
 <span id="more"></span>
-<h3 id="相关工具下载">相关工具下载</h3>
+<h3 id="相关工具下载"><a class="markdownIt-Anchor" href="#相关工具下载"></a> 相关工具下载</h3>
 <ul>
-<li><a target="_blank" rel="noopener" href="https://nodejs.org/en/">Node.js</a>
-：使用<code>node -v</code>和<code>npm -v</code>查看是否安装成功</li>
+<li><a target="_blank" rel="noopener" href="https://nodejs.org/en/">Node.js</a> ：使用<code>node -v</code>和<code>npm -v</code>查看是否安装成功</li>
 <li><a target="_blank" rel="noopener" href="https://git-scm.com/download/win">git</a>：使用<code>git --version</code>查看是否安装成功</li>
 <li>Hexo：<code>npm install -g hexo-cli</code></li>
 </ul>
-<h3 id="github仓库搭建">Github仓库搭建</h3>
+<h3 id="github仓库搭建"><a class="markdownIt-Anchor" href="#github仓库搭建"></a> Github仓库搭建</h3>
 <ul>
 <li>新建一个仓库，仓库名为<code>&lt;Github用户名&gt;.github.io</code></li>
 <li>连接本地与Github服务器：
-<ol type="1">
-<li>打开Gitbash输入<code>ssh-keygen -t rsa -C "&lt;Github注册邮箱地址&gt;"</code></li>
+<ol>
+<li>打开Gitbash输入<code>ssh-keygen -t rsa -C &quot;&lt;Github注册邮箱地址&gt;&quot;</code></li>
 <li>在<code>C:/users/&lt;用户名&gt;/.ssh</code>文件夹下，复制<em>id_rsa.pub</em>文件中的内容</li>
 <li>拷贝内容至Github的settings中</li>
-</ol></li>
+</ol>
+</li>
 </ul>
 <p>注：在.ssh新建文件config，在里面填入</p>
 <figure class="highlight plaintext"><figcaption><span>github.com</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">User 注册github的邮箱</span><br><span class="line">Hostname ssh.github.com</span><br><span class="line">PreferredAuthentications publickey</span><br><span class="line">IdentityFile ~/.ssh/id_rsa</span><br><span class="line">Port 443</span><br></pre></td></tr></table></figure>
-<h3 id="搭建个人博客">搭建个人博客</h3>
+<h3 id="搭建个人博客"><a class="markdownIt-Anchor" href="#搭建个人博客"></a> 搭建个人博客</h3>
 <ul>
 <li><code>hexo init</code> 初始化本地博客文件夹，注意该文件夹应为空</li>
 <li><code>hexo g</code> 生成网页</li>
-<li><code>hexo s</code>
-把生成的网页放在本地服务器，输入[http://localhost:4000/]查看效果</li>
+<li><code>hexo s</code> 把生成的网页放在本地服务器，输入[<a target="_blank" rel="noopener" href="http://localhost:4000/">http://localhost:4000/</a>]查看效果</li>
 <li><code>ctrl + c</code> 结束本地网页</li>
 </ul>
-<h3 id="更改主题-next">更改主题 (NexT)</h3>
+<h3 id="更改主题-next"><a class="markdownIt-Anchor" href="#更改主题-next"></a> 更改主题 (NexT)</h3>
 <ul>
-<li>在本地博客文件夹下载next：
+<li>在本地博客文件夹下载next：<br>
 <code>git clone https://github.com/theme-next/hexo-theme-next themes/next</code></li>
 <li>更改Hexo的config中的scheme值为next</li>
 <li>修改头像：在next/_config.yml中找到<code>avatar</code></li>
 <li>添加搜索：在next/_config.yml中找到<code>local search</code>，并根据上面网页下载搜索插件</li>
 <li>添加分类：在next/_config.yml中找到<code>menu</code>，取消掉相关注释，然后<code>hexo new page &lt;&gt;</code></li>
 </ul>
-<h3 id="其他操作">其他操作</h3>
+<h3 id="其他操作"><a class="markdownIt-Anchor" href="#其他操作"></a> 其他操作</h3>
 <ul>
-<li><p>删除文件：删除本地文件后键入<code>hexo clean</code></p></li>
-<li><p>将当前博客上传到github上</p>
-<ol type="1">
+<li>
+<p>删除文件：删除本地文件后键入<code>hexo clean</code></p>
+</li>
+<li>
+<p>将当前博客上传到github上</p>
+<ol>
 <li>安装部署工具：<code>npm install hexo-deployer-git --save</code></li>
 <li>修改hexo的_config.yml文件中的deploy部分</li>
 <li>使用<code>hexo clean</code>、<code>hexo g</code>、<code>hexo d</code></li>
-</ol></li>
+</ol>
+</li>
 </ul>
 
     </div>
@@ -363,7 +366,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%B8%E5%85%B3%E5%B7%A5%E5%85%B7%E4%B8%8B%E8%BD%BD"><span class="nav-number">1.</span> <span class="nav-text">相关工具下载</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#github%E4%BB%93%E5%BA%93%E6%90%AD%E5%BB%BA"><span class="nav-number">2.</span> <span class="nav-text">Github仓库搭建</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2"><span class="nav-number">3.</span> <span class="nav-text">搭建个人博客</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9B%B4%E6%94%B9%E4%B8%BB%E9%A2%98-next"><span class="nav-number">4.</span> <span class="nav-text">更改主题 (NexT)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E6%93%8D%E4%BD%9C"><span class="nav-number">5.</span> <span class="nav-text">其他操作</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%B8%E5%85%B3%E5%B7%A5%E5%85%B7%E4%B8%8B%E8%BD%BD"><span class="nav-number">1.</span> <span class="nav-text"> 相关工具下载</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#github%E4%BB%93%E5%BA%93%E6%90%AD%E5%BB%BA"><span class="nav-number">2.</span> <span class="nav-text"> Github仓库搭建</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2"><span class="nav-number">3.</span> <span class="nav-text"> 搭建个人博客</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9B%B4%E6%94%B9%E4%B8%BB%E9%A2%98-next"><span class="nav-number">4.</span> <span class="nav-text"> 更改主题 (NexT)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E6%93%8D%E4%BD%9C"><span class="nav-number">5.</span> <span class="nav-text"> 其他操作</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
