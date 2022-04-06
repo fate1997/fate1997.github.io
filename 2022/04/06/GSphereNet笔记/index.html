@@ -20,12 +20,12 @@
     var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="An Autoregressive Flow Model for 3D Molecular Geometry Generation from Scratch [Paper]  [Github]">
+  <meta name="description" content="An Autoregressive Flow Model for 3D Molecular Geometry Generation from Scratch [Paper] [Github]">
 <meta property="og:type" content="article">
 <meta property="og:title" content="G-SphereNet笔记">
 <meta property="og:url" content="http://example.com/2022/04/06/GSphereNet%E7%AC%94%E8%AE%B0/index.html">
 <meta property="og:site_name" content="Ten&#39;s Blog">
-<meta property="og:description" content="An Autoregressive Flow Model for 3D Molecular Geometry Generation from Scratch [Paper]  [Github]">
+<meta property="og:description" content="An Autoregressive Flow Model for 3D Molecular Geometry Generation from Scratch [Paper] [Github]">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2022-04-06T06:10:15.000Z">
 <meta property="article:modified_time" content="2022-04-06T06:21:20.568Z">
@@ -232,129 +232,158 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h3 id="an-autoregressive-flow-model-for-3d-molecular-geometry-generation-from-scratch"><a class="markdownIt-Anchor" href="#an-autoregressive-flow-model-for-3d-molecular-geometry-generation-from-scratch"></a> An Autoregressive Flow Model for 3D Molecular Geometry Generation from Scratch</h3>
-<p><a target="_blank" rel="noopener" href="https://openreview.net/forum?id=C03Ajc-NS5W">[Paper]</a>  <a target="_blank" rel="noopener" href="https://github.com/divelab/DIG">[Github]</a></p>
+        <h3 id="an-autoregressive-flow-model-for-3d-molecular-geometry-generation-from-scratch">An
+Autoregressive Flow Model for 3D Molecular Geometry Generation from
+Scratch</h3>
+<p><a target="_blank" rel="noopener" href="https://openreview.net/forum?id=C03Ajc-NS5W">[Paper]</a> <a target="_blank" rel="noopener" href="https://github.com/divelab/DIG">[Github]</a></p>
 <p><a href="1.png"></a></p>
 <span id="more"></span>
 <ul>
-<li>
-<p><strong>目标</strong>：从头生成3D分子结构</p>
-</li>
-<li>
-<p><strong>现有模型</strong></p>
-<ol>
+<li><p><strong>目标</strong>：从头生成3D分子结构</p></li>
+<li><p><strong>现有模型</strong></p>
+<ol type="1">
 <li>生成2D分子</li>
 <li>通过已有的2D分子生成3D结构</li>
-</ol>
-</li>
-<li>
-<p><strong>模型概要</strong></p>
-<ol>
+</ol></li>
+<li><p><strong>模型概要</strong></p>
+<ol type="1">
 <li>模型一部分来自于SphereNet</li>
 <li>序列地放置原子</li>
 <li>分子的3D坐标隐式地通过距离、角度和二面角体现</li>
 <li>通过SphereNet和注意力机制提取条件信息</li>
-</ol>
-</li>
-<li>
-<p><strong>相关工作</strong></p>
-<ol>
+</ol></li>
+<li><p><strong>相关工作</strong></p>
+<ol type="1">
 <li>通过序列模型生成SMILES</li>
 <li>通过图生成模型去得到原子类型、邻接矩阵</li>
 <li>3D分子从头生成，这个任务可以被分为两个任务，一个是从3D分子结构中学习到一个随机生成模型使得其能够生成有效的3D分子结构；另一个是学习到一个目标分子发现模型使得量子性质分数最大化</li>
 <li>G-SchNet使用自回归模型序列地生成新的原子，并放置到网格点上</li>
 <li>EDMNet和3DMolNet分别通过GAN和VAE生成两个原子间的距离</li>
 <li>E-NFs将flow模型和E(n)不变图神经网络结合，生成所有原子的one-hot坐标并且定义了在隐空间的子空间的先验概率去保证平移不变性</li>
-</ol>
-</li>
-<li>
-<p><a target="_blank" rel="noopener" href="https://lilianweng.github.io/posts/2018-10-13-flow-models/"><strong>流模型</strong></a></p>
-<ol>
+</ol></li>
+<li><p><a target="_blank" rel="noopener" href="https://lilianweng.github.io/posts/2018-10-13-flow-models/"><strong>流模型</strong></a></p>
+<ol type="1">
 <li>直接学习p(x)</li>
-<li>给定一个随机变量<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>z</mi></mrow><annotation encoding="application/x-tex">z</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.04398em;">z</span></span></span></span>满足<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>z</mi><mo>∼</mo><mi>π</mi><mo stretchy="false">(</mo><mi>z</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">z \sim \pi(z)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.04398em;">z</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">∼</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.03588em;">π</span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.04398em;">z</span><span class="mclose">)</span></span></span></span>，建立一个新的随机变量<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>x</mi></mrow><annotation encoding="application/x-tex">x</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault">x</span></span></span></span>，满足<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>x</mi><mo>=</mo><mi>f</mi><mo stretchy="false">(</mo><mi>z</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">x=f(z)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault">x</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.10764em;">f</span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.04398em;">z</span><span class="mclose">)</span></span></span></span>其中<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>f</mi></mrow><annotation encoding="application/x-tex">f</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord mathdefault" style="margin-right:0.10764em;">f</span></span></span></span>是可逆的有，因此<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>z</mi><mo>=</mo><msup><mi>f</mi><mrow><mo>−</mo><mn>1</mn></mrow></msup><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">z=f^{-1}(x)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.04398em;">z</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1.064108em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.10764em;">f</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">−</span><span class="mord mtight">1</span></span></span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord mathdefault">x</span><span class="mclose">)</span></span></span></span>，那么目前的问题就变成了如何推断这个未知概率密度的<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>x</mi></mrow><annotation encoding="application/x-tex">x</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault">x</span></span></span></span> 可以看到，因为两个随机变量都满足归一化，对<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>x</mi></mrow><annotation encoding="application/x-tex">x</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault">x</span></span></span></span>求导数后把<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>z</mi><mo>=</mo><msup><mi>f</mi><mrow><mo>−</mo><mn>1</mn></mrow></msup><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">z=f^{-1}(x)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.04398em;">z</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1.064108em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.10764em;">f</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">−</span><span class="mord mtight">1</span></span></span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord mathdefault">x</span><span class="mclose">)</span></span></span></span>代入，就可以得到<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>p</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">p(x)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">p</span><span class="mopen">(</span><span class="mord mathdefault">x</span><span class="mclose">)</span></span></span></span>的表达式了$$\begin{aligned}<br>
-&amp;\int p(x) d x=\int \pi(z) d z=1 ; \text { Definition of probability distribution. } \<br>
-&amp;p(x)=\pi(z) \frac{d z}{d x}=\pi\left(f^{-1}(x)\right) \frac{d f^{-1}}{d x}=\pi\left(f<sup>{-1}(x)\right)\left|\left(f</sup>{-1}\right)^{\prime}(x)\right|<br>
-\end{aligned}$$</li>
-<li>Normalizing Flows：用可逆函数把已知分布的<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>z</mi><mrow><mi>i</mi><mo>−</mo><mn>1</mn></mrow></msub></mrow><annotation encoding="application/x-tex">z_{i-1}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.638891em;vertical-align:-0.208331em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.04398em;">z</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.311664em;"><span style="top:-2.5500000000000003em;margin-left:-0.04398em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">i</span><span class="mbin mtight">−</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.208331em;"><span></span></span></span></span></span></span></span></span></span>映射到<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>z</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">z_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.04398em;">z</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:-0.04398em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>，也就是上面那个式子，为了简单起见，对等式两边取<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>log</mi><mo>⁡</mo></mrow><annotation encoding="application/x-tex">\log</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mop">lo<span style="margin-right:0.01389em;">g</span></span></span></span></span>函数$$\log p_{i}\left(\mathbf{z}<em>{i}\right)=\log p</em>{i-1}\left(\mathbf{z}<em>{i-1}\right)-\log \operatorname{det} \frac{d f</em>{i}}{d \mathbf{z}<em>{i-1}}$$因此第<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>K</mi></mrow><annotation encoding="application/x-tex">K</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.07153em;">K</span></span></span></span>个变量的概率密度可写为：$$\begin{aligned}<br>
-\mathbf{x}=\mathbf{z}</em>{K} &amp;=f_{K} \circ f_{K-1} \circ \cdots \circ f_{1}\left(\mathbf{z}<em>{0}\right) \<br>
-\log p(\mathbf{x})=\log \pi</em>{K}\left(\mathbf{z}<em>{K}\right) &amp;=\log \pi</em>{K-1}\left(\mathbf{z}<em>{K-1}\right)-\log \operatorname{det} \frac{d f</em>{K}}{d \mathbf{z}<em>{K-1}} \<br>
-&amp;=\log \pi</em>{K-2}\left(\mathbf{z}<em>{K-2}\right)-\log \operatorname{det} \frac{d f</em>{K-1}}{d \mathbf{z}<em>{K-2}}-\log \operatorname{det} \frac{d f</em>{K}}{d \mathbf{z}<em>{K-1}} \<br>
-&amp;=\ldots \<br>
-&amp;=\log \pi</em>{0}\left(\mathbf{z}<em>{0}\right)-\sum</em>{i=1}^{K} \log \operatorname{det} \frac{d f_{i}}{d \mathbf{z}<em>{i-1}}<br>
-\end{aligned}$$这样就可以得到一个新的概率分布，但是需要注意的是转换函数<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>f</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">f_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.10764em;">f</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:-0.10764em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>应满足两个性质，一是它的可逆比较好算，二是它的雅克比行列式比较好算。Normalizing Flows的损失函数可以通过下式进行计算：$$\mathcal{L}(\mathcal{D})=-\frac{1}{|\mathcal{D}|} \sum</em>{\mathbf{x} \in \mathcal{D}} \log p(\mathbf{x})$$</li>
-<li>根据这个<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>f</mi></mrow><annotation encoding="application/x-tex">f</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord mathdefault" style="margin-right:0.10764em;">f</span></span></span></span>的选择，目前有几个模型可供选择：</li>
+<li>给定一个随机变量<span class="math inline">\(z\)</span>满足<span class="math inline">\(z \sim \pi(z)\)</span>，建立一个新的随机变量<span class="math inline">\(x\)</span>，满足<span class="math inline">\(x=f(z)\)</span>其中<span class="math inline">\(f\)</span>是可逆的有，因此<span class="math inline">\(z=f^{-1}(x)\)</span>，那么目前的问题就变成了如何推断这个未知概率密度的<span class="math inline">\(x\)</span>
+可以看到，因为两个随机变量都满足归一化，对<span class="math inline">\(x\)</span>求导数后把<span class="math inline">\(z=f^{-1}(x)\)</span>代入，就可以得到<span class="math inline">\(p(x)\)</span>的表达式了<span class="math display">\[\begin{aligned}
+&amp;\int p(x) d x=\int \pi(z) d z=1 ; \text { Definition of probability
+distribution. } \\
+&amp;p(x)=\pi(z) \frac{d z}{d x}=\pi\left(f^{-1}(x)\right) \frac{d
+f^{-1}}{d
+x}=\pi\left(f^{-1}(x)\right)\left|\left(f^{-1}\right)^{\prime}(x)\right|
+\end{aligned}\]</span></li>
+<li>Normalizing Flows：用可逆函数把已知分布的<span class="math inline">\(z_{i-1}\)</span>映射到<span class="math inline">\(z_i\)</span>，也就是上面那个式子，为了简单起见，对等式两边取<span class="math inline">\(\log\)</span>函数<span class="math display">\[\log
+p_{i}\left(\mathbf{z}_{i}\right)=\log
+p_{i-1}\left(\mathbf{z}_{i-1}\right)-\log \operatorname{det} \frac{d
+f_{i}}{d \mathbf{z}_{i-1}}\]</span>因此第<span class="math inline">\(K\)</span>个变量的概率密度可写为：<span class="math display">\[\begin{aligned}
+\mathbf{x}=\mathbf{z}_{K} &amp;=f_{K} \circ f_{K-1} \circ \cdots \circ
+f_{1}\left(\mathbf{z}_{0}\right) \\
+\log p(\mathbf{x})=\log \pi_{K}\left(\mathbf{z}_{K}\right) &amp;=\log
+\pi_{K-1}\left(\mathbf{z}_{K-1}\right)-\log \operatorname{det} \frac{d
+f_{K}}{d \mathbf{z}_{K-1}} \\
+&amp;=\log \pi_{K-2}\left(\mathbf{z}_{K-2}\right)-\log
+\operatorname{det} \frac{d f_{K-1}}{d \mathbf{z}_{K-2}}-\log
+\operatorname{det} \frac{d f_{K}}{d \mathbf{z}_{K-1}} \\
+&amp;=\ldots \\
+&amp;=\log \pi_{0}\left(\mathbf{z}_{0}\right)-\sum_{i=1}^{K} \log
+\operatorname{det} \frac{d f_{i}}{d \mathbf{z}_{i-1}}
+\end{aligned}\]</span>这样就可以得到一个新的概率分布，但是需要注意的是转换函数<span class="math inline">\(f_i\)</span>应满足两个性质，一是它的可逆比较好算，二是它的雅克比行列式比较好算。Normalizing
+Flows的损失函数可以通过下式进行计算：<span class="math display">\[\mathcal{L}(\mathcal{D})=-\frac{1}{|\mathcal{D}|}
+\sum_{\mathbf{x} \in \mathcal{D}} \log p(\mathbf{x})\]</span></li>
+<li>根据这个<span class="math inline">\(f\)</span>的选择，目前有几个模型可供选择：</li>
 </ol>
-<ol>
-<li>RealNVP：使用bijection(或者叫affine coupling layer)，这种映射关系是一对一的，也就是输入与输出是成对存在的。这个模型采用的bijection是：$$\begin{aligned}<br>
-\mathbf{y}<em>{1: d} &amp;=\mathbf{x}</em>{1: d} \<br>
-\mathbf{y}<em>{d+1: D} &amp;=\mathbf{x}</em>{d+1: D} \odot \exp \left(s\left(\mathbf{x}<em>{1: d}\right)\right)+t\left(\mathbf{x}</em>{1: d}\right)<br>
-\end{aligned}$$这里<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>s</mi><mo stretchy="false">(</mo><mi mathvariant="normal">.</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">s(.)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">s</span><span class="mopen">(</span><span class="mord">.</span><span class="mclose">)</span></span></span></span>和<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>t</mi><mo stretchy="false">(</mo><mi mathvariant="normal">.</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">t(.)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">t</span><span class="mopen">(</span><span class="mord">.</span><span class="mclose">)</span></span></span></span>分别是放大和平移函数。这个映射的雅克比行列式是一个下三角矩阵$$\operatorname{det}(\mathbf{J})=\prod_{j=1}^{D-d} \exp \left(s\left(\mathbf{x}<em>{1: d}\right)\right)</em>{j}=\exp \left(\sum_{j=1}^{D-d} s\left(\mathbf{x}<em>{1: d}\right)</em>{j}\right)$$因为不用计算<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>s</mi><mo stretchy="false">(</mo><mi mathvariant="normal">.</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">s(.)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">s</span><span class="mopen">(</span><span class="mord">.</span><span class="mclose">)</span></span></span></span>和<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>t</mi><mo stretchy="false">(</mo><mi mathvariant="normal">.</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">t(.)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">t</span><span class="mopen">(</span><span class="mord">.</span><span class="mclose">)</span></span></span></span>的雅克比行列式，因此他们都可以是神经网络。由于在一个仿射层中一些维度是保持不变的，因此为了让所有的输入都有机会改变，我们可以在每次应用放射层时翻转输入。对于大规模的输入，可以在仿射层中采用采样的方法，具体可见<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1605.08803">paper</a></li>
-<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1807.03039">Glow</a>：拓展了ReakNVP模型，总共有三个部分，第一个部分是Activation normalization，和BN很像，但是只在1个batch下进行计算，将每个channel的输出归一化后使用新的放大和偏置参数去训练；第二个部分是可逆的1x1卷积，它的雅克比行列式可写为$$\log \operatorname{det} \frac{\partial \operatorname{conv} 2 \mathrm{~d}(\mathbf{h} ; \mathbf{W})}{\partial \mathbf{h}}=\log \left(|\operatorname{det} \mathbf{W}|^{h \cdot w} \mid\right)=h \cdot w \cdot \log |\operatorname{det} \mathbf{W}|$$其中<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>h</mi></mrow><annotation encoding="application/x-tex">h</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathdefault">h</span></span></span></span>和<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>w</mi></mrow><annotation encoding="application/x-tex">w</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.02691em;">w</span></span></span></span>分别是张量的高和宽，<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi mathvariant="bold">h</mi><mo separator="true">;</mo><mi mathvariant="bold">W</mi></mrow><annotation encoding="application/x-tex">\mathbf{h};\mathbf{W}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord"><span class="mord mathbf">h</span></span><span class="mpunct">;</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathbf" style="margin-right:0.01597em;">W</span></span></span></span></span>分别是输入张量和参数矩阵；第三个部分就是Bijection层</li>
+<ol type="1">
+<li>RealNVP：使用bijection(或者叫affine coupling
+layer)，这种映射关系是一对一的，也就是输入与输出是成对存在的。这个模型采用的bijection是：<span class="math display">\[\begin{aligned}
+\mathbf{y}_{1: d} &amp;=\mathbf{x}_{1: d} \\
+\mathbf{y}_{d+1: D} &amp;=\mathbf{x}_{d+1: D} \odot \exp
+\left(s\left(\mathbf{x}_{1: d}\right)\right)+t\left(\mathbf{x}_{1:
+d}\right)
+\end{aligned}\]</span>这里<span class="math inline">\(s(.)\)</span>和<span class="math inline">\(t(.)\)</span>分别是放大和平移函数。这个映射的雅克比行列式是一个下三角矩阵<span class="math display">\[\operatorname{det}(\mathbf{J})=\prod_{j=1}^{D-d}
+\exp \left(s\left(\mathbf{x}_{1: d}\right)\right)_{j}=\exp
+\left(\sum_{j=1}^{D-d} s\left(\mathbf{x}_{1:
+d}\right)_{j}\right)\]</span>因为不用计算<span class="math inline">\(s(.)\)</span>和<span class="math inline">\(t(.)\)</span>的雅克比行列式，因此他们都可以是神经网络。由于在一个仿射层中一些维度是保持不变的，因此为了让所有的输入都有机会改变，我们可以在每次应用放射层时翻转输入。对于大规模的输入，可以在仿射层中采用采样的方法，具体可见<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1605.08803">paper</a></li>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1807.03039">Glow</a>：拓展了ReakNVP模型，总共有三个部分，第一个部分是Activation
+normalization，和BN很像，但是只在1个batch下进行计算，将每个channel的输出归一化后使用新的放大和偏置参数去训练；第二个部分是可逆的1x1卷积，它的雅克比行列式可写为<span class="math display">\[\log \operatorname{det} \frac{\partial
+\operatorname{conv} 2 \mathrm{~d}(\mathbf{h} ; \mathbf{W})}{\partial
+\mathbf{h}}=\log \left(|\operatorname{det} \mathbf{W}|^{h \cdot w}
+\mid\right)=h \cdot w \cdot \log |\operatorname{det}
+\mathbf{W}|\]</span>其中<span class="math inline">\(h\)</span>和<span class="math inline">\(w\)</span>分别是张量的高和宽，<span class="math inline">\(\mathbf{h};\mathbf{W}\)</span>分别是输入张量和参数矩阵；第三个部分就是Bijection层</li>
 </ol>
-<ol start="5">
-<li>自回归流模型：自回归是为了处理序列数据，就是在给定之前的状态预测下一时刻的状态，即<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>p</mi><mo stretchy="false">(</mo><msub><mi>x</mi><mi>i</mi></msub><mi mathvariant="normal">∣</mi><msub><mi>x</mi><mrow><mn>1</mn><mo>:</mo><mi>i</mi><mo>−</mo><mn>1</mn></mrow></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">p(x_i|x_{1:i-1})</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">p</span><span class="mopen">(</span><span class="mord"><span class="mord mathdefault">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord">∣</span><span class="mord"><span class="mord mathdefault">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.311664em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">1</span><span class="mrel mtight">:</span><span class="mord mathdefault mtight">i</span><span class="mbin mtight">−</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.208331em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span>。如果使用一个自回归模型作为flow的变换时这个模型就叫做自回归流模型，下面将先介绍几个自回归模型MADE,PixelRNN，WaveNet，然后再讲几个自回归流模型MAF和IAF</li>
+<ol start="5" type="1">
+<li>自回归流模型：自回归是为了处理序列数据，就是在给定之前的状态预测下一时刻的状态，即<span class="math inline">\(p(x_i|x_{1:i-1})\)</span>。如果使用一个自回归模型作为flow的变换时这个模型就叫做自回归流模型，下面将先介绍几个自回归模型MADE,PixelRNN，WaveNet，然后再讲几个自回归流模型MAF和IAF</li>
 </ol>
-<ol>
+<ol type="1">
 <li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1502.03509">MADE</a>：把Autoencoder里面的权重矩阵乘以一个binary-masked的矩阵，从而使得输出只考虑之前的信息</li>
-<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1601.06759">PixalRNN</a>：针对图像的深度生成模型，一次产生一个像素，在生成当前像素点时，	模型会看到之前生成的像素点。使用对角的BiLSTM去获取之前的Context，但是没办法并行了</li>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1601.06759">PixalRNN</a>：针对图像的深度生成模型，一次产生一个像素，在生成当前像素点时，
+模型会看到之前生成的像素点。使用对角的BiLSTM去获取之前的Context，但是没办法并行了</li>
 <li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1705.07057">MAF</a>：生成数据的概率是已知概率分布的仿射变换</li>
 <li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1606.04934">IAF</a>：与MAF相反，使用相逆的仿射函数</li>
-</ol>
-</li>
-<li>
-<p><strong>方法</strong></p>
-<ol>
-<li>使用点云作为输入，也就是<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>G</mi><mo>=</mo><mo stretchy="false">(</mo><mi>A</mi><mo separator="true">,</mo><mi>R</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">G=(A,R)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault">G</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord mathdefault">A</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="mclose">)</span></span></span></span>其中<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>A</mi></mrow><annotation encoding="application/x-tex">A</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault">A</span></span></span></span>是原子类型矩阵，<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>R</mi></mrow><annotation encoding="application/x-tex">R</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.00773em;">R</span></span></span></span>是原子坐标矩阵</li>
-<li>将分子生成任务作为一个序列决策任务，在第<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>i</mi></mrow><annotation encoding="application/x-tex">i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.65952em;vertical-align:0em;"></span><span class="mord mathdefault">i</span></span></span></span>个步骤，使用之前的点云信息得到隐变量，根据这个隐变量生成分子$$a_{i}=g<sup>{a}\left(z_{i}</sup>{a} ; A_{i}, R_{i}\right), r_{i}=g<sup>{r}\left(z_{i}</sup>{r} ; A_{i}, R_{i}\right), \quad i \geq 1$$</li>
-<li>通过自回归流进行分子生成，首先需要把原子类型转为连续变量$$\tilde{a}<em>{i}=a</em>{i}+u, u \sim U(0,1)^{k}, \quad i \geq 1$$为了生成<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mover accent="true"><mi>a</mi><mo>~</mo></mover><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">\tilde{a}_{i}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8178599999999999em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.6678599999999999em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathdefault">a</span></span></span><span style="top:-3.35em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.25em;">~</span></span></span></span></span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">i</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>，首先从标准正态分布中取值得到一个隐变量<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>z</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">z_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.04398em;">z</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:-0.04398em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>，然后通过映射函数$$\tilde{a}<em>{i}=s</em>{i}^{a} \odot z_{i}<sup>{a}+t_{i}</sup>{a}, \quad i \geq 1$$其中缩放因子和偏置都是根据之前生成的原子得到的条件信息</li>
+</ol></li>
+<li><p><strong>方法</strong></p>
+<ol type="1">
+<li>使用点云作为输入，也就是<span class="math inline">\(G=(A,R)\)</span>其中<span class="math inline">\(A\)</span>是原子类型矩阵，<span class="math inline">\(R\)</span>是原子坐标矩阵</li>
+<li>将分子生成任务作为一个序列决策任务，在第<span class="math inline">\(i\)</span>个步骤，使用之前的点云信息得到隐变量，根据这个隐变量生成分子<span class="math display">\[a_{i}=g^{a}\left(z_{i}^{a} ; A_{i}, R_{i}\right),
+r_{i}=g^{r}\left(z_{i}^{r} ; A_{i}, R_{i}\right), \quad i \geq
+1\]</span></li>
+<li>通过自回归流进行分子生成，首先需要把原子类型转为连续变量<span class="math display">\[\tilde{a}_{i}=a_{i}+u, u \sim U(0,1)^{k}, \quad i
+\geq 1\]</span>为了生成<span class="math inline">\(\tilde{a}_{i}\)</span>，首先从标准正态分布中取值得到一个隐变量<span class="math inline">\(z_i\)</span>，然后通过映射函数<span class="math display">\[\tilde{a}_{i}=s_{i}^{a} \odot
+z_{i}^{a}+t_{i}^{a}, \quad i \geq
+1\]</span>其中缩放因子和偏置都是根据之前生成的原子得到的条件信息</li>
 <li>与分子类型同理，可以生成距离，角度和二面角</li>
 <li>首先通过G-SphereNet得到每个原子更新后的表达，然后经过一个MLP分类器，如果分类的分数比0.5大，那就放在待选列表里，如果待选列表为空，表明不需要生成分子了，否则应随机地从待选列表里选择一个原子</li>
-<li>作者表示如果直接进行atom-wise FFNN的话生成的新原子的位置不靠谱，因此使用了多头自注意力机制使focal atom可以得到其他原子的信息</li>
+<li>作者表示如果直接进行atom-wise
+FFNN的话生成的新原子的位置不靠谱，因此使用了多头自注意力机制使focal
+atom可以得到其他原子的信息</li>
 <li>特别地，对于空间的上下文信息，作者将其与原子类型的embedding相乘</li>
-</ol>
-</li>
-<li>
-<p><strong>训练</strong></p>
-<ol>
+</ol></li>
+<li><p><strong>训练</strong></p>
+<ol type="1">
 <li>使用Prim算法使得采样的focal atom总是离最新的原子最近</li>
-<li>损失函数如下：$$\begin{aligned}<br>
-\log p(G) &amp;=\sum_{i=1}^{n-1}\left[\log p_{Z_{a}}\left(z_{i}^{a}\right)+\log \left|\frac{\partial \tilde{a}<em>{i}}{\partial z</em>{i}<sup>{a}}\right|\right]+\sum_{i=1}</sup>{n-1}\left[\log p_{Z_{d}}\left(z_{i}^{d}\right)+\log \left|\frac{\partial d_{i}}{\partial z_{i}^{d}}\right|\right] \<br>
-&amp;+\sum_{i=2}^{n-1}\left[\log p_{Z_{\theta}}\left(z_{i}^{\theta}\right)+\log \left|\frac{\partial \theta_{i}}{\partial z_{i}<sup>{\theta}}\right|\right]+\sum_{i=3}</sup>{n-1}\left[\log p_{Z_{\varphi}}\left(z_{i}^{\varphi}\right)+\log \left|\frac{\partial \varphi_{i}}{\partial z_{i}^{\varphi}}\right|\right]<br>
-\end{aligned}$$其中<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>z</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">z_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.04398em;">z</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:-0.04398em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>可以通过映射的反函数求得</li>
-</ol>
-</li>
-<li>
-<p><strong>实验</strong></p>
-<ol>
+<li>损失函数如下：<span class="math display">\[\begin{aligned}
+\log p(G) &amp;=\sum_{i=1}^{n-1}\left[\log
+p_{Z_{a}}\left(z_{i}^{a}\right)+\log \left|\frac{\partial
+\tilde{a}_{i}}{\partial
+z_{i}^{a}}\right|\right]+\sum_{i=1}^{n-1}\left[\log
+p_{Z_{d}}\left(z_{i}^{d}\right)+\log \left|\frac{\partial
+d_{i}}{\partial z_{i}^{d}}\right|\right] \\
+&amp;+\sum_{i=2}^{n-1}\left[\log
+p_{Z_{\theta}}\left(z_{i}^{\theta}\right)+\log \left|\frac{\partial
+\theta_{i}}{\partial
+z_{i}^{\theta}}\right|\right]+\sum_{i=3}^{n-1}\left[\log
+p_{Z_{\varphi}}\left(z_{i}^{\varphi}\right)+\log \left|\frac{\partial
+\varphi_{i}}{\partial z_{i}^{\varphi}}\right|\right]
+\end{aligned}\]</span>其中<span class="math inline">\(z_i\)</span>可以通过映射的反函数求得</li>
+</ol></li>
+<li><p><strong>实验</strong></p>
+<ol type="1">
 <li>随机3D分子几何生成，使用QM9数据集。3D分子几何通过<a target="_blank" rel="noopener" href="https://onlinelibrary.wiley.com/doi/abs/10.1002/bkcs.10334">Kim</a>提出的方法变为3D分子，使用有效性作为评价指标，有效性是指所有不违反化学价规则的分子占所有生成分子的比例。通过键长分布的MMD距离，把距离与常见的化学键距离做比较，从而确定生成的到底是什么键(好麻烦，不如直接用化学键生成)，有效性才88%</li>
-<li>目标分子发现，用了两个任务，一个是最小化HOMO-LUMO gap，另一个是最大化各向异构极化性。将QM9里面小的HOMO-LUMO和大的各向异构极化性的分子拿出来，然后去做分子生成。评价的指标是看生成的分子中比QM9里最小的HOMO-LUMO以及最大的各向异构极化性分子还大的分子的比例</li>
-<li>消融实验：local feature &lt; global feature；without 3D information &lt; with 3D information；focal atom从50%里面选择 &gt; 直接采用softmax后最大比例的分子</li>
-</ol>
-</li>
-<li>
-<p><strong>Limitations</strong></p>
-<ol>
+<li>目标分子发现，用了两个任务，一个是最小化HOMO-LUMO
+gap，另一个是最大化各向异构极化性。将QM9里面小的HOMO-LUMO和大的各向异构极化性的分子拿出来，然后去做分子生成。评价的指标是看生成的分子中比QM9里最小的HOMO-LUMO以及最大的各向异构极化性分子还大的分子的比例</li>
+<li>消融实验：local feature &lt; global feature；without 3D information
+&lt; with 3D information；focal atom从50%里面选择 &gt;
+直接采用softmax后最大比例的分子</li>
+</ol></li>
+<li><p><strong>Limitations</strong></p>
+<ol type="1">
 <li>原子类型有没有都考虑</li>
 <li>化学键的选择对于生成的位置坐标的精度要求有点高</li>
 <li>由点云-&gt;分子图的方法是否合理</li>
 <li>反向设计是否不太现实</li>
-</ol>
-</li>
-<li>
-<p><strong>Development</strong></p>
-<ol>
+</ol></li>
+<li><p><strong>Development</strong></p>
+<ol type="1">
 <li>不要用点云，保留键的信息，从而避免从点云-&gt;分子图这个过程</li>
 <li>反向设计可以使用动态规划、强化学习等序贯决策过程进行设计</li>
 <li>需要考虑多个原子类型</li>
 <li>综上所述，context encoder应满足几个条件</li>
 </ol>
-<ol>
+<ol type="1">
 <li>能够处理不同原子类型</li>
 <li>使用角度、距离、二面角生成分子</li>
 <li>不使用点云而使用分子结构</li>
 <li>为了生成合适的键，需要考虑原子的杂化类型</li>
-</ol>
-</li>
+</ol></li>
 </ul>
 
     </div>
@@ -433,7 +462,9 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#an-autoregressive-flow-model-for-3d-molecular-geometry-generation-from-scratch"><span class="nav-number">1.</span> <span class="nav-text"> An Autoregressive Flow Model for 3D Molecular Geometry Generation from Scratch</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#an-autoregressive-flow-model-for-3d-molecular-geometry-generation-from-scratch"><span class="nav-number">1.</span> <span class="nav-text">An
+Autoregressive Flow Model for 3D Molecular Geometry Generation from
+Scratch</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
